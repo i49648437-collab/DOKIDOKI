@@ -1,0 +1,2106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Литературный клуб: Первый акт | Literature Club: Act One</title>
+    <style>
+        :root {
+            --bg: #fbe9e7;
+            --dark: #1e1316;
+            --gold: #fae3e0;
+            --text: #2c1e16;
+            --accent: #b34141;
+            --accent2: #795548;
+            --modal-bg: rgba(0, 0, 0, 0.75);
+            --slot-empty: rgba(255, 255, 255, 0.06);
+            --slot-occupied: rgba(255, 255, 255, 0.14);
+            --slot-hover: rgba(255, 255, 255, 0.22);
+            --danger: #c0392b;
+            --success: #27ae60;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+            font-family: 'Georgia', 'Courier New', serif;
+            user-select: none;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .game-container {
+            width: 90vw;
+            height: 90vh;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.85);
+            transition: filter 0.5s ease;
+        }
+        body.glitch .game-container {
+            animation: glitchShake 0.2s infinite;
+            filter: hue-rotate(10deg) contrast(1.2);
+        }
+        @keyframes glitchShake {
+            0% {
+                transform: translate(2px, -2px);
+            }
+            25% {
+                transform: translate(-2px, 1px);
+            }
+            50% {
+                transform: translate(-1px, -1px);
+            }
+            75% {
+                transform: translate(1px, 2px);
+            }
+            100% {
+                transform: translate(0, 0);
+            }
+        }
+
+        .scene-area {
+            flex: 1;
+            background: var(--dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            min-height: 0;
+        }
+        .scene-area .bg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            background-color: var(--dark);
+        }
+        .scene-area .bg-layer.active {
+            opacity: 1;
+        }
+
+        .character-sprite {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%) translateY(15px);
+            height: 92%;
+            width: auto;
+            max-width: 82%;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.7));
+            opacity: 0;
+            transition: opacity 0.45s ease, transform 0.45s ease;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .character-sprite.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .dialogue-box {
+            background: rgba(250, 243, 224, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1rem 1.8rem;
+            border-top: 2px solid rgba(188, 170, 164, 0.7);
+            color: var(--text);
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            flex-shrink: 0;
+            min-height: 15vh;
+            max-height: 25vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin: 0 1rem 0.5rem 1rem;
+            border-radius: 20px;
+        }
+        .speaker-name {
+            font-weight: bold;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 0 white;
+        }
+        .dialogue-text {
+            font-size: 1.2rem;
+            line-height: 1.5;
+            word-break: break-word;
+            font-family: 'Georgia', 'Times New Roman', serif;
+        }
+        .dialogue-text .char {
+            opacity: 0;
+            animation: fadeInChar 0.02s forwards;
+        }
+        @keyframes fadeInChar {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .choices-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .choice-btn {
+            background: rgba(241, 224, 208, 0.9);
+            border: 2px solid var(--accent2);
+            color: #3e2723;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            flex: 1 1 auto;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(8px);
+            animation: choiceIn 0.35s ease forwards;
+        }
+        .choice-btn:nth-child(2) {
+            animation-delay: 0.08s;
+        }
+        .choice-btn:nth-child(3) {
+            animation-delay: 0.16s;
+        }
+        @keyframes choiceIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .choice-btn:hover {
+            background: #d7ccc8;
+            border-color: #4e342e;
+            box-shadow: 0 0 12px #a1887f;
+            transform: translateY(-2px);
+        }
+
+        .next-indicator {
+            text-align: right;
+            font-style: italic;
+            color: #6d4c41;
+            margin-top: 6px;
+            animation: pulse 1.5s infinite;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        @keyframes pulse {
+            0% {
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0.5;
+            }
+        }
+        .hidden {
+            display: none !important;
+        }
+
+        .static-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(rgba(20, 0, 0, 0.3), black);
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+        body.corrupted .static-overlay {
+            opacity: 0.7;
+        }
+
+        .title-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 5;
+            color: white;
+            text-shadow: 2px 2px 4px black;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+        .title-screen.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .title-screen h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+        .title-screen button {
+            padding: 15px 40px;
+            font-size: 1.4rem;
+            background: var(--accent);
+            border: none;
+            color: white;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .title-screen button:hover {
+            background: #8b2a2a;
+            transform: translateY(-2px);
+        }
+
+        .save-load-panel {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .save-load-btn {
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: 1px solid #aaa;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        .save-load-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+        .lang-btn {
+            background: rgba(180, 65, 65, 0.7);
+            border: 1px solid #e0a0a0;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+        .lang-btn:hover {
+            background: rgba(180, 65, 65, 0.95);
+        }
+
+        .day-transition {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            color: white;
+            font-size: 4rem;
+            font-weight: bold;
+            text-shadow: 0 0 20px black;
+            opacity: 0;
+            transition: opacity 0.8s;
+            pointer-events: none;
+        }
+        .day-transition.show {
+            opacity: 1;
+        }
+
+        #videoContainer {
+            position: absolute;
+            top: 2.5%;
+            left: 2.5%;
+            width: 95%;
+            height: 95%;
+            z-index: 30;
+            background: black;
+            display: block;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        #introVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        #videoPrompt {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 32;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px black;
+            text-align: center;
+            padding: 0 20px;
+        }
+        #videoPrompt button {
+            margin-top: 20px;
+            padding: 15px 40px;
+            font-size: 1.4rem;
+            background: var(--accent);
+            border: none;
+            color: white;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        #videoPrompt button:hover {
+            background: #8b2a2a;
+        }
+        .skip-hint {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            z-index: 31;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 6px 15px;
+            border-radius: 20px;
+            pointer-events: none;
+        }
+
+        /* ===== МОДАЛЬНОЕ ОКНО СОХРАНЕНИЙ ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--modal-bg);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-window {
+            background: #2a1f1f;
+            border: 2px solid #6d4c41;
+            border-radius: 16px;
+            padding: 1.5rem;
+            width: 90%;
+            max-width: 650px;
+            max-height: 85vh;
+            overflow-y: auto;
+            color: #fbe9e7;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+            position: relative;
+        }
+        .modal-window h2 {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 1.6rem;
+            letter-spacing: 1px;
+            color: #fbe9e7;
+        }
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: #ccc;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .modal-close:hover {
+            color: #fff;
+        }
+        .save-slots-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        @media (max-width: 500px) {
+            .save-slots-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .save-slot {
+            background: var(--slot-empty);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: background 0.2s;
+            min-height: 80px;
+            justify-content: space-between;
+        }
+        .save-slot.occupied {
+            background: var(--slot-occupied);
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+        .save-slot.autosave {
+            border-color: #b34141;
+            background: rgba(180, 65, 65, 0.15);
+        }
+        .save-slot.autosave.occupied {
+            background: rgba(180, 65, 65, 0.25);
+        }
+        .save-slot:hover {
+            background: var(--slot-hover);
+        }
+        .slot-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #ddd;
+        }
+        .slot-badge {
+            font-size: 0.7rem;
+            background: #b34141;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            letter-spacing: 0.5px;
+        }
+        .slot-info {
+            font-size: 0.8rem;
+            color: #bbb;
+            flex: 1;
+        }
+        .slot-info .day-label {
+            color: #e0a0a0;
+            font-weight: bold;
+        }
+        .slot-info .time-label {
+            color: #999;
+            font-size: 0.75rem;
+        }
+        .slot-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .slot-actions button {
+            padding: 5px 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: bold;
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.1);
+            color: #eee;
+            white-space: nowrap;
+        }
+        .slot-actions button:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        .slot-actions .btn-save {
+            border-color: #27ae60;
+            color: #2ecc71;
+        }
+        .slot-actions .btn-save:hover {
+            background: rgba(39, 174, 96, 0.3);
+        }
+        .slot-actions .btn-load {
+            border-color: #3498db;
+            color: #5dade2;
+        }
+        .slot-actions .btn-load:hover {
+            background: rgba(52, 152, 219, 0.3);
+        }
+        .slot-actions .btn-delete {
+            border-color: #c0392b;
+            color: #e74c3c;
+        }
+        .slot-actions .btn-delete:hover {
+            background: rgba(192, 57, 43, 0.3);
+        }
+        .slot-empty-text {
+            color: #777;
+            font-style: italic;
+            font-size: 0.85rem;
+            text-align: center;
+            padding: 8px 0;
+        }
+        .modal-footer {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .modal-footer button {
+            padding: 8px 24px;
+            border-radius: 20px;
+            border: 1px solid #aaa;
+            background: rgba(255, 255, 255, 0.1);
+            color: #eee;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        .modal-footer button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ===== ТОСТ-УВЕДОМЛЕНИЕ ===== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #2a1f1f;
+            color: #fbe9e7;
+            padding: 10px 24px;
+            border-radius: 30px;
+            z-index: 200;
+            font-size: 0.95rem;
+            border: 1px solid #6d4c41;
+            opacity: 0;
+            transition: all 0.35s ease;
+            pointer-events: none;
+            text-align: center;
+            max-width: 90vw;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 600px) {
+            .dialogue-box {
+                padding: 0.8rem;
+                margin: 0 0.5rem 0.5rem 0.5rem;
+            }
+            .speaker-name {
+                font-size: 1.2rem;
+            }
+            .dialogue-text {
+                font-size: 1rem;
+            }
+            .modal-window {
+                padding: 1rem;
+                width: 95%;
+                max-height: 90vh;
+            }
+            .save-load-btn {
+                padding: 6px 10px;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ВИДЕО-ВСТУПЛЕНИЕ -->
+    <div id="videoContainer">
+        <video id="introVideo" muted playsinline preload="auto">
+            <source src="видео/заставка видео.mp4" type="video/mp4">
+        </video>
+        <div id="videoPrompt">
+            <div id="videoPromptText">Добро пожаловать в Литературный клуб</div>
+            <button id="startVideoBtn">Смотреть вступление</button>
+        </div>
+        <div class="skip-hint" id="skipHint" style="display: none;">Нажмите, чтобы пропустить</div>
+    </div>
+
+    <!-- АУДИО -->
+    <audio id="titleMusic" loop preload="auto"><source src="музыка/DDLC_-_Doki_Doki_(SkySound.cc).mp3" type="audio/mpeg"></audio>
+    <audio id="bgGameMusic" loop preload="auto"><source src="музыка/фоновая музыка.ogg" type="audio/ogg"></audio>
+    <audio id="confessionMusic" preload="auto"><source src="музыка/признание сайори.ogg" type="audio/ogg"></audio>
+    <audio id="deathMusic" preload="auto"><source src="музыка/смерть сайори.ogg" type="audio/ogg"></audio>
+
+    <!-- СТАТИЧЕСКИЙ ОВЕРЛЕЙ -->
+    <div class="static-overlay" id="staticEffect"></div>
+
+    <!-- ТОСТ -->
+    <div class="toast" id="toast"></div>
+
+    <!-- МОДАЛЬНОЕ ОКНО СОХРАНЕНИЙ -->
+    <div class="modal-overlay" id="saveModalOverlay">
+        <div class="modal-window" id="saveModalWindow">
+            <button class="modal-close" id="modalCloseBtn">&times;</button>
+            <h2 id="modalTitle">💾 Сохранения</h2>
+            <div class="save-slots-grid" id="saveSlotsGrid"></div>
+            <div class="modal-footer">
+                <button id="modalCloseFooter">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ИГРОВОЙ КОНТЕЙНЕР -->
+    <div class="game-container" id="gameContainer">
+        <div class="scene-area" id="sceneArea">
+            <div class="bg-layer" id="bgLayerA"></div>
+            <div class="bg-layer" id="bgLayerB"></div>
+            <img id="characterImg" class="character-sprite" src="" alt="Персонаж">
+            <div id="titleScreen" class="title-screen">
+                <h1 id="titleHeading">Литературный клуб</h1>
+                <button id="startButton">Начать игру</button>
+            </div>
+            <div id="dayTransition" class="day-transition"></div>
+            <div class="save-load-panel">
+                <button class="save-load-btn lang-btn" id="langButton" title="Сменить язык / Switch language">🌐 RU</button>
+                <button class="save-load-btn" id="saveButton">💾 Сохранить</button>
+                <button class="save-load-btn" id="loadButton">📂 Загрузить</button>
+            </div>
+        </div>
+        <div class="dialogue-box" id="dialogueBox">
+            <div class="speaker-name" id="speakerName">...</div>
+            <div class="dialogue-text" id="dialogueText">Нажмите, чтобы начать...</div>
+            <div id="choicesArea" class="choices-container"></div>
+            <div id="nextMarker" class="next-indicator">▼ Продолжить ▼</div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  ИГРОВОЙ ДВИЖОК С СОХРАНЕНИЯМИ И ПЕРЕКЛЮЧЕНИЕМ ЯЗЫКА
+        // ============================================================
+        (function() {
+            'use strict';
+
+            // ===== ЯЗЫКОВАЯ СИСТЕМА =====
+            let currentLang = 'ru';
+
+            const i18n = {
+                ru: {
+                    title: 'Литературный клуб',
+                    startGame: 'Начать игру',
+                    save: '💾 Сохранить',
+                    load: '📂 Загрузить',
+                    savesTitle: '💾 Сохранения',
+                    close: 'Закрыть',
+                    continue_: '▼ Продолжить ▼',
+                    clickToStart: 'Нажмите, чтобы начать...',
+                    day: 'День',
+                    empty: 'Пусто',
+                    autosave: 'Авто',
+                    saved: 'Игра сохранена!',
+                    loaded: 'Игра загружена!',
+                    deleted: 'Сохранение удалено.',
+                    noSaves: 'Нет сохранений.',
+                    saveFailed: 'Не удалось сохранить игру.',
+                    loadFailed: 'Ошибка загрузки сохранения.',
+                    cannotSaveNow: 'Сохранение недоступно во время выбора. Завершите действие.',
+                    confirmOverwrite: 'Перезаписать это сохранение?',
+                    confirmDelete: 'Удалить это сохранение?',
+                    videoWelcome: 'Добро пожаловать в Литературный клуб',
+                    watchIntro: 'Смотреть вступление',
+                    skipHint: 'Нажмите, чтобы пропустить',
+                    goodEnding: 'Конец первого акта (хорошая концовка)',
+                    poemGameTitle: 'Мини-игра',
+                    poemPrompt: 'Выбери 5 слов, из которых сложится твоё стихотворение.',
+                    ready: 'Готово',
+                },
+                en: {
+                    title: 'Literature Club',
+                    startGame: 'Start Game',
+                    save: '💾 Save',
+                    load: '📂 Load',
+                    savesTitle: '💾 Saves',
+                    close: 'Close',
+                    continue_: '▼ Continue ▼',
+                    clickToStart: 'Click to begin...',
+                    day: 'Day',
+                    empty: 'Empty',
+                    autosave: 'Auto',
+                    saved: 'Game saved!',
+                    loaded: 'Game loaded!',
+                    deleted: 'Save deleted.',
+                    noSaves: 'No saves found.',
+                    saveFailed: 'Failed to save the game.',
+                    loadFailed: 'Failed to load the save.',
+                    cannotSaveNow: 'Cannot save during a choice. Finish the current action.',
+                    confirmOverwrite: 'Overwrite this save?',
+                    confirmDelete: 'Delete this save?',
+                    videoWelcome: 'Welcome to the Literature Club',
+                    watchIntro: 'Watch Intro',
+                    skipHint: 'Click to skip',
+                    goodEnding: 'End of Act One (Good Ending)',
+                    poemGameTitle: 'Mini-game',
+                    poemPrompt: 'Pick 5 words to compose your poem.',
+                    ready: 'Done',
+                }
+            };
+
+            function t(key) { return (i18n[currentLang] && i18n[currentLang][key]) || key; }
+
+            function td(ruText, enText) { return currentLang === 'en' ? (enText || ruText) : ruText; }
+
+            function updateAllUI() {
+                document.getElementById('titleHeading').textContent = t('title');
+                document.getElementById('startButton').textContent = t('startGame');
+                document.getElementById('saveButton').textContent = t('save');
+                document.getElementById('loadButton').textContent = t('load');
+                document.getElementById('modalTitle').textContent = t('savesTitle');
+                document.getElementById('modalCloseFooter').textContent = t('close');
+                document.getElementById('nextMarker').textContent = t('continue_');
+                document.getElementById('langButton').textContent = currentLang === 'ru' ? '🌐 EN' : '🌐 RU';
+                document.getElementById('videoPromptText').textContent = t('videoWelcome');
+                document.getElementById('startVideoBtn').textContent = t('watchIntro');
+                document.getElementById('skipHint').textContent = t('skipHint');
+                if (!state || !state.started) {
+                    document.getElementById('dialogueText').textContent = t('clickToStart');
+                }
+                document.documentElement.lang = currentLang;
+                refreshSaveModal();
+            }
+
+            // ===== ТОСТ-УВЕДОМЛЕНИЯ =====
+            const toastEl = document.getElementById('toast');
+            let toastTimer = null;
+
+            function showToast(msg) {
+                if (toastTimer) clearTimeout(toastTimer);
+                toastEl.textContent = msg;
+                toastEl.classList.add('show');
+                toastTimer = setTimeout(() => { toastEl.classList.remove('show');
+                    toastTimer = null; }, 2200);
+            }
+
+            // ===== СИСТЕМА СОХРАНЕНИЙ =====
+            const SAVE_PREFIX = 'litklub_save_';
+            const MANUAL_SLOTS = 6; // 0..5
+            const AUTO_SLOT_KEY = SAVE_PREFIX + 'auto';
+            const SAVE_META_KEY = 'litklub_save_meta';
+
+            function getSlotKey(index) { return SAVE_PREFIX + index; }
+
+            function getAllSlots() {
+                const slots = [];
+                // Автослот
+                const autoRaw = localStorage.getItem(AUTO_SLOT_KEY);
+                slots.push({
+                    key: AUTO_SLOT_KEY,
+                    id: 'auto',
+                    label: t('autosave'),
+                    isAuto: true,
+                    data: autoRaw ? JSON.parse(autoRaw) : null,
+                });
+                // Ручные слоты
+                for (let i = 0; i < MANUAL_SLOTS; i++) {
+                    const raw = localStorage.getItem(getSlotKey(i));
+                    slots.push({
+                        key: getSlotKey(i),
+                        id: String(i + 1),
+                        label: String(i + 1),
+                        isAuto: false,
+                        data: raw ? JSON.parse(raw) : null,
+                    });
+                }
+                return slots;
+            }
+
+            function formatTimestamp(ts) {
+                if (!ts) return '';
+                const d = new Date(ts);
+                const fmt = (n) => String(n).padStart(2, '0');
+                return `${fmt(d.getDate())}.${fmt(d.getMonth()+1)}.${d.getFullYear()} ${fmt(d.getHours())}:${fmt(d.getMinutes())}`;
+            }
+
+            function buildSavePayload() {
+                return {
+                    state: state,
+                    dayIndex: dayIndex,
+                    stepIndex: stepIndex,
+                    activeSteps: activeSteps,
+                    timestamp: Date.now(),
+                    dayTitle: (script[dayIndex] && script[dayIndex].title) ? script[dayIndex].title : null,
+                };
+            }
+
+            function canSaveNow() {
+                if (!state || !state.started) return false;
+                if (stepIndex >= activeSteps.length) return true;
+                const cur = activeSteps[stepIndex];
+                return cur && cur.type === 'line';
+            }
+
+            function saveToSlot(slotKey) {
+                if (!canSaveNow()) {
+                    showToast(t('cannotSaveNow'));
+                    return false;
+                }
+                try {
+                    const payload = buildSavePayload();
+                    localStorage.setItem(slotKey, JSON.stringify(payload));
+                    updateSaveMeta(slotKey, payload);
+                    showToast(t('saved'));
+                    refreshSaveModal();
+                    return true;
+                } catch (e) {
+                    showToast(t('saveFailed'));
+                    return false;
+                }
+            }
+
+            function updateSaveMeta(slotKey, payload) {
+                try {
+                    let meta = {};
+                    const raw = localStorage.getItem(SAVE_META_KEY);
+                    if (raw) meta = JSON.parse(raw);
+                    meta[slotKey] = {
+                        timestamp: payload.timestamp,
+                        dayTitle: payload.dayTitle,
+                    };
+                    localStorage.setItem(SAVE_META_KEY, JSON.stringify(meta));
+                } catch (e) { /* тихо */ }
+            }
+
+            function loadFromSlot(slotKey) {
+                const raw = localStorage.getItem(slotKey);
+                if (!raw) { showToast(t('noSaves')); return false; }
+                try {
+                    const payload = JSON.parse(raw);
+                    state = payload.state;
+                    dayIndex = payload.dayIndex;
+                    stepIndex = payload.stepIndex;
+                    activeSteps = payload.activeSteps;
+                    bodyEl.classList.remove('corrupted', 'glitch');
+                    staticOverlay.style.opacity = '0';
+                    titleScreen.classList.remove('show');
+                    nextMarker.onclick = (e) => { e.stopPropagation();
+                        advance(); };
+                    stopAllMusic();
+                    playGameBg();
+                    renderCurrentStep();
+                    showToast(t('loaded'));
+                    closeSaveModal();
+                    return true;
+                } catch (e) {
+                    showToast(t('loadFailed'));
+                    return false;
+                }
+            }
+
+            function deleteSlot(slotKey) {
+                localStorage.removeItem(slotKey);
+                try {
+                    let meta = {};
+                    const raw = localStorage.getItem(SAVE_META_KEY);
+                    if (raw) meta = JSON.parse(raw);
+                    delete meta[slotKey];
+                    localStorage.setItem(SAVE_META_KEY, JSON.stringify(meta));
+                } catch (e) { /* тихо */ }
+                showToast(t('deleted'));
+                refreshSaveModal();
+            }
+
+            function autosave() {
+                if (!canSaveNow()) return;
+                try {
+                    const payload = buildSavePayload();
+                    localStorage.setItem(AUTO_SLOT_KEY, JSON.stringify(payload));
+                    updateSaveMeta(AUTO_SLOT_KEY, payload);
+                    console.log('🔁 Автосохранение выполнено');
+                } catch (e) { /* тихо */ }
+            }
+
+            // ===== МОДАЛЬНОЕ ОКНО =====
+            const saveModalOverlay = document.getElementById('saveModalOverlay');
+            const saveSlotsGrid = document.getElementById('saveSlotsGrid');
+            const modalCloseBtn = document.getElementById('modalCloseBtn');
+            const modalCloseFooter = document.getElementById('modalCloseFooter');
+
+            function openSaveModal() {
+                refreshSaveModal();
+                saveModalOverlay.classList.add('active');
+            }
+
+            function closeSaveModal() {
+                saveModalOverlay.classList.remove('active');
+            }
+
+            function refreshSaveModal() {
+                const slots = getAllSlots();
+                saveSlotsGrid.innerHTML = '';
+                slots.forEach(slot => {
+                    const div = document.createElement('div');
+                    div.className = 'save-slot' + (slot.data ? ' occupied' : '') + (slot.isAuto ? ' autosave' :
+                        '');
+                    const headerDiv = document.createElement('div');
+                    headerDiv.className = 'slot-header';
+                    const labelSpan = document.createElement('span');
+                    labelSpan.textContent = slot.isAuto ? '🔄 ' + slot.label : '📁 ' + t('save') + ' ' + slot
+                        .label;
+                    headerDiv.appendChild(labelSpan);
+                    if (slot.isAuto) {
+                        const badge = document.createElement('span');
+                        badge.className = 'slot-badge';
+                        badge.textContent = t('autosave');
+                        headerDiv.appendChild(badge);
+                    }
+                    div.appendChild(headerDiv);
+
+                    const infoDiv = document.createElement('div');
+                    infoDiv.className = 'slot-info';
+                    if (slot.data) {
+                        const daySpan = document.createElement('span');
+                        daySpan.className = 'day-label';
+                        daySpan.textContent = slot.data.dayTitle ? (t('day') + ' ' + slot.data.dayTitle) : '';
+                        infoDiv.appendChild(daySpan);
+                        infoDiv.appendChild(document.createElement('br'));
+                        const timeSpan = document.createElement('span');
+                        timeSpan.className = 'time-label';
+                        timeSpan.textContent = formatTimestamp(slot.data.timestamp);
+                        infoDiv.appendChild(timeSpan);
+                    } else {
+                        const emptySpan = document.createElement('span');
+                        emptySpan.className = 'slot-empty-text';
+                        emptySpan.textContent = t('empty');
+                        infoDiv.appendChild(emptySpan);
+                    }
+                    div.appendChild(infoDiv);
+
+                    const actionsDiv = document.createElement('div');
+                    actionsDiv.className = 'slot-actions';
+
+                    // Кнопка Save
+                    const saveBtn = document.createElement('button');
+                    saveBtn.className = 'btn-save';
+                    saveBtn.textContent = slot.data ? '💾 ' + t('save') : '💾 ' + t('save');
+                    saveBtn.title = slot.data ? t('confirmOverwrite') : t('save');
+                    saveBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (slot.data && !confirm(t('confirmOverwrite') + ' (' + slot.label +
+                                ')')) return;
+                        if (saveToSlot(slot.key)) closeSaveModal();
+                    });
+                    actionsDiv.appendChild(saveBtn);
+
+                    // Кнопка Load (только если есть данные)
+                    if (slot.data) {
+                        const loadBtn = document.createElement('button');
+                        loadBtn.className = 'btn-load';
+                        loadBtn.textContent = '📂 ' + t('load');
+                        loadBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            loadFromSlot(slot.key);
+                        });
+                        actionsDiv.appendChild(loadBtn);
+                    }
+
+                    // Кнопка Delete (только если есть данные и это не автослот или автослот тоже можно удалить)
+                    if (slot.data) {
+                        const delBtn = document.createElement('button');
+                        delBtn.className = 'btn-delete';
+                        delBtn.textContent = '🗑 ' + t('close');
+                        delBtn.title = t('confirmDelete');
+                        delBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            if (confirm(t('confirmDelete') + ' (' + slot.label + ')?')) {
+                                deleteSlot(slot.key);
+                            }
+                        });
+                        actionsDiv.appendChild(delBtn);
+                    }
+
+                    div.appendChild(actionsDiv);
+                    saveSlotsGrid.appendChild(div);
+                });
+            }
+
+            modalCloseBtn.addEventListener('click', closeSaveModal);
+            modalCloseFooter.addEventListener('click', closeSaveModal);
+            saveModalOverlay.addEventListener('click', function(e) {
+                if (e.target === saveModalOverlay) closeSaveModal();
+            });
+
+            // ===== КНОПКИ =====
+            document.getElementById('saveButton').addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!state || !state.started) { showToast(t('cannotSaveNow')); return; }
+                openSaveModal();
+            });
+            document.getElementById('loadButton').addEventListener('click', (e) => {
+                e.stopPropagation();
+                openSaveModal();
+            });
+            document.getElementById('langButton').addEventListener('click', (e) => {
+                e.stopPropagation();
+                currentLang = currentLang === 'ru' ? 'en' : 'ru';
+                updateAllUI();
+                if (state && state.started && stepIndex < activeSteps.length) {
+                    renderCurrentStep();
+                }
+            });
+
+            // ===== АССЕТЫ =====
+            const IMG = {
+                title: "изображения/заставка.jpg",
+                club: "изображения/клуб.webp",
+                sayori: "изображения/Sayori.webp",
+                sceneDay2: "изображения/первая сцена сайори.jpg",
+                sceneDay4: "изображения/вторая сцена сайори.webp",
+                confessionScene: "изображения/признание в любви от сайори.jpg",
+                deadSayori: "изображения/мёртвая сайори.jpg",
+                roomSayori: "изображения/комната сайори.jpg",
+                natsuki: "изображения/нацуки.png",
+                monika: "изображения/Monika_DDLC.png",
+                yuri: "изображения/Yuri.webp",
+                street: "изображения/Городской район, где живут главный герой и Сайори.webp",
+                poemBg: "изображения/Фон для поэтической мини-игры.webp",
+                hallway: "изображения/Школьный коридор.webp",
+                festivalRoom: "изображения/комната фестеваля.webp",
+                heroRoom: "изображения/комната главного героя.webp",
+                sayoriRope: "изображения/сайори в ночнушке с верёвкой.png",
+                closetNatsuki: "изображения/Шкаф в классе, где Нацуки хранит свою мангу.webp",
+                stairsYuri: "изображения/Укромная тихая лестница, где любит сидеть и читать Юри..webp",
+                helpYuri: "изображения/Предложить помочь Юри с подготовкой к фестивалю..webp",
+                helpNatsuki: "изображения/Предложить помочь Нацуки с подготовкой к фестивалю..webp",
+                poemYuri: "изображения/Написать стихотворение для Юри..webp",
+                poemNatsuki: "изображения/Написать стихотворение для Нацуки..webp",
+                poemYuri2: "изображения/Написать второе стихотворение для Юри..webp",
+                poemNatsuki2: "изображения/Написать второе стихотворение для Нацуки..webp"
+            };
+
+            const characters = {
+                sayori: { name: "Сайори", enName: "Sayori", color: "#f08a5d", sprite: IMG.sayori, bg: IMG.club },
+                natsuki: { name: "Нацуки", enName: "Natsuki", color: "#e91e63", sprite: IMG.natsuki, bg: IMG.club },
+                monika: { name: "Моника", enName: "Monika", color: "#4caf50", sprite: IMG.monika, bg: IMG.club },
+                yuri: { name: "Юри", enName: "Yuri", color: "#9c27b0", sprite: IMG.yuri, bg: IMG.club },
+                scene2: { name: "Сайори", enName: "Sayori", color: "#f08a5d", sprite: "", bg: IMG.sceneDay2 },
+                scene4: { name: "Сайори", enName: "Sayori", color: "#f08a5d", sprite: "", bg: IMG.sceneDay4 },
+                confession: { name: "Сайори", enName: "Sayori", color: "#f08a5d", sprite: "", bg: IMG
+                        .confessionScene },
+                death: { name: "Сайори", enName: "Sayori", color: "#555", sprite: "", bg: IMG.deadSayori },
+                night: { name: "Сайори", enName: "Sayori", color: "#f08a5d", sprite: IMG.sayoriRope, bg: IMG
+                        .roomSayori },
+                hero: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: null },
+                street: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: IMG.street },
+                hallway: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: IMG.hallway },
+                heroRoom: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: IMG.heroRoom },
+                closetNatsuki: { name: "Нацуки", enName: "Natsuki", color: "#e91e63", sprite: "", bg: IMG
+                        .closetNatsuki },
+                stairsYuri: { name: "Юри", enName: "Yuri", color: "#9c27b0", sprite: "", bg: IMG.stairsYuri },
+                helpNatsukiScene: { name: "Нацуки", enName: "Natsuki", color: "#e91e63", sprite: "", bg: IMG
+                        .helpNatsuki },
+                helpYuriScene: { name: "Юри", enName: "Yuri", color: "#9c27b0", sprite: "", bg: IMG.helpYuri },
+                poemNatsukiScene: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: IMG.poemNatsuki },
+                poemYuriScene: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: IMG.poemYuri },
+                poemNatsuki2Scene: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: IMG.poemNatsuki2 },
+                poemYuri2Scene: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: IMG.poemYuri2 },
+                narrator: { name: "", enName: "", color: "#3e2723", sprite: "", bg: null }
+            };
+
+            function getCharName(charKey) {
+                const c = characters[charKey];
+                if (!c) return '';
+                return currentLang === 'en' ? (c.enName || c.name) : c.name;
+            }
+
+            // ===== АУДИО =====
+            const titleMusic = document.getElementById('titleMusic');
+            const bgGameMusic = document.getElementById('bgGameMusic');
+            const confessionMusic = document.getElementById('confessionMusic');
+            const deathMusic = document.getElementById('deathMusic');
+            const allTracks = [titleMusic, bgGameMusic, confessionMusic, deathMusic];
+
+            function stopAllMusic() { allTracks.forEach(a => { try { a.pause();
+                        a.currentTime = 0; } catch (e) {} }); }
+
+            function playGameBg() { stopAllMusic();
+                bgGameMusic.play().catch(e => console.log('Фоновая музыка недоступна:', e)); }
+
+            function playOneShot(track, onEnded) {
+                stopAllMusic();
+                track.currentTime = 0;
+                track.play().then(() => { track.onended = onEnded || null; }).catch(e => {
+                    console.log('Трек недоступен:', e);
+                    if (onEnded) onEnded();
+                });
+            }
+
+            // ===== DOM =====
+            const sceneArea = document.getElementById('sceneArea');
+            const bgLayerA = document.getElementById('bgLayerA');
+            const bgLayerB = document.getElementById('bgLayerB');
+            const charImg = document.getElementById('characterImg');
+            const speakerName = document.getElementById('speakerName');
+            const dialogueText = document.getElementById('dialogueText');
+            const choicesArea = document.getElementById('choicesArea');
+            const nextMarker = document.getElementById('nextMarker');
+            const bodyEl = document.body;
+            const staticOverlay = document.getElementById('staticEffect');
+            const titleScreen = document.getElementById('titleScreen');
+            const startButton = document.getElementById('startButton');
+            const dayTransition = document.getElementById('dayTransition');
+
+            let bgLayerActive = bgLayerA;
+            let currentBg = null;
+
+            function setBg(path) {
+                if (path === currentBg) return;
+                currentBg = path;
+                const nextLayer = bgLayerActive === bgLayerA ? bgLayerB : bgLayerA;
+                if (path) {
+                    nextLayer.style.backgroundImage = `url("${path}")`;
+                } else {
+                    nextLayer.style.backgroundImage = 'none';
+                }
+                nextLayer.classList.add('active');
+                bgLayerActive.classList.remove('active');
+                bgLayerActive = nextLayer;
+            }
+
+            function setSprite(path) {
+                if (!path) {
+                    charImg.classList.remove('show');
+                    return;
+                }
+                if (charImg.getAttribute('data-src') !== path) {
+                    charImg.classList.remove('show');
+                    charImg.setAttribute('data-src', path);
+                    charImg.onerror = () => console.log('Спрайт не найден:', path);
+                    charImg.src = path;
+                }
+                requestAnimationFrame(() => charImg.classList.add('show'));
+            }
+
+            function updateScene(charKey, bgOverride) {
+                const c = characters[charKey] || characters.narrator;
+                speakerName.textContent = getCharName(charKey);
+                speakerName.style.color = c.color;
+                if (bgOverride) setBg(bgOverride);
+                else if (c.bg !== null) setBg(c.bg);
+                setSprite(c.sprite);
+            }
+
+            function showDayTransition(n) {
+                const label = td('День ' + n, 'Day ' + n);
+                dayTransition.textContent = label;
+                dayTransition.classList.add('show');
+                setTimeout(() => dayTransition.classList.remove('show'), 1600);
+            }
+
+            function clearChoices() { choicesArea.innerHTML = ''; }
+
+            function showNext(v) { nextMarker.classList.toggle('hidden', !v); }
+
+            function addChoice(label, onClick) {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.textContent = label;
+                btn.onclick = (e) => { e.stopPropagation();
+                    clearChoices();
+                    showNext(false);
+                    onClick(); };
+                choicesArea.appendChild(btn);
+            }
+
+            // ===== СОСТОЯНИЕ =====
+            let state = null;
+            let activeSteps = [];
+            let stepIndex = 0;
+            let dayIndex = 0;
+            let dayBgOverride = null;
+
+            function freshState() {
+                return {
+                    started: false,
+                    affection: 2,
+                    corruption: 0,
+                    bowFixed: false,
+                    helpedWithBump: false,
+                    loveConfessed: false,
+                    visitedAtNight: false,
+                    route: null,
+                    helper: null
+                };
+            }
+
+            // ===== СЦЕНАРИЙ (с английскими переводами) =====
+            // Каждый шаг с текстом теперь имеет поле en для английской версии
+            const script = [{
+                title: 1,
+                onEnter() { dayBgOverride = null;
+                    updateScene('heroRoom'); },
+                steps: () => [
+                    { type: 'line', speaker: 'heroRoom',
+                        text: 'Утро. Будильник прозвенел слишком рано… Но сегодня мой первый день в новом клубе.',
+                        en: 'Morning. The alarm rang too early… But today is my first day at the new club.' },
+                    { type: 'line', speaker: 'street',
+                        text: 'Выйдя из дома, я увидел бегущую навстречу Сайори — она, как всегда, опаздывала.',
+                        en: 'Leaving the house, I saw Sayori running towards me — late, as always.' },
+                    { type: 'line', speaker: 'sayori',
+                        text: 'Ты опять не разбудил меня! Ну ничего, идём вместе, а то опоздаем!', bg: IMG.street,
+                        en: 'You didn\'t wake me up again! Oh well, let\'s go together or we\'ll be late!' },
+                    { type: 'line', speaker: 'hallway',
+                        text: 'Я шёл по школьному коридору, вспоминая слова Сайори про Литературный клуб и обещанные кексы.',
+                        en: 'I walked down the school hallway, remembering Sayori\'s words about the Literature Club and the promised cupcakes.'
+                    },
+                    { type: 'line', speaker: 'monika',
+                        text: 'Добро пожаловать в Литературный клуб! Я Моника, президент клуба.',
+                        en: 'Welcome to the Literature Club! I\'m Monika, the club president.' },
+                    { type: 'line', speaker: 'sayori',
+                        text: 'Приве-е-ет! Я Сайори, вице-президент! Я так рада, что ты здесь!',
+                        en: 'Heeello! I\'m Sayori, vice president! I\'m so glad you\'re here!' },
+                    { type: 'line', speaker: 'natsuki',
+                        text: 'Хмф. Ещё один новенький? Надеюсь, ты не такой нудный. Я Нацуки.',
+                        en: 'Hmph. Another newbie? I hope you\'re not as boring as the last one. I\'m Natsuki.' },
+                    { type: 'line', speaker: 'yuri',
+                        text: 'Здравствуй… Я Юри. Приятно познакомиться.',
+                        en: 'Hello… I\'m Yuri. Nice to meet you.' },
+                    { type: 'line', speaker: 'monika',
+                        text: 'Итак, хочешь посмотреть стихи или осмотреться?',
+                        en: 'So, do you want to look at some poems or look around?' }, {
+                        type: 'choice',
+                        options: [{
+                            label: 'Посмотреть стихи',
+                            enLabel: 'Look at poems',
+                            apply: (s) => { s.affection = Math.min(4, s.affection + 1); },
+                            lines: [
+                                { speaker: 'natsuki',
+                                    text: 'О, стихи? Мои — самые крутые.',
+                                    en: 'Oh, poems? Mine are the coolest.' },
+                                { speaker: 'yuri',
+                                    text: 'Я тоже люблю поэзию… глубокие образы.',
+                                    en: 'I love poetry too… deep imagery.' },
+                                { speaker: 'sayori',
+                                    text: 'Эй! Мои стихи передают чувства!',
+                                    en: 'Hey! My poems convey feelings!' },
+                                { type: 'poemgame' }
+                            ]
+                        }, {
+                            label: 'Осмотреться',
+                            enLabel: 'Look around',
+                            apply: (s) => { s.corruption += 0.5; },
+                            lines: [
+                                { speaker: 'sayori',
+                                    text: 'Пойдём, покажу кладовку!',
+                                    en: 'Come on, I\'ll show you the closet!' },
+                                { speaker: 'natsuki', text: 'Не советую.',
+                                    en: 'I don\'t recommend it.' },
+                                { speaker: 'yuri',
+                                    text: 'Кладовая… там довольно мрачно.',
+                                    en: 'The closet… it\'s quite gloomy in there.' },
+                                { speaker: 'monika',
+                                    text: 'Оставайтесь в общей комнате.',
+                                    en: 'Stay in the common room.' }
+                            ]
+                        }]
+                    },
+                    { type: 'line', speaker: 'monika',
+                        text: 'Кстати — к завтрашнему дню каждый должен написать своё стихотворение.',
+                        en: 'By the way — everyone needs to write their own poem by tomorrow.' }, {
+                        type: 'choice',
+                        options: [{
+                            label: 'Написать для Сайори',
+                            enLabel: 'Write for Sayori',
+                            apply: (s) => { s.route = 'sayori'; },
+                            lines: [
+                                { speaker: 'heroRoom',
+                                    text: 'Вечером я сел за стол и решил посвятить стихотворение Сайори — старому другу детства.',
+                                    en: 'In the evening I sat down and decided to dedicate the poem to Sayori — my old childhood friend.'
+                                }
+                            ]
+                        }, {
+                            label: 'Написать для Нацуки',
+                            enLabel: 'Write for Natsuki',
+                            apply: (s) => { s.route = 'natsuki'; },
+                            lines: [
+                                { speaker: 'heroRoom',
+                                    text: 'Вечером я сел за стол, думая об едких, но по-своему милых стихах Нацуки.',
+                                    en: 'In the evening I sat down, thinking about Natsuki\'s sharp but cute poems.',
+                                    bg: IMG.poemNatsuki }
+                            ]
+                        }, {
+                            label: 'Написать для Юри',
+                            enLabel: 'Write for Yuri',
+                            apply: (s) => { s.route = 'yuri'; },
+                            lines: [
+                                { speaker: 'heroRoom',
+                                    text: 'Вечером я сел за стол, вспоминая глубокие метафоры Юри.',
+                                    en: 'In the evening I sat down, remembering Yuri\'s profound metaphors.',
+                                    bg: IMG.poemYuri }
+                            ]
+                        }]
+                    }
+                ]
+            }, {
+                title: 2,
+                onEnter() { dayBgOverride = null;
+                    updateScene('street'); },
+                steps: () => {
+                    if (state.route === 'natsuki') {
+                        return [
+                            { type: 'line', speaker: 'street',
+                                text: 'Утром я, как обычно, встретил Сайори по пути в школу.',
+                                en: 'In the morning, as usual, I met Sayori on the way to school.' },
+                            { type: 'line', speaker: 'natsuki',
+                                text: 'Эй, ты! Помоги — кто-то закинул мою мангу в кладовку класса.',
+                                en: 'Hey, you! Help — someone tossed my manga into the classroom closet.',
+                                bg: IMG.closetNatsuki },
+                            { type: 'line', speaker: 'natsuki',
+                                text: 'Вот она! «Ванильные Девочки» — между прочим, лучшая манга на свете.',
+                                en: 'Here it is! "Vanilla Girls" — the best manga in the world, by the way.',
+                                bg: IMG.closetNatsuki },
+                            { type: 'line', speaker: 'hero',
+                                text: 'Мы устроились в клубе и вместе полистали мангу — оказалось, довольно занятно.',
+                                en: 'We settled in the club and flipped through the manga together — it was pretty fun.'
+                            },
+                            { type: 'line', speaker: 'monika',
+                                text: 'Хм, а сегодняшнее стихотворение чем-то напоминает стиль Нацуки.',
+                                en: 'Hmm, today\'s poem is somewhat reminiscent of Natsuki\'s style.' },
+                            { type: 'line', speaker: 'natsuki',
+                                text: 'Ч-что? Н-ну… оно было просто неплохим, вот и всё! Не подумай ничего такого.',
+                                en: 'W-what? W-well… it was just not bad, that\'s all! Don\'t get the wrong idea.' }
+                        ];
+                    }
+                    if (state.route === 'yuri') {
+                        return [
+                            { type: 'line', speaker: 'street',
+                                text: 'Утром я, как обычно, встретил Сайори по пути в школу.',
+                                en: 'In the morning, as usual, I met Sayori on the way to school.' },
+                            { type: 'line', speaker: 'yuri',
+                                text: 'Я обычно читаю здесь, на лестнице… тут почти никто не ходит.',
+                                en: 'I usually read here, on the stairs… hardly anyone comes here.',
+                                bg: IMG.stairsYuri },
+                            { type: 'line', speaker: 'yuri',
+                                text: 'Я купила эту книгу… и, кажется, ещё один экземпляр. Впрочем, забудь, что я сказала.',
+                                en: 'I bought this book… and, I think, another copy. Actually, forget I said anything.',
+                                bg: IMG.stairsYuri },
+                            { type: 'line', speaker: 'hero',
+                                text: 'Мы вместе читали «Портрет Маркова», сидя рядом на тихих ступенях.',
+                                en: 'We read "Portrait of Markov" together, sitting side by side on the quiet steps.',
+                                bg: IMG.stairsYuri },
+                            { type: 'line', speaker: 'monika',
+                                text: 'Кажется, сегодняшнее стихотворение перекликается со стилем Юри.',
+                                en: 'It seems today\'s poem echoes Yuri\'s style.' },
+                            { type: 'line', speaker: 'yuri',
+                                text: 'Я перечитала его ещё раз… думаю, вот что здесь стоило бы улучшить.',
+                                en: 'I reread it… I think here\'s what could be improved.' }
+                        ];
+                    }
+                    return [
+                        { type: 'line', speaker: 'street',
+                            text: 'Я вышел из дома и направился в сторону школы, как обычно встречая Сайори по пути.',
+                            en: 'I left the house and headed to school, meeting Sayori along the way as usual.' },
+                        { type: 'line', speaker: 'scene2',
+                            text: 'Доброе утро! У меня сегодня бантик немного растрепался…',
+                            en: 'Good morning! My bow is a bit messy today…' },
+                        { type: 'line', speaker: 'scene2',
+                            text: 'Как думаешь, поправить его или оставить как есть?',
+                            en: 'What do you think, should I fix it or leave it as is?' }, {
+                            type: 'choice',
+                            options: [{
+                                label: 'Поправить бантик',
+                                enLabel: 'Fix the bow',
+                                apply: (s) => { s.bowFixed = true;
+                                    s.affection = Math.min(4, s.affection + 1); },
+                                lines: [
+                                    { speaker: 'scene2',
+                                        text: 'Ой, спасибо! Ты такой внимательный.',
+                                        en: 'Oh, thank you! You\'re so thoughtful.' },
+                                    { speaker: 'hero',
+                                        text: 'Сайори, с таким бантиком ты точно не заведёшь парня.',
+                                        en: 'Sayori, with a bow like that you\'ll definitely never get a boyfriend.'
+                                    },
+                                    { speaker: 'scene2',
+                                        text: 'А мне и не нужен никто… У меня уже есть ты.',
+                                        en: 'I don\'t need anyone… I already have you.' },
+                                    { speaker: 'scene2',
+                                        text: 'Ладно, пойдём в клуб!',
+                                        en: 'Alright, let\'s go to the club!' }
+                                ]
+                            }, {
+                                label: 'Оставить как есть',
+                                enLabel: 'Leave it as is',
+                                apply: (s) => { s.bowFixed = false; },
+                                lines: [
+                                    { speaker: 'scene2',
+                                        text: 'Ну и ладно, само расправится. Пошли скорее!',
+                                        en: 'Oh well, it\'ll straighten out on its own. Let\'s hurry!' }
+                                ]
+                            }]
+                        },
+                        { speaker: 'monika',
+                            text: 'Моника заметила, что стихотворение сегодня очень похоже на манеру письма Сайори.',
+                            en: 'Monika noticed that today\'s poem closely resembles Sayori\'s writing style.' },
+                        { speaker: 'sayori',
+                            text: 'Правда? Мне понравилось твоё стихотворение… Спасибо, что ты в клубе.',
+                            en: 'Really? I liked your poem… Thank you for being in the club.' }
+                    ].map(l => (l.type ? l : { type: 'line', ...l }));
+                }
+            }, {
+                title: 3,
+                onEnter() { dayBgOverride = IMG.festivalRoom;
+                    updateScene('monika', dayBgOverride); },
+                steps: () => {
+                    const base = [
+                        { type: 'line', speaker: 'monika',
+                            text: 'Сегодня готовимся к фестивалю. Сайори, ты что-то хотела сказать?',
+                            en: 'Today we\'re preparing for the festival. Sayori, did you want to say something?' },
+                        { type: 'line', speaker: 'sayori',
+                            text: 'Да! Я предлагаю украсить комнату гирляндами.',
+                            en: 'Yes! I suggest decorating the room with garlands.' },
+                        { type: 'line', speaker: 'natsuki',
+                            text: 'Скучно. Лучше повесить мои рисунки.',
+                            en: 'Boring. Let\'s hang up my drawings instead.' },
+                        { type: 'line', speaker: 'yuri',
+                            text: 'Можно добавить свечи… для атмосферы.',
+                            en: 'We could add candles… for atmosphere.' }, {
+                            type: 'choice',
+                            options: [{
+                                label: 'Поддержать идею Сайори',
+                                enLabel: 'Support Sayori\'s idea',
+                                apply: (s) => { s.affection = Math.min(4, s.affection + 0.5); },
+                                lines: [
+                                    { speaker: 'sayori',
+                                        text: 'Правда? Ура! Значит, гирлянды победили!',
+                                        en: 'Really? Yay! Garlands win!' },
+                                    { speaker: 'monika',
+                                        text: 'Решено. Приступим к украшению.',
+                                        en: 'It\'s settled. Let\'s start decorating.' }
+                                ]
+                            }, {
+                                label: 'Предложить объединить все идеи',
+                                enLabel: 'Combine all ideas',
+                                apply: (s) => { s.affection = Math.min(4, s.affection + 0.25); },
+                                lines: [
+                                    { speaker: 'monika',
+                                        text: 'Неплохо — гирлянды, рисунки и свечи вместе. Всем хватит места.',
+                                        en: 'Not bad — garlands, drawings, and candles together. There\'s room for everything.'
+                                    },
+                                    { speaker: 'natsuki',
+                                        text: 'Хм… ладно, годится.',
+                                        en: 'Hm… fine, that works.' }
+                                ]
+                            }]
+                        }
+                    ];
+                    if (state.route === 'natsuki') {
+                        base.push({ type: 'line', speaker: 'heroRoom',
+                            text: 'Вечером я снова сел писать стихотворение, вспоминая задорные строчки Нацуки.',
+                            en: 'In the evening I sat down to write another poem, remembering Natsuki\'s lively lines.',
+                            bg: IMG.poemNatsuki2 });
+                        base.push({ type: 'line', speaker: 'natsuki',
+                            text: 'Опять что-то в моём духе? Ладно, ладно… мне понравилось, если честно.',
+                            en: 'Something in my style again? Alright, alright… I liked it, honestly.' });
+                    } else if (state.route === 'yuri') {
+                        base.push({ type: 'line', speaker: 'heroRoom',
+                            text: 'Во второй раз я постарался писать ещё вдумчивее, помня слова Юри.',
+                            en: 'The second time I tried to write even more thoughtfully, remembering Yuri\'s words.',
+                            bg: IMG.poemYuri2 });
+                        base.push({ type: 'line', speaker: 'yuri',
+                            text: 'Заметен явный прогресс… Мне правда приятно это читать.',
+                            en: 'There\'s clear progress… I truly enjoy reading this.' });
+                    } else {
+                        base.push({ type: 'line', speaker: 'sayori',
+                            text: 'Ты опять писал стихи специально для меня? Мне так приятно…',
+                            en: 'You wrote poems just for me again? That makes me so happy…' });
+                    }
+                    return base;
+                }
+            }, {
+                title: 4,
+                onEnter() { dayBgOverride = null;
+                    updateScene('scene4'); },
+                steps: () => [
+                    { type: 'line', speaker: 'scene4',
+                        text: 'Ой-ёй! Я ударилась головой о дверь… Кажется, будет шишка.',
+                        en: 'Ouch! I hit my head on the door… I think there\'s going to be a bump.' },
+                    { type: 'line', speaker: 'scene4',
+                        text: 'Можешь принести что-нибудь холодное? Или пустяки, само пройдёт.',
+                        en: 'Can you bring something cold? Or never mind, it\'ll go away on its own.' }, {
+                        type: 'choice',
+                        options: [{
+                            label: 'Принести холодную бутылку',
+                            enLabel: 'Bring a cold bottle',
+                            apply: (s) => { s.helpedWithBump = true;
+                                s.affection = Math.min(4, s.affection + 1); },
+                            lines: [
+                                { speaker: 'hero',
+                                    text: 'Вот, держи холодненькую бутылочку.',
+                                    en: 'Here, hold this cold bottle.' },
+                                { speaker: 'scene4',
+                                    text: 'Спасибо… Ты всегда рядом. Я очень ценю это.',
+                                    en: 'Thank you… You\'re always there. I really appreciate it.' },
+                                { speaker: 'scene4',
+                                    text: 'Ты такой заботливый. Мне становится спокойнее, когда ты помогаешь.',
+                                    en: 'You\'re so caring. I feel calmer when you help.' },
+                                { speaker: 'monika',
+                                    text: 'Всё в порядке? Продолжим подготовку.',
+                                    en: 'Everything okay? Let\'s continue the preparations.' }
+                            ]
+                        }, {
+                            label: 'Оставить как есть',
+                            enLabel: 'Leave it',
+                            apply: (s) => { s.helpedWithBump = false; },
+                            lines: [
+                                { speaker: 'scene4',
+                                    text: 'Да ничего страшного, я уже встала. Побежали!',
+                                    en: 'It\'s no big deal, I\'m already up. Let\'s go!' }
+                            ]
+                        }]
+                    },
+                    { type: 'line', speaker: 'monika',
+                        text: 'На выходных нужно доделать приготовления к фестивалю — кому-то не помешала бы помощь.',
+                        en: 'We need to finish the festival preparations over the weekend — someone could use a hand.' }, {
+                        type: 'choice',
+                        options: [{
+                            label: 'Помочь Нацуки',
+                            enLabel: 'Help Natsuki',
+                            apply: (s) => { s.helper = 'natsuki';
+                                s.affection = Math.min(4, s.affection + 0.5); },
+                            lines: [
+                                { speaker: 'helpNatsukiScene',
+                                    text: 'Я пришёл к Нацуки помочь с готовкой сладостей для фестиваля.',
+                                    en: 'I came to Natsuki to help with baking sweets for the festival.' },
+                                { speaker: 'helpNatsukiScene',
+                                    text: 'Э-это не значит, что мне нужна твоя помощь! Но… ладно, только не мешай.',
+                                    en: 'I-it\'s not like I need your help! But… fine, just don\'t get in the way.'
+                                },
+                                { speaker: 'helpNatsukiScene',
+                                    text: 'Мы провозились с глазурью весь день — получилось не идеально, зато весело.',
+                                    en: 'We spent the whole day messing with icing — not perfect, but fun.' }
+                            ]
+                        }, {
+                            label: 'Помочь Юри',
+                            enLabel: 'Help Yuri',
+                            apply: (s) => { s.helper = 'yuri';
+                                s.affection = Math.min(4, s.affection + 0.5); },
+                            lines: [
+                                { speaker: 'helpYuriScene',
+                                    text: 'Я пришёл к Юри помочь с декорациями для фестиваля.',
+                                    en: 'I came to Yuri to help with the festival decorations.' },
+                                { speaker: 'helpYuriScene',
+                                    text: 'Правда? Было бы… замечательно, если бы ты остался ещё ненадолго.',
+                                    en: 'Really? It would be… wonderful if you stayed a little longer.' },
+                                { speaker: 'helpYuriScene',
+                                    text: 'Мы работали над оформлением почти до самого вечера, разговаривая обо всём на свете.',
+                                    en: 'We worked on the decorations almost until evening, talking about everything under the sun.'
+                                }
+                            ]
+                        }]
+                    },
+                    { type: 'line', speaker: 'hero',
+                        text: 'Закончив с делами, я решил заглянуть к Сайори — узнать, как у неё дела.',
+                        en: 'Having finished, I decided to check on Sayori — to see how she was doing.' }
+                ]
+            }, {
+                title: 5,
+                onEnter() { dayBgOverride = null;
+                    playOneShot(confessionMusic, () => { if (state.started) playGameBg(); });
+                    updateScene('confession'); },
+                steps: () => [
+                    { type: 'line', speaker: 'confession',
+                        text: 'Послушай… я хочу, чтобы ты развлекался с другими девушками.',
+                        en: 'Listen… I want you to have fun with the other girls.' },
+                    { type: 'line', speaker: 'hero',
+                        text: 'Сайори, почему ты так говоришь?',
+                        en: 'Sayori, why are you saying that?' },
+                    { type: 'line', speaker: 'confession',
+                        text: 'Просто… Я не хочу тебя обременять. Но если честно…',
+                        en: 'It\'s just… I don\'t want to be a burden. But honestly…' },
+                    { type: 'line', speaker: 'confession', text: 'Я люблю тебя. Давно уже.',
+                        en: 'I love you. I have for a long time.' }, {
+                        type: 'choice',
+                        options: [{
+                            label: 'Я тоже тебя люблю!',
+                            enLabel: 'I love you too!',
+                            apply: (s) => { s.loveConfessed = true;
+                                s.affection = Math.min(4, s.affection + 2); },
+                            lines: [
+                                { speaker: 'confession',
+                                    text: 'Правда?.. Ты тоже? Спасибо… Я так счастлива.',
+                                    en: 'Really?.. You too? Thank you… I\'m so happy.' },
+                                { speaker: 'hero', text: 'Мы будем вместе.',
+                                    en: 'We\'ll be together.' }
+                            ]
+                        }, {
+                            label: 'Ты очень дорогой друг',
+                            enLabel: 'You\'re a very dear friend',
+                            apply: (s) => { s.loveConfessed = false; },
+                            lines: [
+                                { speaker: 'confession',
+                                    text: 'Друг… понятно. Извини, что сказала.',
+                                    en: 'Friend… I see. Sorry I said anything.' },
+                                { speaker: 'hero',
+                                    text: 'Сайори, я не хотел тебя обидеть.',
+                                    en: 'Sayori, I didn\'t mean to hurt you.' }
+                            ]
+                        }]
+                    }, {
+                        type: 'choice',
+                        options: [{
+                            label: 'Навестить Сайори ночью',
+                            enLabel: 'Visit Sayori at night',
+                            apply: (s) => { s.visitedAtNight = true; },
+                            lines: [
+                                { speaker: 'night',
+                                    text: 'Ты… зачем пришёл? Я не хотела, чтобы ты видел это.',
+                                    en: 'You… why did you come? I didn\'t want you to see this.' },
+                                { speaker: 'hero',
+                                    text: 'Сайори, положи верёвку. Я рядом.',
+                                    en: 'Sayori, put down the rope. I\'m here.' },
+                                { speaker: 'night',
+                                    text: 'Зачем? Всё бессмысленно. Я устала притворяться.',
+                                    en: 'Why? Everything is pointless. I\'m tired of pretending.' },
+                                { speaker: 'hero',
+                                    text: 'Ты не одна. Я здесь. Мы справимся вместе.',
+                                    en: 'You\'re not alone. I\'m here. We\'ll get through this together.' },
+                                { speaker: 'night',
+                                    text: 'Правда?.. Ты не бросишь меня?',
+                                    en: 'Really?.. You won\'t abandon me?' },
+                                { speaker: 'hero',
+                                    text: 'Никогда. Обещаю. Давай просто посидим.',
+                                    en: 'Never. I promise. Let\'s just sit for a while.' },
+                                { speaker: 'night',
+                                    text: 'Спасибо… Я попробую.',
+                                    en: 'Thank you… I\'ll try.' }
+                            ]
+                        }, {
+                            label: 'Оставить её в покое',
+                            enLabel: 'Leave her alone',
+                            apply: (s) => { s.visitedAtNight = false; },
+                            lines: [
+                                { speaker: 'street',
+                                    text: 'Я решил не тревожить её… Утром будет лучше.',
+                                    en: 'I decided not to disturb her… Morning will be better.' },
+                                { speaker: 'monika',
+                                    text: 'Сайори так и не пришла… Давай сходим к ней.',
+                                    en: 'Sayori never showed up… Let\'s go check on her.' },
+                                { speaker: 'street',
+                                    text: 'Дверь открыта… О нет…',
+                                    en: 'The door is open… Oh no…' }
+                            ]
+                        }]
+                    }
+                ],
+                onComplete(s) {
+                    if (s.visitedAtNight) goodEnding();
+                    else badEnding();
+                }
+            }];
+
+            // ===== ОТРИСОВКА ДИАЛОГА =====
+            function typeText(text) {
+                dialogueText.innerHTML = '';
+                const frag = document.createDocumentFragment();
+                [...text].forEach((ch, i) => {
+                    const span = document.createElement('span');
+                    span.className = 'char';
+                    span.textContent = ch;
+                    span.style.animationDelay = (i * 12) + 'ms';
+                    frag.appendChild(span);
+                });
+                dialogueText.appendChild(frag);
+            }
+
+            function getStepText(step) {
+                if (!step) return '';
+                return currentLang === 'en' ? (step.en || step.text) : step.text;
+            }
+
+            function renderCurrentStep() {
+                if (stepIndex >= activeSteps.length) {
+                    finishDay();
+                    return;
+                }
+                const step = activeSteps[stepIndex];
+
+                if (step.type === 'line') {
+                    updateScene(step.speaker, step.bg || dayBgOverride);
+                    typeText(getStepText(step));
+                    clearChoices();
+                    showNext(true);
+                    return;
+                }
+
+                if (step.type === 'choice') {
+                    showNext(false);
+                    clearChoices();
+                    step.options.forEach(opt => {
+                        const label = currentLang === 'en' ? (opt.enLabel || opt.label) : opt.label;
+                        addChoice(label, () => {
+                            opt.apply(state);
+                            const resolvedLines = opt.lines.map(l => ({ type: 'line', ...l }));
+                            activeSteps.splice(stepIndex, 1, ...resolvedLines);
+                            renderCurrentStep();
+                        });
+                    });
+                    return;
+                }
+
+                if (step.type === 'poemgame') {
+                    renderPoemGame();
+                    return;
+                }
+            }
+
+            // ===== МИНИ-ИГРА: СТИХИ =====
+            const poemWords = [
+                { word: 'котёнок', enWord: 'kitten', tag: 'natsuki' },
+                { word: 'кекс', enWord: 'cupcake', tag: 'natsuki' },
+                { word: 'улыбка', enWord: 'smile', tag: 'sayori' },
+                { word: 'солнце', enWord: 'sun', tag: 'sayori' },
+                { word: 'праздник', enWord: 'party', tag: 'sayori' },
+                { word: 'тень', enWord: 'shadow', tag: 'yuri' },
+                { word: 'бездна', enWord: 'abyss', tag: 'yuri' },
+                { word: 'тишина', enWord: 'silence', tag: 'yuri' },
+                { word: 'книга', enWord: 'book', tag: 'yuri' },
+                { word: 'смех', enWord: 'laughter', tag: 'natsuki' }
+            ];
+
+            function renderPoemGame() {
+                updateScene('narrator', IMG.poemBg);
+                speakerName.textContent = t('poemGameTitle');
+                speakerName.style.color = '#3e2723';
+                typeText(t('poemPrompt'));
+                showNext(false);
+                clearChoices();
+
+                const selected = [];
+                const confirmBtn = document.createElement('button');
+                confirmBtn.className = 'choice-btn';
+                confirmBtn.textContent = t('ready') + ' (0/5)';
+                confirmBtn.disabled = true;
+                confirmBtn.style.opacity = '0.5';
+                confirmBtn.style.flex = '1 1 100%';
+
+                poemWords.forEach(item => {
+                    const btn = document.createElement('button');
+                    btn.className = 'choice-btn';
+                    btn.textContent = currentLang === 'en' ? item.enWord : item.word;
+                    btn.onclick = (e) => {
+                        e.stopPropagation();
+                        const idx = selected.indexOf(item);
+                        if (idx >= 0) {
+                            selected.splice(idx, 1);
+                            btn.style.background = '';
+                        } else if (selected.length < 5) {
+                            selected.push(item);
+                            btn.style.background = '#d7ccc8';
+                        }
+                        confirmBtn.textContent = t('ready') + ` (${selected.length}/5)`;
+                        confirmBtn.disabled = selected.length !== 5;
+                        confirmBtn.style.opacity = selected.length === 5 ? '1' : '0.5';
+                    };
+                    choicesArea.appendChild(btn);
+                });
+
+                confirmBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    if (selected.length !== 5) return;
+                    clearChoices();
+                    const counts = {};
+                    selected.forEach(w => { counts[w.tag] = (counts[w.tag] || 0) + 1; });
+                    let winner = 'sayori',
+                        max = -1;
+                    Object.keys(counts).forEach(tag => { if (counts[tag] > max) { max = counts[tag];
+                            winner = tag; } });
+
+                    const reactions = {
+                        natsuki: {
+                            ru: 'Хм… а неплохо! Мне понравилось, тут есть характер.',
+                            en: 'Hm… not bad! I liked it, it has character.'
+                        },
+                        yuri: {
+                            ru: 'Очень… глубоко. Мне нравится атмосфера этих строк.',
+                            en: 'Very… profound. I like the atmosphere of these lines.'
+                        },
+                        sayori: {
+                            ru: 'Вау, как мило! У тебя получилось очень тёплое стихотворение!',
+                            en: 'Wow, how cute! You wrote a really warm poem!'
+                        }
+                    };
+                    if (winner === 'sayori') state.affection = Math.min(4, state.affection + 0.5);
+                    const reactionText = currentLang === 'en' ? reactions[winner].en : reactions[winner].ru;
+                    const resultStep = { type: 'line', speaker: winner, text: reactionText, en: reactions[winner]
+                            .en };
+                    activeSteps.splice(stepIndex, 1, resultStep);
+                    renderCurrentStep();
+                };
+                choicesArea.appendChild(confirmBtn);
+            }
+
+            // ===== НАВИГАЦИЯ =====
+            function advance() {
+                if (!state || !state.started) return;
+                if (choicesArea.children.length > 0) return;
+                const step = activeSteps[stepIndex];
+                if (step && step.type === 'line') {
+                    stepIndex++;
+                    renderCurrentStep();
+                }
+            }
+
+            function startDay(idx) {
+                dayIndex = idx;
+                const day = script[idx];
+                showDayTransition(day.title);
+                activeSteps = day.steps();
+                stepIndex = 0;
+                if (day.onEnter) day.onEnter();
+                renderCurrentStep();
+                // Автосохранение при смене дня
+                setTimeout(() => autosave(), 1800);
+            }
+
+            function finishDay() {
+                const day = script[dayIndex];
+                if (day.onComplete) { day.onComplete(state); return; }
+                if (dayIndex + 1 < script.length) startDay(dayIndex + 1);
+            }
+
+            // ===== ПЛОХАЯ КОНЦОВКА =====
+            function badEnding() {
+                stopAllMusic();
+                deathMusic.play().catch(e => console.log('Музыка смерти недоступна:', e));
+                updateScene('death');
+                typeText(td('Сайори повесилась…', 'Sayori hanged herself…'));
+                speakerName.textContent = '';
+                bodyEl.classList.add('corrupted');
+                staticOverlay.style.opacity = '0.9';
+                showNext(false);
+                clearChoices();
+                setTimeout(() => {
+                    updateScene('hero');
+                    typeText(td('Я потерял самого дорогого человека. Я не смог её спасти…',
+                        'I lost the most precious person. I couldn\'t save her…'));
+                    staticOverlay.style.opacity = '0.8';
+                    setTimeout(() => {
+                        typeText(td('И никогда не прощу себе этого.',
+                            'And I will never forgive myself for it.'));
+                        bodyEl.classList.add('glitch');
+                        state.started = false;
+                    }, 2500);
+                }, 3000);
+            }
+
+            // ===== ХОРОШАЯ КОНЦОВКА =====
+            function goodEnding() {
+                stopAllMusic();
+                playGameBg();
+                updateScene('sayori', IMG.festivalRoom);
+                const lines = [
+                    { speaker: 'sayori', text: 'Я пришла на фестиваль! Спасибо тебе.',
+                        en: 'I came to the festival! Thank you.' },
+                    { speaker: 'monika', text: 'Сайори, ты сегодня светишься.',
+                    en: 'Sayori, you\'re glowing today.' },
+                    { speaker: 'yuri', text: 'Мы все рады, что ты с нами.',
+                    en: 'We\'re all glad you\'re with us.' },
+                    { speaker: 'natsuki', text: 'Ну наконец-то без опозданий.',
+                        en: 'Finally, no delays.' },
+                    { speaker: 'hero', text: 'Мы всегда будем рядом.', en: 'We\'ll always be by your side.' }
+                ];
+                activeSteps = lines.map(l => ({ type: 'line', ...l }));
+                stepIndex = 0;
+                dayIndex = -1;
+                const endMsg = t('goodEnding');
+                const originalComplete = () => endGame(endMsg);
+                renderCurrentStepWithEnd(originalComplete);
+            }
+
+            function renderCurrentStepWithEnd(onEnd) {
+                function step() {
+                    if (stepIndex >= activeSteps.length) { onEnd(); return; }
+                    const s = activeSteps[stepIndex];
+                    updateScene(s.speaker, IMG.festivalRoom);
+                    typeText(getStepText(s));
+                    showNext(true);
+                }
+                nextMarker.onclick = (e) => {
+                    e.stopPropagation();
+                    stepIndex++;
+                    step();
+                };
+                step();
+            }
+
+            function endGame(message) {
+                showNext(false);
+                clearChoices();
+                speakerName.textContent = '';
+                typeText(message);
+                state.started = false;
+                nextMarker.onclick = null;
+            }
+
+            // ===== СТАРТ ИГРЫ =====
+            function startGame() {
+                stopAllMusic();
+                playGameBg();
+                state = freshState();
+                state.started = true;
+                dayBgOverride = null;
+                bodyEl.classList.remove('corrupted', 'glitch');
+                staticOverlay.style.opacity = '0';
+                titleScreen.classList.remove('show');
+                nextMarker.onclick = (e) => { e.stopPropagation();
+                    advance(); };
+                startDay(0);
+            }
+
+            startButton.addEventListener('click', (e) => { e.stopPropagation();
+                startGame(); });
+            document.getElementById('dialogueBox').addEventListener('click', (e) => {
+                if (e.target.tagName !== 'BUTTON' && nextMarker.onclick) nextMarker.onclick(e);
+            });
+            sceneArea.addEventListener('click', (e) => {
+                if (e.target === startButton || e.target.classList.contains('save-load-btn') || e.target
+                    .classList.contains('lang-btn')) return;
+                if (nextMarker.onclick) nextMarker.onclick(e);
+            });
+
+            // ===== УПРАВЛЕНИЕ С КЛАВИАТУРЫ =====
+            document.addEventListener('keydown', function(e) {
+                if (e.key === ' ' || e.keyCode === 32) {
+                    e.preventDefault();
+                    if (titleScreen.classList.contains('show')) {
+                        startGame();
+                        return;
+                    }
+                    if (!state || !state.started) return;
+                    const readyBtn = Array.from(choicesArea.querySelectorAll('button.choice-btn'))
+                        .find(btn => btn.textContent.startsWith(t('ready')) && !btn.disabled);
+                    if (readyBtn) {
+                        readyBtn.click();
+                        return;
+                    }
+                    if (choicesArea.children.length === 0 && nextMarker.onclick && !nextMarker.classList
+                        .contains('hidden')) {
+                        nextMarker.click();
+                    }
+                    return;
+                }
+                if (!state || !state.started) return;
+                if (e.key >= '1' && e.key <= '9') {
+                    e.preventDefault();
+                    const index = parseInt(e.key) - 1;
+                    const allBtns = choicesArea.querySelectorAll('button.choice-btn');
+                    const choiceButtons = Array.from(allBtns).filter(btn => !btn.textContent.startsWith(t(
+                        'ready')));
+                    if (choiceButtons.length > 0 && index < choiceButtons.length) {
+                        choiceButtons[index].click();
+                    }
+                }
+                // Escape закрывает модальное окно
+                if (e.key === 'Escape') {
+                    if (saveModalOverlay.classList.contains('active')) {
+                        closeSaveModal();
+                    }
+                }
+            });
+
+            // ===== ВИДЕО-ВСТУПЛЕНИЕ =====
+            const videoContainer = document.getElementById('videoContainer');
+            const introVideo = document.getElementById('introVideo');
+            const videoPrompt = document.getElementById('videoPrompt');
+            const startVideoBtn = document.getElementById('startVideoBtn');
+            const skipHint = document.getElementById('skipHint');
+            let videoEnded = false;
+            let musicStarted = false;
+
+            function hideVideoShowTitle() {
+                if (videoEnded) return;
+                videoEnded = true;
+                videoContainer.style.display = 'none';
+                skipHint.style.display = 'none';
+                titleScreen.classList.add('show');
+                if (!musicStarted) {
+                    titleMusic.play().then(() => { musicStarted = true; }).catch(() => {});
+                }
+            }
+
+            function tryPlayVideo() {
+                if (videoEnded) return;
+                videoPrompt.style.display = 'none';
+                skipHint.style.display = 'block';
+                introVideo.play().catch(() => hideVideoShowTitle());
+                if (!musicStarted && titleMusic.paused) {
+                    titleMusic.play().then(() => { musicStarted = true; }).catch(() => {});
+                }
+            }
+
+            startVideoBtn.addEventListener('click', tryPlayVideo);
+            introVideo.addEventListener('click', hideVideoShowTitle);
+            introVideo.addEventListener('ended', hideVideoShowTitle);
+            introVideo.addEventListener('error', () => hideVideoShowTitle());
+
+            setTimeout(() => {
+                if (!videoEnded && videoPrompt.style.display !== 'none') tryPlayVideo();
+            }, 1500);
+
+            setBg(IMG.title);
+            speakerName.textContent = '';
+            updateAllUI();
+            typeText(t('clickToStart'));
+            showNext(false);
+        })();
+    </script>
+
+    <!-- ============================================================
+         ЗАЩИТА ОТ ПРОСМОТРА КОДА (F12 и др.)
+         ============================================================ -->
+    <script>
+        (function() {
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); return false; }
+                if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.keyCode === 73)) { e
+                        .preventDefault(); return false; }
+                if (e.ctrlKey && e.shiftKey && (e.key === 'J' || e.key === 'j' || e.keyCode === 74)) { e
+                        .preventDefault(); return false; }
+                if (e.ctrlKey && e.shiftKey && (e.key === 'C' || e.key === 'c' || e.keyCode === 67)) { e
+                        .preventDefault(); return false; }
+                if (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.keyCode === 85)) { e.preventDefault(); return false; }
+                if (e.ctrlKey && (e.key === 'S' || e.key === 's' || e.keyCode === 83)) { e.preventDefault(); return false; }
+            });
+            setInterval(function() { debugger; }, 100);
+        })();
+    </script>
+</body>
+</html>
