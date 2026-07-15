@@ -273,6 +273,12 @@
             letter-spacing: 2px;
             text-align: center;
         }
+        .title-screen .menu-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
         .title-screen button {
             padding: 15px 40px;
             font-size: 1.4rem;
@@ -283,6 +289,7 @@
             cursor: pointer;
             font-weight: bold;
             transition: background 0.2s, transform 0.2s;
+            min-width: 200px;
         }
         .title-screen button:hover {
             background: #8b2a2a;
@@ -321,6 +328,13 @@
         }
         .lang-btn:hover {
             background: rgba(180, 65, 65, 0.95);
+        }
+        .menu-btn {
+            background: rgba(60, 60, 60, 0.7);
+            border-color: #888;
+        }
+        .menu-btn:hover {
+            background: rgba(60, 60, 60, 0.95);
         }
 
         .day-transition {
@@ -686,13 +700,16 @@
             <img id="characterImg" class="character-sprite" src="" alt="Персонаж">
             <div id="titleScreen" class="title-screen">
                 <h1 id="titleHeading">Литературный клуб</h1>
-                <button id="startButton">Начать игру</button>
+                <div class="menu-buttons">
+                    <button id="startButton">Начать игру</button>
+                </div>
             </div>
             <div id="dayTransition" class="day-transition"></div>
             <div class="save-load-panel">
                 <button class="save-load-btn lang-btn" id="langButton" title="Сменить язык / Switch language">🌐 RU</button>
                 <button class="save-load-btn" id="saveButton">💾 Сохранить</button>
                 <button class="save-load-btn" id="loadButton">📂 Загрузить</button>
+                <button class="save-load-btn menu-btn" id="menuButton">🏠 Меню</button>
             </div>
         </div>
         <div class="dialogue-box" id="dialogueBox">
@@ -705,7 +722,7 @@
 
     <script>
         // ============================================================
-        //  ИГРОВОЙ ДВИЖОК С СОХРАНЕНИЯМИ И ПЕРЕКЛЮЧЕНИЕМ ЯЗЫКА
+        //  ИГРОВОЙ ДВИЖОК С СОХРАНЕНИЯМИ, БЕЗ ГАЛЕРЕИ
         // ============================================================
         (function() {
             'use strict';
@@ -742,6 +759,8 @@
                     poemGameTitle: 'Мини-игра',
                     poemPrompt: 'Выбери 5 слов, из которых сложится твоё стихотворение.',
                     ready: 'Готово',
+                    menu: '🏠 Меню',
+                    backToMenu: 'Вернуться в главное меню?',
                 },
                 en: {
                     title: 'Literature Club',
@@ -771,6 +790,8 @@
                     poemGameTitle: 'Mini-game',
                     poemPrompt: 'Pick 5 words to compose your poem.',
                     ready: 'Done',
+                    menu: '🏠 Menu',
+                    backToMenu: 'Return to main menu?',
                 }
             };
 
@@ -783,6 +804,7 @@
                 document.getElementById('startButton').textContent = t('startGame');
                 document.getElementById('saveButton').textContent = t('save');
                 document.getElementById('loadButton').textContent = t('load');
+                document.getElementById('menuButton').textContent = t('menu');
                 document.getElementById('modalTitle').textContent = t('savesTitle');
                 document.getElementById('modalCloseFooter').textContent = t('close');
                 document.getElementById('nextMarker').textContent = t('continue_');
@@ -794,6 +816,8 @@
                     document.getElementById('dialogueText').textContent = t('clickToStart');
                 }
                 document.documentElement.lang = currentLang;
+                // Скрываем кнопку смены языка во время игры
+                document.getElementById('langButton').classList.toggle('hidden', !!(state && state.started));
                 refreshSaveModal();
             }
 
@@ -811,7 +835,7 @@
 
             // ===== СИСТЕМА СОХРАНЕНИЙ =====
             const SAVE_PREFIX = 'litklub_save_';
-            const MANUAL_SLOTS = 6; // 0..5
+            const MANUAL_SLOTS = 6;
             const AUTO_SLOT_KEY = SAVE_PREFIX + 'auto';
             const SAVE_META_KEY = 'litklub_save_meta';
 
@@ -819,7 +843,6 @@
 
             function getAllSlots() {
                 const slots = [];
-                // Автослот
                 const autoRaw = localStorage.getItem(AUTO_SLOT_KEY);
                 slots.push({
                     key: AUTO_SLOT_KEY,
@@ -828,7 +851,6 @@
                     isAuto: true,
                     data: autoRaw ? JSON.parse(autoRaw) : null,
                 });
-                // Ручные слоты
                 for (let i = 0; i < MANUAL_SLOTS; i++) {
                     const raw = localStorage.getItem(getSlotKey(i));
                     slots.push({
@@ -916,6 +938,7 @@
                     playGameBg();
                     renderCurrentStep();
                     showToast(t('loaded'));
+                    updateAllUI();
                     closeSaveModal();
                     return true;
                 } catch (e) {
@@ -943,11 +966,10 @@
                     const payload = buildSavePayload();
                     localStorage.setItem(AUTO_SLOT_KEY, JSON.stringify(payload));
                     updateSaveMeta(AUTO_SLOT_KEY, payload);
-                    console.log('🔁 Автосохранение выполнено');
                 } catch (e) { /* тихо */ }
             }
 
-            // ===== МОДАЛЬНОЕ ОКНО =====
+            // ===== МОДАЛЬНОЕ ОКНО СОХРАНЕНИЙ =====
             const saveModalOverlay = document.getElementById('saveModalOverlay');
             const saveSlotsGrid = document.getElementById('saveSlotsGrid');
             const modalCloseBtn = document.getElementById('modalCloseBtn');
@@ -1006,7 +1028,6 @@
                     const actionsDiv = document.createElement('div');
                     actionsDiv.className = 'slot-actions';
 
-                    // Кнопка Save
                     const saveBtn = document.createElement('button');
                     saveBtn.className = 'btn-save';
                     saveBtn.textContent = slot.data ? '💾 ' + t('save') : '💾 ' + t('save');
@@ -1019,7 +1040,6 @@
                     });
                     actionsDiv.appendChild(saveBtn);
 
-                    // Кнопка Load (только если есть данные)
                     if (slot.data) {
                         const loadBtn = document.createElement('button');
                         loadBtn.className = 'btn-load';
@@ -1031,7 +1051,6 @@
                         actionsDiv.appendChild(loadBtn);
                     }
 
-                    // Кнопка Delete (только если есть данные и это не автослот или автослот тоже можно удалить)
                     if (slot.data) {
                         const delBtn = document.createElement('button');
                         delBtn.className = 'btn-delete';
@@ -1076,6 +1095,36 @@
                 }
             });
 
+            // ===== КНОПКА "В ГЛАВНОЕ МЕНЮ" (с полным сбросом) =====
+            document.getElementById('menuButton').addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (state && state.started) {
+                    if (!confirm(t('backToMenu'))) return;
+                    autosave();
+                }
+                // Полный сброс игры
+                state = null;
+                activeSteps = [];
+                stepIndex = 0;
+                dayIndex = 0;
+                dayBgOverride = null;
+                stopAllMusic();
+                titleMusic.play().catch(() => {});
+                titleScreen.classList.add('show');
+                // Сброс UI
+                setBg(IMG.title);
+                setSprite(null);
+                speakerName.textContent = '';
+                typeText(t('clickToStart'));
+                clearChoices();
+                showNext(false);
+                nextMarker.onclick = null;
+                bodyEl.classList.remove('corrupted', 'glitch');
+                staticOverlay.style.opacity = '0';
+                if (saveModalOverlay.classList.contains('active')) closeSaveModal();
+                updateAllUI();
+            });
+
             // ===== АССЕТЫ =====
             const IMG = {
                 title: "изображения/заставка.jpg",
@@ -1105,6 +1154,7 @@
                 poemNatsuki2: "изображения/Написать второе стихотворение для Нацуки..webp"
             };
 
+            // ===== ПЕРСОНАЖИ =====
             const characters = {
                 sayori: { name: "Сайори", enName: "Sayori", color: "#f08a5d", sprite: IMG.sayori, bg: IMG.club },
                 natsuki: { name: "Нацуки", enName: "Natsuki", color: "#e91e63", sprite: IMG.natsuki, bg: IMG.club },
@@ -1192,6 +1242,7 @@
                 nextLayer.classList.add('active');
                 bgLayerActive.classList.remove('active');
                 bgLayerActive = nextLayer;
+                // Разблокировка артов удалена вместе с галереей
             }
 
             function setSprite(path) {
@@ -1257,11 +1308,11 @@
                     visitedAtNight: false,
                     route: null,
                     helper: null
+                    // unlockedArts удалено за ненадобностью
                 };
             }
 
-            // ===== СЦЕНАРИЙ (с английскими переводами) =====
-            // Каждый шаг с текстом теперь имеет поле en для английской версии
+            // ===== СЦЕНАРИЙ =====
             const script = [{
                 title: 1,
                 onEnter() { dayBgOverride = null;
@@ -1885,7 +1936,6 @@
                 stepIndex = 0;
                 if (day.onEnter) day.onEnter();
                 renderCurrentStep();
-                // Автосохранение при смене дня
                 setTimeout(() => autosave(), 1800);
             }
 
@@ -1971,6 +2021,14 @@
 
             // ===== СТАРТ ИГРЫ =====
             function startGame() {
+                if (state && state.started) {
+                    titleScreen.classList.remove('show');
+                    if (bgGameMusic.paused) {
+                        stopAllMusic();
+                        playGameBg();
+                    }
+                    return;
+                }
                 stopAllMusic();
                 playGameBg();
                 state = freshState();
@@ -1981,6 +2039,7 @@
                 titleScreen.classList.remove('show');
                 nextMarker.onclick = (e) => { e.stopPropagation();
                     advance(); };
+                updateAllUI(); // скроет кнопку языка
                 startDay(0);
             }
 
@@ -2027,7 +2086,6 @@
                         choiceButtons[index].click();
                     }
                 }
-                // Escape закрывает модальное окно
                 if (e.key === 'Escape') {
                     if (saveModalOverlay.classList.contains('active')) {
                         closeSaveModal();
@@ -2069,10 +2127,6 @@
             introVideo.addEventListener('click', hideVideoShowTitle);
             introVideo.addEventListener('ended', hideVideoShowTitle);
             introVideo.addEventListener('error', () => hideVideoShowTitle());
-
-            setTimeout(() => {
-                if (!videoEnded && videoPrompt.style.display !== 'none') tryPlayVideo();
-            }, 1500);
 
             setBg(IMG.title);
             speakerName.textContent = '';
