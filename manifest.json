@@ -1,0 +1,25 @@
+{
+  "name": "Литературный клуб: Первый акт",
+  "short_name": "ЛитКлуб",
+  "description": "Визуальная новелла «Литературный клуб»",
+  "start_url": ".",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#1e1316",
+  "theme_color": "#fbe9e7",
+  "lang": "ru",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
