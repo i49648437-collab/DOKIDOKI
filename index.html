@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Литературный клуб: Первый акт | Literature Club: Act One</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#b34141">
     <style>
         :root {
             --bg: #fbe9e7;
@@ -2155,6 +2157,15 @@
             });
             setInterval(function() { debugger; }, 100);
         })();
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                .then(reg => console.log('SW зарегистрирован:', reg.scope))
+                .catch(err => console.log('Ошибка SW:', err));
+            });
+        }
     </script>
 </body>
 </html>
