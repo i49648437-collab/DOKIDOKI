@@ -190,15 +190,15 @@
             document.getElementById('menuButton').addEventListener('click', (e) => { e.stopPropagation(); if (!state || !state.started) return; if (!confirm(t('backToMenu'))) return; autosave(); state.paused = true; state.started = false; stopAllMusic(); titleMusic.play().catch(() => {}); titleScreen.classList.add('show'); if (state.act2) setBg(IMG.titleAct2); else if (state.act3) setBg(IMG.titleAct3); else setBg(chooseTitleBg()); setSprite(null); speakerName.textContent = ''; typeText(t('clickToStart')); clearChoices(); showNext(false); nextMarker.onclick = null; bodyEl.classList.remove('corrupted', 'glitch'); staticOverlay.style.opacity = '0'; document.getElementById('dialogueBox').style.display = ''; document.getElementById('nextMarker').style.display = ''; updateAllUI(); if (saveModalOverlay.classList.contains('active')) closeSaveModal(); });
             const IMG = { title: "изображения/заставка.jpg", titleAlt1: "изображения/DDLC сквозь призму аутизма и философии.jpg", titleAct2: "изображения/Главное меню во втором Акте.jpg", titleAct3: "изображения/Главное меню во втором Акте.jpg", club: "изображения/клуб.webp", sayori: "изображения/Sayori.webp", sceneDay2: "изображения/первая сцена сайори.jpg", sceneDay4: "изображения/вторая сцена сайори.webp", confessionScene: "изображения/признание в любви от сайори.jpg", deadSayori: "изображения/мёртвая сайори.jpg", roomSayori: "изображения/комната сайори.jpg", natsuki: "изображения/нацуки.png", monika: "изображения/Monika_DDLC.png", yuri: "изображения/Yuri.webp", street: "изображения/Городской район, где живут главный герой и Сайори.webp", poemBg: "изображения/Фон для поэтической мини-игры.webp", hallway: "изображения/Школьный коридор.webp", festivalRoom: "изображения/комната фестеваля.webp", heroRoom: "изображения/комната главного героя.webp", sayoriRope: "изображения/сайори в ночнушке с верёвкой.png", closetNatsuki: "изображения/Шкаф в классе, где Нацуки хранит свою мангу.webp", stairsYuri: "изображения/Укромная тихая лестница, где любит сидеть и читать Юри..webp", helpYuri: "изображения/Предложить помочь Юри с подготовкой к фестивалю..webp", helpNatsuki: "изображения/Предложить помочь Нацуки с подготовкой к фестивалю..webp", poemYuri: "изображения/Написать стихотворение для Юри..webp", poemNatsuki: "изображения/Написать стихотворение для Нацуки..webp", poemYuri2: "изображения/Написать второе стихотворение для Юри..webp", poemNatsuki2: "изображения/Написать второе стихотворение для Нацуки..webp", natsukiVomit: "изображения/Нацуки блюёт.webp", natsukiBrokenNeck: "изображения/Нацуки со сломоной шеей.png", blueScreen: "изображения/Синий экран смерти от моники.webp", yuriCut: "изображения/Юри режет себя ножом.png", yuriKnife: "изображения/Юри с ножиком.png", yuriRealEyes: "изображения/юри с реалистичными глазами.webp", yuriDeadBody: "изображения/Конец Юри сцена где пронтагонист прововит все выходные у тела Юри.png" };
             const characters = {
-                sayori: { name: "Сайори", enName: "Sayori", color: "#f08a5d", sprite: IMG.sayori, bg: IMG.club },
-                natsuki: { name: "Нацуки", enName: "Natsuki", color: "#e91e63", sprite: IMG.natsuki, bg: IMG.club, offsetY: '-10%' },
-                monika: { name: "Моника", enName: "Monika", color: "#4caf50", sprite: IMG.monika, bg: IMG.club },
-                yuri: { name: "Юри", enName: "Yuri", color: "#9c27b0", sprite: IMG.yuri, bg: IMG.club },
+                sayori: { name: "Сайори", enName: "Sayori", color: "#f08a5d", sprite: IMG.sayori, bg: IMG.club, scale: 1.4 },
+                natsuki: { name: "Нацуки", enName: "Natsuki", color: "#e91e63", sprite: IMG.natsuki, bg: IMG.club, scale: 1.4, offsetY: '-10%' },
+                monika: { name: "Моника", enName: "Monika", color: "#4caf50", sprite: IMG.monika, bg: IMG.club, scale: 1.4 },
+                yuri: { name: "Юри", enName: "Yuri", color: "#9c27b0", sprite: IMG.yuri, bg: IMG.club, scale: 1.4 },
                 scene2: { name: "Сайори", enName: "Sayori", color: "#f08a5d", sprite: "", bg: IMG.sceneDay2 },
                 scene4: { name: "Сайори", enName: "Sayori", color: "#f08a5d", sprite: "", bg: IMG.sceneDay4 },
                 confession: { name: "Сайори", enName: "Sayori", color: "#f08a5d", sprite: "", bg: IMG.confessionScene },
                 death: { name: "Сайори", enName: "Sayori", color: "#555", sprite: "", bg: IMG.deadSayori },
-                night: { name: "Сайори", enName: "Sayori", color: "#f08a5d", sprite: IMG.sayoriRope, bg: IMG.roomSayori },
+                night: { name: "Сайори", enName: "Sayori", color: "#f08a5d", sprite: IMG.sayoriRope, bg: IMG.roomSayori, scale: 1.4 },
                 hero: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: null },
                 street: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: IMG.street },
                 hallway: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: IMG.hallway },
@@ -212,12 +212,12 @@
                 poemNatsuki2Scene: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: IMG.poemNatsuki2 },
                 poemYuri2Scene: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: IMG.poemYuri2 },
                 narrator: { name: "", enName: "", color: "#3e2723", sprite: "", bg: null },
-                natsukiGlitch: { name: "Нацуки", enName: "Natsuki", color: "#e91e63", sprite: IMG.natsukiBrokenNeck, bg: IMG.club, offsetY: '-10%' },
-                natsukiVomitCh: { name: "Нацуки", enName: "Natsuki", color: "#e91e63", sprite: IMG.natsukiVomit, bg: IMG.club },
-                yuriKnifeCh: { name: "Юри", enName: "Yuri", color: "#9c27b0", sprite: IMG.yuriKnife, bg: IMG.club, scale: 0.7 },
+                natsukiGlitch: { name: "Нацуки", enName: "Natsuki", color: "#e91e63", sprite: IMG.natsukiBrokenNeck, bg: IMG.club, scale: 1.4, offsetY: '-10%' },
+                natsukiVomitCh: { name: "Нацуки", enName: "Natsuki", color: "#e91e63", sprite: IMG.natsukiVomit, bg: IMG.club, scale: 1.4 },
+                yuriKnifeCh: { name: "Юри", enName: "Yuri", color: "#9c27b0", sprite: IMG.yuriKnife, bg: IMG.club, scale: 1.4, bottom: '0%', offsetY: '0%' },
                 yuriRealEyesCh: { name: "Юри", enName: "Yuri", color: "#9c27b0", sprite: "", bg: IMG.yuriRealEyes },
                 yuriDeadCh: { name: "Юри", enName: "Yuri", color: "#555", sprite: "", bg: IMG.yuriDeadBody },
-                monikaEvil: { name: "Моника", enName: "Monika", color: "#4caf50", sprite: IMG.monika, bg: IMG.club }
+                monikaEvil: { name: "Моника", enName: "Monika", color: "#4caf50", sprite: IMG.monika, bg: IMG.club, scale: 1.4 }
             };
             function getCharName(key) { const c = characters[key]; if (!c) return ''; return currentLang === 'en' ? (c.enName || c.name) : c.name; }
             const titleMusic = document.getElementById('titleMusic'); const bgGameMusic = document.getElementById('bgGameMusic'); const confessionMusic = document.getElementById('confessionMusic'); const deathMusic = document.getElementById('deathMusic'); const glitchSound = document.getElementById('glitchSound'); const allTracks = [titleMusic, bgGameMusic, confessionMusic, deathMusic, glitchSound];
@@ -239,7 +239,9 @@
                 const c = charKey ? characters[charKey] : null;
                 let scale = c && c.scale ? c.scale : 1;
                 let offsetY = c && c.offsetY ? c.offsetY : '0%';
+                let bottom = c && c.bottom ? c.bottom : null;
                 charImg.style.transform = `translateX(-50%) translateY(${offsetY}) scale(${scale})`;
+                charImg.style.bottom = bottom !== null ? bottom : '';
                 requestAnimationFrame(() => charImg.classList.add('show'));
             }
             function updateScene(charKey, bgOverride) {
