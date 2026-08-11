@@ -99,46 +99,27 @@
         #terminalBgImage { position:fixed; top:0; left:0; width:100%; height:100%; background-size:cover; background-position:center; opacity:0; z-index:0; filter:brightness(0.32) grayscale(0.25); transition:opacity 1.8s ease; pointer-events:none; }
         #terminalContent { position:relative; z-index:1; }
         .cursor-blink { display:inline-block; background:#0f0; color:#000; animation:blink 1s step-end infinite; margin-left:2px; } @keyframes blink { 50% { opacity:0; } }
+        .explorer-modal { background:#fdfdfd !important; border:2px solid #555 !important; color:#111 !important; }
+        .explorer-modal h2 { color:#222 !important; }
+        .explorer-file-list { list-style:none; padding:0; margin:0; }
+        .explorer-file-item { display:flex; align-items:center; justify-content:space-between; padding:0.8rem 1rem; border-bottom:1px solid #ddd; background:#fff; gap:1rem; flex-wrap:wrap; }
+        .explorer-file-item:last-child { border-bottom:none; }
+        .explorer-file-info { display:flex; align-items:center; gap:0.5rem; flex:1; }
+        .explorer-file-icon { font-size:1.6rem; }
+        .explorer-file-name { font-weight:bold; font-size:1.1rem; color:#b34141; word-break:break-all; }
+        .explorer-file-status { font-size:0.85rem; padding:2px 8px; border-radius:10px; margin-left:0.5rem; }
+        .explorer-file-status.exists { background:#d4edda; color:#155724; }
+        .explorer-file-status.deleted { background:#f8d7da; color:#721c24; }
+        .explorer-file-actions button { padding:6px 14px; border-radius:14px; border:1px solid #aaa; cursor:pointer; font-size:0.8rem; font-weight:bold; transition:0.2s; background:#f0f0f0; color:#333; white-space:nowrap; }
+        .explorer-file-actions button:hover { background:#ddd; }
+        .explorer-file-actions .btn-del { border-color:#c0392b; color:#c0392b; } .explorer-file-actions .btn-del:hover { background:#fdd; }
+        .explorer-file-actions .btn-restore { border-color:#27ae60; color:#27ae60; } .explorer-file-actions .btn-restore:hover { background:#dfd; }
+        .explorer-btn { position:absolute; top:15px; left:15px; z-index:20; background:rgba(255,255,255,0.9); border:1px solid #888; padding:6px 14px; border-radius:20px; font-size:0.85rem; cursor:pointer; font-weight:bold; color:#333; backdrop-filter:blur(4px); transition:background 0.2s; }
+        .explorer-btn:hover { background:rgba(255,255,255,1); }
+        .blackout { position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:250; display:flex; align-items:center; justify-content:center; flex-direction:column; color:#fff; font-size:2rem; opacity:0; pointer-events:none; transition:opacity 0.6s; }
+        .blackout.show { opacity:1; pointer-events:auto; }
+        .blackout img { max-height:60vh; width:auto; max-width:80vw; object-fit:contain; margin-bottom:1rem; border:3px solid #333; border-radius:8px; }
         @media (max-width:600px) { .dialogue-box { padding:0.8rem; margin:0 0.5rem 0.5rem 0.5rem; } .speaker-name { font-size:1.2rem; } .dialogue-text { font-size:1rem; } .modal-window { padding:1rem; width:95%; max-height:90vh; } .save-load-btn { padding:6px 10px; font-size:0.75rem; } }
-
-        /* проводник */
-        .explorer-btn {
-            position:absolute; top:15px; left:15px; z-index:11;
-            background:rgba(0,0,0,0.6); color:white; border:1px solid #aaa; padding:8px 14px;
-            border-radius:20px; font-size:0.85rem; cursor:pointer; backdrop-filter:blur(5px);
-            transition:background 0.2s; white-space:nowrap; font-weight:bold;
-        }
-        .explorer-btn:hover { background:rgba(0,0,0,0.8); }
-        #explorerOverlay .modal-window {
-            background:#f5f2eb; color:#1e1316; border:3px solid #8b5a2b; box-shadow:0 0 30px rgba(0,0,0,0.9);
-        }
-        #explorerOverlay h2 { color:#3e2723; }
-        .explorer-files { display:flex; flex-direction:column; gap:12px; }
-        .chr-file-row {
-            display:flex; align-items:center; justify-content:space-between; background:#fff;
-            border:1px solid #ccc; border-radius:8px; padding:10px 15px; box-shadow:0 1px 3px rgba(0,0,0,0.1);
-        }
-        .chr-file-name { font-family:'Courier New',monospace; font-weight:bold; font-size:1.1rem; color:#1e1316; }
-        .chr-file-status { font-size:0.8rem; margin-left:10px; padding:2px 8px; border-radius:10px; font-weight:bold; }
-        .status-ok { background:#c8e6c9; color:#2e7d32; }
-        .status-deleted { background:#ffcdd2; color:#b71c1c; }
-        .chr-file-actions button {
-            padding:5px 15px; border-radius:14px; border:1px solid #aaa; cursor:pointer;
-            font-size:0.8rem; font-weight:bold; transition:0.2s; margin-left:8px;
-        }
-        .btn-delete-chr { background:#ffebee; color:#b71c1c; border-color:#e57373; }
-        .btn-delete-chr:hover { background:#ffcdd2; }
-        .btn-restore-chr { background:#e8f5e9; color:#2e7d32; border-color:#81c784; }
-        .btn-restore-chr:hover { background:#c8e6c9; }
-
-        #monikaBlockOverlay {
-            position:fixed; top:0; left:0; width:100%; height:100%; background:black;
-            z-index:300; display:none; flex-direction:column; align-items:center; justify-content:center;
-            color:white; text-align:center; font-size:1.8rem; padding:20px;
-        }
-        #monikaBlockOverlay.show { display:flex; }
-        #monikaBlockText { margin-bottom:30px; white-space:pre-wrap; }
-        #monikaBlockOverlay button { padding:12px 30px; font-size:1.2rem; background:#b34141; border:none; color:white; border-radius:20px; cursor:pointer; }
     </style>
 </head>
 <body>
@@ -151,22 +132,16 @@
     <div class="static-overlay" id="staticEffect"></div>
     <div class="toast" id="toast"></div>
     <div class="modal-overlay" id="saveModalOverlay"><div class="modal-window" id="saveModalWindow"><button class="modal-close" id="modalCloseBtn">&times;</button><h2 id="modalTitle">💾 Сохранения</h2><div class="save-slots-grid" id="saveSlotsGrid"></div><div class="modal-footer"><button id="modalCloseFooter">Закрыть</button></div></div></div>
+    <div class="modal-overlay" id="explorerModalOverlay"><div class="modal-window explorer-modal" id="explorerModalWindow"><button class="modal-close" id="explorerModalCloseBtn">&times;</button><h2>📁 Проводник</h2><ul class="explorer-file-list" id="explorerFileList"></ul><div class="modal-footer"><button id="explorerModalCloseFooter">Закрыть</button></div></div></div>
+    <div class="blackout" id="blackoutScreen"><div id="blackoutContent"></div></div>
     <div id="terminalOverlay"><div id="terminalBgImage"></div><div id="terminalContent"></div></div>
     <div id="blueScreenOverlay"></div>
-    <div id="monikaBlockOverlay"><div id="monikaBlockText"></div><button id="monikaBlockOk">Продолжить</button></div>
-    <div class="modal-overlay" id="explorerOverlay">
-        <div class="modal-window">
-            <button class="modal-close" id="explorerCloseBtn">&times;</button>
-            <h2>📁 Проводник / File Explorer</h2>
-            <div class="explorer-files" id="explorerFiles"></div>
-        </div>
-    </div>
     <div class="game-container" id="gameContainer">
-        <button class="explorer-btn hidden" id="explorerButton">📁 Проводник</button>
         <div class="scene-area" id="sceneArea">
             <div class="bg-layer" id="bgLayerA"></div><div class="bg-layer" id="bgLayerB"></div>
             <img id="characterImg" class="character-sprite" src="" alt="Персонаж">
             <div id="titleScreen" class="title-screen"><h1 id="titleHeading">Литературный клуб</h1><div class="menu-buttons"><button id="startButton">Начать игру</button></div></div>
+            <button class="explorer-btn hidden" id="explorerButton" title="Проводник">📁 Проводник</button>
             <div id="dayTransition" class="day-transition"></div>
             <div class="save-load-panel">
                 <button class="save-load-btn lang-btn" id="langButton" title="Сменить язык / Switch language">🌐 RU</button>
@@ -185,17 +160,15 @@
     <script>
         (function() {
             'use strict';
+            const FILE_STORAGE_KEY = 'litklub_file_states';
+            function loadFileStates() { try { const raw = localStorage.getItem(FILE_STORAGE_KEY); if (raw) return JSON.parse(raw); } catch(e) {} return { sayori: true, yuri: true, natsuki: true, monika: true, storyDeletions: { sayori: false, yuri: false, natsuki: false, monika: false } }; }
+            function saveFileStates(fs) { try { localStorage.setItem(FILE_STORAGE_KEY, JSON.stringify(fs)); } catch(e) {} }
+            let fileStates = loadFileStates();
+            function resetFileStatesToDefault() { fileStates = { sayori: true, yuri: true, natsuki: true, monika: true, storyDeletions: { sayori: false, yuri: false, natsuki: false, monika: false } }; saveFileStates(fileStates); }
             let currentLang = 'ru';
-            const i18n = { ru: { title: 'Литературный клуб', startGame: 'Начать игру', startAct2: 'Начать 2 Акт', startAct3: 'Начать 3 Акт', continue: 'Продолжить', save: '💾 Сохранить', load: '📂 Загрузить', savesTitle: '💾 Сохранения', close: 'Закрыть', continue_: '▼ Продолжить ▼', clickToStart: 'Нажмите, чтобы начать...', day: 'День', empty: 'Пусто', autosave: 'Авто', saved: 'Игра сохранена!', loaded: 'Игра загружена!', deleted: 'Сохранение удалено.', noSaves: 'Нет сохранений.', saveFailed: 'Не удалось сохранить игру.', loadFailed: 'Ошибка загрузки сохранения.', cannotSaveNow: 'Сохранение недоступно в данный момент.', confirmOverwrite: 'Перезаписать это сохранение?', confirmDelete: 'Удалить это сохранение?', videoWelcome: 'Добро пожаловать в Литературный клуб', watchIntro: 'Смотреть вступление', skipHint: 'Нажмите, чтобы пропустить', goodEnding: 'Конец первого акта (хорошая концовка)', poemGameTitle: 'Мини-игра', poemPrompt: 'Выбери 5 слов, из которых сложится твоё стихотворение.', ready: 'Готово', menu: '🏠 Меню', backToMenu: 'Вернуться в главное меню?', justMonika: 'Just Monika', onlyMonika: 'Только Моника', explorer: '📁 Проводник', deleteChr: 'Удалить', restoreChr: 'Восстановить', chrDeletedByStory: 'Даже не думай! Я специально её удалила!', saveWrongAct: 'Файл сохранения не может быть загружен', saveWrongAct2: 'Ты что, хочешь меня обмануть?' }, en: { title: 'Literature Club', startGame: 'Start Game', startAct2: 'Start Act 2', startAct3: 'Start Act 3', continue: 'Continue', save: '💾 Save', load: '📂 Load', savesTitle: '💾 Saves', close: 'Close', continue_: '▼ Continue ▼', clickToStart: 'Click to begin...', day: 'Day', empty: 'Empty', autosave: 'Auto', saved: 'Game saved!', loaded: 'Game loaded!', deleted: 'Save deleted.', noSaves: 'No saves found.', saveFailed: 'Failed to save the game.', loadFailed: 'Failed to load the save.', cannotSaveNow: 'Cannot save right now.', confirmOverwrite: 'Overwrite this save?', confirmDelete: 'Delete this save?', videoWelcome: 'Welcome to the Literature Club', watchIntro: 'Watch Intro', skipHint: 'Click to skip', goodEnding: 'End of Act One (Good Ending)', poemGameTitle: 'Mini-game', poemPrompt: 'Pick 5 words to compose your poem.', ready: 'Done', menu: '🏠 Menu', backToMenu: 'Return to main menu?', justMonika: 'Just Monika', onlyMonika: 'Only Monika', explorer: '📁 Explorer', deleteChr: 'Delete', restoreChr: 'Restore', chrDeletedByStory: "Don't even think about it! I deleted her on purpose!", saveWrongAct: 'Save file cannot be loaded', saveWrongAct2: 'Are you trying to trick me?' } };
+            const i18n = { ru: { title: 'Литературный клуб', startGame: 'Начать игру', startAct2: 'Начать 2 Акт', startAct3: 'Начать 3 Акт', continue: 'Продолжить', save: '💾 Сохранить', load: '📂 Загрузить', savesTitle: '💾 Сохранения', close: 'Закрыть', continue_: '▼ Продолжить ▼', clickToStart: 'Нажмите, чтобы начать...', day: 'День', empty: 'Пусто', autosave: 'Авто', saved: 'Игра сохранена!', loaded: 'Игра загружена!', deleted: 'Сохранение удалено.', noSaves: 'Нет сохранений.', saveFailed: 'Не удалось сохранить игру.', loadFailed: 'Ошибка загрузки сохранения.', cannotSaveNow: 'Сохранение недоступно в данный момент.', confirmOverwrite: 'Перезаписать это сохранение?', confirmDelete: 'Удалить это сохранение?', videoWelcome: 'Добро пожаловать в Литературный клуб', watchIntro: 'Смотреть вступление', skipHint: 'Нажмите, чтобы пропустить', goodEnding: 'Конец первого акта (хорошая концовка)', poemGameTitle: 'Мини-игра', poemPrompt: 'Выбери 5 слов, из которых сложится твоё стихотворение.', ready: 'Готово', menu: '🏠 Меню', backToMenu: 'Вернуться в главное меню?', justMonika: 'Just Monika', onlyMonika: 'Только Моника', explorer: '📁 Проводник', fileDeleted: 'удалён', fileExists: 'в наличии', deleteFile: 'Удалить', restoreFile: 'Восстановить', monikaBlockRestore: 'Даже не думай! Я специально её удалила!', loadWrongAct: 'Файл сохранения не может быть загружен', loadWrongAct2: 'Ты что, хочешь меня обмануть?', quickEndSayori: 'Теперь все будут счастливы.', end: 'КОНЕЦ' }, en: { title: 'Literature Club', startGame: 'Start Game', startAct2: 'Start Act 2', startAct3: 'Start Act 3', continue: 'Continue', save: '💾 Save', load: '📂 Load', savesTitle: '💾 Saves', close: 'Close', continue_: '▼ Continue ▼', clickToStart: 'Click to begin...', day: 'Day', empty: 'Empty', autosave: 'Auto', saved: 'Game saved!', loaded: 'Game loaded!', deleted: 'Save deleted.', noSaves: 'No saves found.', saveFailed: 'Failed to save the game.', loadFailed: 'Failed to load the save.', cannotSaveNow: 'Cannot save right now.', confirmOverwrite: 'Overwrite this save?', confirmDelete: 'Delete this save?', videoWelcome: 'Welcome to the Literature Club', watchIntro: 'Watch Intro', skipHint: 'Click to skip', goodEnding: 'End of Act One (Good Ending)', poemGameTitle: 'Mini-game', poemPrompt: 'Pick 5 words to compose your poem.', ready: 'Done', menu: '🏠 Menu', backToMenu: 'Return to main menu?', justMonika: 'Just Monika', onlyMonika: 'Only Monika', explorer: '📁 File Explorer', fileDeleted: 'deleted', fileExists: 'exists', deleteFile: 'Delete', restoreFile: 'Restore', monikaBlockRestore: "Don't even think about it! I deleted her on purpose!", loadWrongAct: 'Save file cannot be loaded', loadWrongAct2: 'Are you trying to trick me?', quickEndSayori: 'Everyone will be happy now.', end: 'END' } };
             function t(key) { return (i18n[currentLang] && i18n[currentLang][key]) || key; }
             function td(ru, en) { return currentLang === 'en' ? (en || ru) : ru; }
-
-            const CHR_STORAGE_KEY = 'ddlc_chr_files';
-            let chrFiles = { sayori:{deleted:false,deletedByStory:false}, yuri:{deleted:false,deletedByStory:false}, natsuki:{deleted:false,deletedByStory:false}, monika:{deleted:false,deletedByStory:false} };
-            function loadChrFiles() { try { const raw = localStorage.getItem(CHR_STORAGE_KEY); if(raw) chrFiles = JSON.parse(raw); } catch(e){} }
-            function saveChrFiles() { try { localStorage.setItem(CHR_STORAGE_KEY, JSON.stringify(chrFiles)); } catch(e){} }
-            loadChrFiles();
-
             function updateAllUI() {
                 document.getElementById('titleHeading').textContent = t('title');
                 const startBtn = document.getElementById('startButton');
@@ -214,88 +187,17 @@
                 document.getElementById('videoPromptText').textContent = t('videoWelcome');
                 document.getElementById('startVideoBtn').textContent = t('watchIntro');
                 document.getElementById('skipHint').textContent = t('skipHint');
+                document.getElementById('explorerButton').textContent = t('explorer');
                 if (!state || !state.started) document.getElementById('dialogueText').textContent = t('clickToStart');
                 document.documentElement.lang = currentLang;
                 const langBtn = document.getElementById('langButton');
                 if (state && state.started && state.disableUI) langBtn.classList.add('hidden');
                 else langBtn.classList.toggle('hidden', !!(state && state.started));
-                const explorerBtn = document.getElementById('explorerButton');
-                explorerBtn.classList.toggle('hidden', !!(state && state.started));
                 refreshSaveModal();
-                refreshExplorerUI();
+                refreshExplorerModal();
             }
-
-            const explorerOverlay = document.getElementById('explorerOverlay');
-            const explorerFilesDiv = document.getElementById('explorerFiles');
-            const explorerButton = document.getElementById('explorerButton');
-            const explorerCloseBtn = document.getElementById('explorerCloseBtn');
-
-            function refreshExplorerUI() {
-                explorerFilesDiv.innerHTML = '';
-                const chars = ['sayori','yuri','natsuki','monika'];
-                chars.forEach(ch => {
-                    const data = chrFiles[ch];
-                    const row = document.createElement('div');
-                    row.className = 'chr-file-row';
-                    const nameSpan = document.createElement('span');
-                    nameSpan.className = 'chr-file-name';
-                    nameSpan.textContent = ch + '.chr';
-                    const statusSpan = document.createElement('span');
-                    statusSpan.className = 'chr-file-status ' + (data.deleted ? 'status-deleted' : 'status-ok');
-                    statusSpan.textContent = data.deleted ? '❌ удалён' : '✔ активен';
-                    const actionsDiv = document.createElement('div');
-                    actionsDiv.className = 'chr-file-actions';
-                    if (data.deleted) {
-                        const restoreBtn = document.createElement('button');
-                        restoreBtn.className = 'btn-restore-chr';
-                        restoreBtn.textContent = t('restoreChr');
-                        restoreBtn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            if (data.deletedByStory) {
-                                showToast(t('chrDeletedByStory'));
-                            } else {
-                                data.deleted = false;
-                                data.deletedByStory = false;
-                                saveChrFiles();
-                                refreshExplorerUI();
-                                showToast(ch + '.chr восстановлен');
-                            }
-                        });
-                        actionsDiv.appendChild(restoreBtn);
-                    } else {
-                        const deleteBtn = document.createElement('button');
-                        deleteBtn.className = 'btn-delete-chr';
-                        deleteBtn.textContent = t('deleteChr');
-                        deleteBtn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            data.deleted = true;
-                            data.deletedByStory = false;
-                            saveChrFiles();
-                            refreshExplorerUI();
-                            showToast(ch + '.chr удалён');
-                        });
-                        actionsDiv.appendChild(deleteBtn);
-                    }
-                    row.appendChild(nameSpan);
-                    row.appendChild(statusSpan);
-                    row.appendChild(actionsDiv);
-                    explorerFilesDiv.appendChild(row);
-                });
-            }
-
-            explorerButton.addEventListener('click', (e) => {
-                e.stopPropagation();
-                refreshExplorerUI();
-                explorerOverlay.classList.add('active');
-            });
-            explorerCloseBtn.addEventListener('click', () => explorerOverlay.classList.remove('active'));
-            explorerOverlay.addEventListener('click', function(e) {
-                if (e.target === explorerOverlay) explorerOverlay.classList.remove('active');
-            });
-
             const toastEl = document.getElementById('toast'); let toastTimer = null;
             function showToast(msg) { if (toastTimer) clearTimeout(toastTimer); toastEl.textContent = msg; toastEl.classList.add('show'); toastTimer = setTimeout(() => { toastEl.classList.remove('show'); toastTimer = null; }, 2200); }
-
             const SAVE_PREFIX = 'litklub_save_'; const MANUAL_SLOTS = 6; const AUTO_SLOT_KEY = SAVE_PREFIX + 'auto'; const SAVE_META_KEY = 'litklub_save_meta';
             function getSlotKey(i) { return SAVE_PREFIX + i; }
             function getAllSlots() { const slots = []; const autoRaw = localStorage.getItem(AUTO_SLOT_KEY); slots.push({ key: AUTO_SLOT_KEY, id: 'auto', label: t('autosave'), isAuto: true, data: autoRaw ? JSON.parse(autoRaw) : null }); for (let i = 0; i < MANUAL_SLOTS; i++) { const raw = localStorage.getItem(getSlotKey(i)); slots.push({ key: getSlotKey(i), id: String(i + 1), label: String(i + 1), isAuto: false, data: raw ? JSON.parse(raw) : null }); } return slots; }
@@ -304,87 +206,19 @@
             function canSaveNow() { if (!state || !state.started || state.disableSave) return false; if (stepIndex >= activeSteps.length) return true; const cur = activeSteps[stepIndex]; return cur && cur.type === 'line'; }
             function saveToSlot(slotKey) { if (!canSaveNow()) { showToast(t('cannotSaveNow')); return false; } try { const payload = buildSavePayload(); localStorage.setItem(slotKey, JSON.stringify(payload)); updateSaveMeta(slotKey, payload); showToast(t('saved')); refreshSaveModal(); return true; } catch (e) { showToast(t('saveFailed')); return false; } }
             function updateSaveMeta(slotKey, payload) { try { let meta = {}; const raw = localStorage.getItem(SAVE_META_KEY); if (raw) meta = JSON.parse(raw); meta[slotKey] = { timestamp: payload.timestamp, dayTitle: payload.dayTitle }; localStorage.setItem(SAVE_META_KEY, JSON.stringify(meta)); } catch (e) {} }
-
-            const monikaBlockOverlay = document.getElementById('monikaBlockOverlay');
-            const monikaBlockText = document.getElementById('monikaBlockText');
-            const monikaBlockOk = document.getElementById('monikaBlockOk');
-            function showMonikaBlock(textLines, callback) {
-                monikaBlockText.textContent = textLines.join('\n');
-                monikaBlockOverlay.classList.add('show');
-                monikaBlockOk.onclick = () => {
-                    monikaBlockOverlay.classList.remove('show');
-                    if (callback) callback();
-                };
-            }
-
-            function loadFromSlot(slotKey) {
-                const raw = localStorage.getItem(slotKey);
-                if (!raw) { showToast(t('noSaves')); return false; }
-                let payload;
-                try { payload = JSON.parse(raw); } catch (e) { showToast(t('loadFailed')); return false; }
-                if (state && state.started) {
-                    const currentAct = state.act3 ? 3 : (state.act2 ? 2 : 1);
-                    const savedAct = payload.state.act3 ? 3 : (payload.state.act2 ? 2 : 1);
-                    if (currentAct !== savedAct) {
-                        showMonikaBlock([t('saveWrongAct'), t('saveWrongAct2'), '... *Моника смеётся*'], () => {});
-                        return false;
-                    }
-                }
-                try {
-                    state = payload.state; dayIndex = payload.dayIndex; stepIndex = payload.stepIndex; activeSteps = payload.activeSteps;
-                    currentScript = state.act2 ? scriptAct2 : state.act3 ? scriptAct3 : scriptAct1;
-                    bodyEl.classList.remove('corrupted', 'glitch'); staticOverlay.style.opacity = '0';
-                    titleScreen.classList.remove('show'); nextMarker.onclick = (e) => { e.stopPropagation(); advance(); };
-                    stopAllMusic(); playGameBg();
-                    renderCurrentStep(); showToast(t('loaded')); updateAllUI(); closeSaveModal();
-                    return true;
-                } catch (e) { showToast(t('loadFailed')); return false; }
-            }
-
+            function loadFromSlot(slotKey) { const raw = localStorage.getItem(slotKey); if (!raw) { showToast(t('noSaves')); return false; } try { const payload = JSON.parse(raw); if (state && state.started) { const currentAct = state.currentAct || (state.act3 ? 3 : (state.act2 ? 2 : 1)); const saveAct = payload.state.currentAct || (payload.state.act3 ? 3 : (payload.state.act2 ? 2 : 1)); if (currentAct !== saveAct) { showWrongActBlock(); return false; } } state = payload.state; dayIndex = payload.dayIndex; stepIndex = payload.stepIndex; activeSteps = payload.activeSteps; currentScript = state.act2 ? scriptAct2 : state.act3 ? scriptAct3 : scriptAct1; bodyEl.classList.remove('corrupted', 'glitch'); staticOverlay.style.opacity = '0'; titleScreen.classList.remove('show'); nextMarker.onclick = (e) => { e.stopPropagation(); advance(); }; stopAllMusic(); playGameBg(); renderCurrentStep(); showToast(t('loaded')); updateAllUI(); closeSaveModal(); return true; } catch (e) { showToast(t('loadFailed')); return false; } }
+            function showWrongActBlock() { const blackout = document.getElementById('blackoutScreen'); const content = document.getElementById('blackoutContent'); content.innerHTML = `<div style="font-size:2.2rem;color:#ff5555;margin-bottom:1rem;">${t('loadWrongAct')}</div><div style="font-size:1.6rem;margin-bottom:2rem;">${t('loadWrongAct2')}</div>`; blackout.classList.add('show'); setTimeout(() => { content.innerHTML += `<div style="margin-top:2rem; display:flex; flex-direction:column; align-items:center;"><img src="${IMG.monika}" style="max-height:30vh; border-radius:10px;"/><span style="color:#4caf50; margin-top:0.5rem;">Моника</span></div>`; setTimeout(() => { blackout.classList.remove('show'); content.innerHTML = ''; }, 3500); }, 2000); closeSaveModal(); }
             function deleteSlot(slotKey) { localStorage.removeItem(slotKey); try { let meta = {}; const raw = localStorage.getItem(SAVE_META_KEY); if (raw) meta = JSON.parse(raw); delete meta[slotKey]; localStorage.setItem(SAVE_META_KEY, JSON.stringify(meta)); } catch (e) {} showToast(t('deleted')); refreshSaveModal(); }
             function autosave() { if (!canSaveNow()) return; try { const payload = buildSavePayload(); localStorage.setItem(AUTO_SLOT_KEY, JSON.stringify(payload)); updateSaveMeta(AUTO_SLOT_KEY, payload); } catch (e) {} }
-
             const saveModalOverlay = document.getElementById('saveModalOverlay'); const saveSlotsGrid = document.getElementById('saveSlotsGrid'); const modalCloseBtn = document.getElementById('modalCloseBtn'); const modalCloseFooter = document.getElementById('modalCloseFooter');
             function openSaveModal() { refreshSaveModal(); saveModalOverlay.classList.add('active'); }
             function closeSaveModal() { saveModalOverlay.classList.remove('active'); }
-            function refreshSaveModal() {
-                const slots = getAllSlots(); saveSlotsGrid.innerHTML = '';
-                slots.forEach(slot => {
-                    const div = document.createElement('div'); div.className = 'save-slot' + (slot.data ? ' occupied' : '') + (slot.isAuto ? ' autosave' : '');
-                    const headerDiv = document.createElement('div'); headerDiv.className = 'slot-header';
-                    const labelSpan = document.createElement('span'); labelSpan.textContent = slot.isAuto ? '🔄 ' + slot.label : '📁 ' + t('save') + ' ' + slot.label;
-                    headerDiv.appendChild(labelSpan);
-                    if (slot.isAuto) { const badge = document.createElement('span'); badge.className = 'slot-badge'; badge.textContent = t('autosave'); headerDiv.appendChild(badge); }
-                    div.appendChild(headerDiv);
-                    const infoDiv = document.createElement('div'); infoDiv.className = 'slot-info';
-                    if (slot.data) { const daySpan = document.createElement('span'); daySpan.className = 'day-label'; daySpan.textContent = slot.data.dayTitle ? (t('day') + ' ' + slot.data.dayTitle) : ''; infoDiv.appendChild(daySpan); infoDiv.appendChild(document.createElement('br')); const timeSpan = document.createElement('span'); timeSpan.className = 'time-label'; timeSpan.textContent = formatTimestamp(slot.data.timestamp); infoDiv.appendChild(timeSpan); } else { const emptySpan = document.createElement('span'); emptySpan.className = 'slot-empty-text'; emptySpan.textContent = t('empty'); infoDiv.appendChild(emptySpan); }
-                    div.appendChild(infoDiv);
-                    const actionsDiv = document.createElement('div'); actionsDiv.className = 'slot-actions';
-                    const saveBtn = document.createElement('button'); saveBtn.className = 'btn-save'; saveBtn.textContent = '💾 ' + t('save'); saveBtn.title = slot.data ? t('confirmOverwrite') : t('save');
-                    saveBtn.addEventListener('click', (e) => { e.stopPropagation(); if (slot.data && !confirm(t('confirmOverwrite') + ' (' + slot.label + ')')) return; if (saveToSlot(slot.key)) closeSaveModal(); });
-                    actionsDiv.appendChild(saveBtn);
-                    if (slot.data) { const loadBtn = document.createElement('button'); loadBtn.className = 'btn-load'; loadBtn.textContent = '📂 ' + t('load'); loadBtn.addEventListener('click', (e) => { e.stopPropagation(); loadFromSlot(slot.key); }); actionsDiv.appendChild(loadBtn); }
-                    if (slot.data) { const delBtn = document.createElement('button'); delBtn.className = 'btn-delete'; delBtn.textContent = '🗑 ' + t('close'); delBtn.title = t('confirmDelete'); delBtn.addEventListener('click', (e) => { e.stopPropagation(); if (confirm(t('confirmDelete') + ' (' + slot.label + ')?')) deleteSlot(slot.key); }); actionsDiv.appendChild(delBtn); }
-                    div.appendChild(actionsDiv); saveSlotsGrid.appendChild(div);
-                });
-            }
-            modalCloseBtn.addEventListener('click', closeSaveModal); modalCloseFooter.addEventListener('click', closeSaveModal);
-            saveModalOverlay.addEventListener('click', function(e) { if (e.target === saveModalOverlay) closeSaveModal(); });
-
+            function refreshSaveModal() { const slots = getAllSlots(); saveSlotsGrid.innerHTML = ''; slots.forEach(slot => { const div = document.createElement('div'); div.className = 'save-slot' + (slot.data ? ' occupied' : '') + (slot.isAuto ? ' autosave' : ''); const headerDiv = document.createElement('div'); headerDiv.className = 'slot-header'; const labelSpan = document.createElement('span'); labelSpan.textContent = slot.isAuto ? '🔄 ' + slot.label : '📁 ' + t('save') + ' ' + slot.label; headerDiv.appendChild(labelSpan); if (slot.isAuto) { const badge = document.createElement('span'); badge.className = 'slot-badge'; badge.textContent = t('autosave'); headerDiv.appendChild(badge); } div.appendChild(headerDiv); const infoDiv = document.createElement('div'); infoDiv.className = 'slot-info'; if (slot.data) { const daySpan = document.createElement('span'); daySpan.className = 'day-label'; daySpan.textContent = slot.data.dayTitle ? (t('day') + ' ' + slot.data.dayTitle) : ''; infoDiv.appendChild(daySpan); infoDiv.appendChild(document.createElement('br')); const timeSpan = document.createElement('span'); timeSpan.className = 'time-label'; timeSpan.textContent = formatTimestamp(slot.data.timestamp); infoDiv.appendChild(timeSpan); } else { const emptySpan = document.createElement('span'); emptySpan.className = 'slot-empty-text'; emptySpan.textContent = t('empty'); infoDiv.appendChild(emptySpan); } div.appendChild(infoDiv); const actionsDiv = document.createElement('div'); actionsDiv.className = 'slot-actions'; const saveBtn = document.createElement('button'); saveBtn.className = 'btn-save'; saveBtn.textContent = '💾 ' + t('save'); saveBtn.title = slot.data ? t('confirmOverwrite') : t('save'); saveBtn.addEventListener('click', (e) => { e.stopPropagation(); if (slot.data && !confirm(t('confirmOverwrite') + ' (' + slot.label + ')')) return; if (saveToSlot(slot.key)) closeSaveModal(); }); actionsDiv.appendChild(saveBtn); if (slot.data) { const loadBtn = document.createElement('button'); loadBtn.className = 'btn-load'; loadBtn.textContent = '📂 ' + t('load'); loadBtn.addEventListener('click', (e) => { e.stopPropagation(); loadFromSlot(slot.key); }); actionsDiv.appendChild(loadBtn); } if (slot.data) { const delBtn = document.createElement('button'); delBtn.className = 'btn-delete'; delBtn.textContent = '🗑 ' + t('close'); delBtn.title = t('confirmDelete'); delBtn.addEventListener('click', (e) => { e.stopPropagation(); if (confirm(t('confirmDelete') + ' (' + slot.label + ')?')) deleteSlot(slot.key); }); actionsDiv.appendChild(delBtn); } div.appendChild(actionsDiv); saveSlotsGrid.appendChild(div); }); }
+            modalCloseBtn.addEventListener('click', closeSaveModal); modalCloseFooter.addEventListener('click', closeSaveModal); saveModalOverlay.addEventListener('click', function(e) { if (e.target === saveModalOverlay) closeSaveModal(); });
             document.getElementById('saveButton').addEventListener('click', (e) => { e.stopPropagation(); if (!state || !state.started) { showToast(t('cannotSaveNow')); return; } openSaveModal(); });
             document.getElementById('loadButton').addEventListener('click', (e) => { e.stopPropagation(); openSaveModal(); });
             document.getElementById('langButton').addEventListener('click', (e) => { e.stopPropagation(); currentLang = currentLang === 'ru' ? 'en' : 'ru'; updateAllUI(); if (state && state.started && stepIndex < activeSteps.length) renderCurrentStep(); });
-            document.getElementById('menuButton').addEventListener('click', (e) => {
-                e.stopPropagation(); if (!state || !state.started) return;
-                if (!confirm(t('backToMenu'))) return; autosave(); state.paused = true; state.started = false;
-                stopAllMusic(); titleMusic.play().catch(() => {}); titleScreen.classList.add('show');
-                if (state.act2) setBg(IMG.titleAct2); else if (state.act3) setBg(IMG.titleAct3); else setBg(chooseTitleBg());
-                setSprite(null); speakerName.textContent = ''; typeText(t('clickToStart')); clearChoices(); showNext(false);
-                nextMarker.onclick = null; bodyEl.classList.remove('corrupted', 'glitch'); staticOverlay.style.opacity = '0';
-                document.getElementById('dialogueBox').style.display = ''; document.getElementById('nextMarker').style.display = '';
-                updateAllUI(); if (saveModalOverlay.classList.contains('active')) closeSaveModal();
-            });
-
+            document.getElementById('menuButton').addEventListener('click', (e) => { e.stopPropagation(); if (!state || !state.started) return; if (!confirm(t('backToMenu'))) return; autosave(); state.paused = true; state.started = false; stopAllMusic(); titleMusic.play().catch(() => {}); titleScreen.classList.add('show'); if (state.act2) setBg(IMG.titleAct2); else if (state.act3) setBg(IMG.titleAct3); else setBg(chooseTitleBg()); setSprite(null); speakerName.textContent = ''; typeText(t('clickToStart')); clearChoices(); showNext(false); nextMarker.onclick = null; bodyEl.classList.remove('corrupted', 'glitch'); staticOverlay.style.opacity = '0'; document.getElementById('dialogueBox').style.display = ''; document.getElementById('nextMarker').style.display = ''; document.getElementById('explorerButton').classList.remove('hidden'); updateAllUI(); if (saveModalOverlay.classList.contains('active')) closeSaveModal(); });
             const IMG = { title: "изображения/заставка.jpg", titleAlt1: "изображения/DDLC сквозь призму аутизма и философии.jpg", titleAct2: "изображения/Главное меню во втором Акте.jpg", titleAct3: "изображения/Главное меню во втором Акте.jpg", club: "изображения/клуб.webp", sayori: "изображения/Sayori.webp", sceneDay2: "изображения/первая сцена сайори.jpg", sceneDay4: "изображения/вторая сцена сайори.webp", confessionScene: "изображения/признание в любви от сайори.jpg", deadSayori: "изображения/мёртвая сайори.jpg", roomSayori: "изображения/комната сайори.jpg", natsuki: "изображения/нацуки.png", monika: "изображения/Monika_DDLC.png", yuri: "изображения/Yuri.webp", street: "изображения/Городской район, где живут главный герой и Сайори.webp", poemBg: "изображения/Фон для поэтической мини-игры.webp", hallway: "изображения/Школьный коридор.webp", festivalRoom: "изображения/комната фестеваля.webp", heroRoom: "изображения/комната главного героя.webp", sayoriRope: "изображения/сайори в ночнушке с верёвкой.png", closetNatsuki: "изображения/Шкаф в классе, где Нацуки хранит свою мангу.webp", stairsYuri: "изображения/Укромная тихая лестница, где любит сидеть и читать Юри..webp", helpYuri: "изображения/Предложить помочь Юри с подготовкой к фестивалю..webp", helpNatsuki: "изображения/Предложить помочь Нацуки с подготовкой к фестивалю..webp", poemYuri: "изображения/Написать стихотворение для Юри..webp", poemNatsuki: "изображения/Написать стихотворение для Нацуки..webp", poemYuri2: "изображения/Написать второе стихотворение для Юри..webp", poemNatsuki2: "изображения/Написать второе стихотворение для Нацуки..webp", natsukiVomit: "изображения/Нацуки блюёт.webp", natsukiBrokenNeck: "изображения/Нацуки со сломоной шеей.png", blueScreen: "изображения/Синий экран смерти от моники.webp", yuriKnife: "изображения/Юри с ножиком.png", yuriRealEyes: "изображения/юри с реалистичными глазами.webp", yuriDeadBody: "изображения/Конец Юри сцена где пронтагонист прововит все выходные у тела Юри.png" };
             const characters = {
                 sayori: { name: "Сайори", enName: "Sayori", color: "#f08a5d", sprite: IMG.sayori, bg: IMG.club, scale: 1.4 },
@@ -417,38 +251,70 @@
                 monikaEvil: { name: "Моника", enName: "Monika", color: "#4caf50", sprite: IMG.monika, bg: IMG.club, scale: 1.4 }
             };
             function getCharName(key) { const c = characters[key]; if (!c) return ''; return currentLang === 'en' ? (c.enName || c.name) : c.name; }
-            const titleMusic = document.getElementById('titleMusic'), bgGameMusic = document.getElementById('bgGameMusic'), confessionMusic = document.getElementById('confessionMusic'), deathMusic = document.getElementById('deathMusic'), glitchSound = document.getElementById('glitchSound'), allTracks = [titleMusic, bgGameMusic, confessionMusic, deathMusic, glitchSound];
+            const titleMusic = document.getElementById('titleMusic'), bgGameMusic = document.getElementById('bgGameMusic'), confessionMusic = document.getElementById('confessionMusic'), deathMusic = document.getElementById('deathMusic'), glitchSound = document.getElementById('glitchSound');
+            const allTracks = [titleMusic, bgGameMusic, confessionMusic, deathMusic, glitchSound];
             function stopAllMusic() { allTracks.forEach(a => { try { a.pause(); a.currentTime = 0; } catch (e) {} }); }
             function playGameBg() { stopAllMusic(); bgGameMusic.play().catch(e => {}); }
             function playOneShot(track, onEnded) { stopAllMusic(); track.currentTime = 0; track.play().then(() => { track.onended = onEnded || null; }).catch(e => { if (onEnded) onEnded(); }); }
             function playGlitch() { glitchSound.currentTime = 0; glitchSound.play().catch(() => {}); }
             const sceneArea = document.getElementById('sceneArea'), bgLayerA = document.getElementById('bgLayerA'), bgLayerB = document.getElementById('bgLayerB'), charImg = document.getElementById('characterImg'), speakerName = document.getElementById('speakerName'), dialogueText = document.getElementById('dialogueText'), choicesArea = document.getElementById('choicesArea'), nextMarker = document.getElementById('nextMarker'), bodyEl = document.body, staticOverlay = document.getElementById('staticEffect'), titleScreen = document.getElementById('titleScreen'), startButton = document.getElementById('startButton'), dayTransition = document.getElementById('dayTransition'), terminalOverlay = document.getElementById('terminalOverlay'), terminalContent = document.getElementById('terminalContent'), terminalBgImage = document.getElementById('terminalBgImage'), blueScreenOverlay = document.getElementById('blueScreenOverlay');
-            let bgLayerActive = bgLayerA, currentBg = null, prevBgBeforeBlue = null;
+            const explorerModalOverlay = document.getElementById('explorerModalOverlay'), explorerFileList = document.getElementById('explorerFileList'), explorerModalCloseBtn = document.getElementById('explorerModalCloseBtn'), explorerModalCloseFooter = document.getElementById('explorerModalCloseFooter'), explorerButton = document.getElementById('explorerButton');
+            function openExplorerModal() { refreshExplorerModal(); explorerModalOverlay.classList.add('active'); }
+            function closeExplorerModal() { explorerModalOverlay.classList.remove('active'); }
+            function refreshExplorerModal() {
+                const chars = ['sayori', 'yuri', 'natsuki', 'monika']; const icons = { sayori: '🎀', yuri: '📚', natsuki: '🧁', monika: '💚' };
+                explorerFileList.innerHTML = '';
+                chars.forEach(ch => {
+                    const exists = fileStates[ch] === true;
+                    const storyDeleted = fileStates.storyDeletions && fileStates.storyDeletions[ch] === true;
+                    const li = document.createElement('li'); li.className = 'explorer-file-item';
+                    li.innerHTML = `<div class="explorer-file-info"><span class="explorer-file-icon">${icons[ch]||'📄'}</span><span class="explorer-file-name">${ch}.chr</span><span class="explorer-file-status ${exists?'exists':'deleted'}">${exists?t('fileExists'):t('fileDeleted')}</span></div><div class="explorer-file-actions"></div>`;
+                    const actionsDiv = li.querySelector('.explorer-file-actions');
+                    if (exists) {
+                        const delBtn = document.createElement('button'); delBtn.className = 'btn-del'; delBtn.textContent = t('deleteFile');
+                        delBtn.addEventListener('click', (e) => { e.stopPropagation(); fileStates[ch] = false; fileStates.storyDeletions[ch] = false; saveFileStates(fileStates); refreshExplorerModal(); });
+                        actionsDiv.appendChild(delBtn);
+                    } else {
+                        const restoreBtn = document.createElement('button'); restoreBtn.className = 'btn-restore'; restoreBtn.textContent = t('restoreFile');
+                        restoreBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            if (storyDeleted) { showToast(t('monikaBlockRestore')); return; }
+                            fileStates[ch] = true; fileStates.storyDeletions[ch] = false; saveFileStates(fileStates); refreshExplorerModal();
+                        });
+                        actionsDiv.appendChild(restoreBtn);
+                    }
+                    explorerFileList.appendChild(li);
+                });
+            }
+            explorerModalCloseBtn.addEventListener('click', closeExplorerModal); explorerModalCloseFooter.addEventListener('click', closeExplorerModal); explorerModalOverlay.addEventListener('click', (e) => { if (e.target === explorerModalOverlay) closeExplorerModal(); });
+            explorerButton.addEventListener('click', (e) => { e.stopPropagation(); openExplorerModal(); });
+            let bgLayerActive = bgLayerA, currentBg = null;
             function setBg(path) { if (path === currentBg) return; currentBg = path; const next = bgLayerActive === bgLayerA ? bgLayerB : bgLayerA; if (path) next.style.backgroundImage = `url("${path}")`; else next.style.backgroundImage = 'none'; next.classList.add('active'); bgLayerActive.classList.remove('active'); bgLayerActive = next; }
             function setSprite(path, charKey) {
                 if (!path) { charImg.classList.remove('show'); return; }
                 if (charImg.getAttribute('data-src') !== path) { charImg.classList.remove('show'); charImg.setAttribute('data-src', path); charImg.onerror = () => {}; charImg.src = path; }
-                const c = charKey ? characters[charKey] : null;
-                let scale = c && c.scale ? c.scale : 1, offsetY = c && c.offsetY ? c.offsetY : '0%', bottom = c && c.bottom ? c.bottom : null;
-                charImg.style.transform = `translateX(-50%) translateY(${offsetY}) scale(${scale})`;
-                charImg.style.bottom = bottom !== null ? bottom : '';
+                const c = charKey ? characters[charKey] : null; let scale = c && c.scale ? c.scale : 1; let offsetY = c && c.offsetY ? c.offsetY : '0%'; let bottom = c && c.bottom ? c.bottom : null;
+                charImg.style.transform = `translateX(-50%) translateY(${offsetY}) scale(${scale})`; charImg.style.bottom = bottom !== null ? bottom : '';
                 requestAnimationFrame(() => charImg.classList.add('show'));
             }
-            function updateScene(charKey, bgOverride) {
-                const c = characters[charKey] || characters.narrator;
-                speakerName.textContent = getCharName(charKey); speakerName.style.color = c.color;
-                if (bgOverride) setBg(bgOverride); else if (c.bg !== null) setBg(c.bg);
-                setSprite(c.sprite, charKey);
-            }
+            function updateScene(charKey, bgOverride) { const c = characters[charKey] || characters.narrator; speakerName.textContent = getCharName(charKey); speakerName.style.color = c.color; if (bgOverride) setBg(bgOverride); else if (c.bg !== null) setBg(c.bg); setSprite(c.sprite, charKey); }
             function showDayTransition(n) { const label = td('День ' + n, 'Day ' + n); dayTransition.textContent = label; dayTransition.classList.add('show'); setTimeout(() => dayTransition.classList.remove('show'), 1600); }
             function clearChoices() { choicesArea.innerHTML = ''; }
             function showNext(v) { nextMarker.classList.toggle('hidden', !v); }
             function addChoice(label, onClick, disabled = false) { const btn = document.createElement('button'); btn.className = 'choice-btn'; btn.textContent = label; btn.disabled = disabled; btn.onclick = (e) => { e.stopPropagation(); if (!disabled) { clearChoices(); showNext(false); onClick(); } }; choicesArea.appendChild(btn); }
             let state = null, activeSteps = [], stepIndex = 0, dayIndex = 0, dayBgOverride = null, currentScript = null;
-            function freshState() { return { started: false, paused: false, affection: 2, corruption: 0, bowFixed: false, helpedWithBump: false, loveConfessed: false, visitedAtNight: false, route: null, helper: null, act2Menu: false, act2: false, act3Menu: false, act3: false, disableSave: false, disableUI: false, routeAct2: null, yuriAlive: false }; }
+            function freshState() { const fs = loadFileStates(); return { started: false, paused: false, affection: 2, corruption: 0, bowFixed: false, helpedWithBump: false, loveConfessed: false, visitedAtNight: false, route: null, helper: null, act2Menu: false, act2: false, act3Menu: false, act3: false, disableSave: false, disableUI: false, routeAct2: null, yuriAlive: false, currentAct: 1 }; }
+            function isCharDeleted(ch) { return fileStates[ch] === false; }
+            function filterStepsForDeletedCharacters(steps) {
+                return steps.filter(step => {
+                    if (step.type === 'line') { const sp = step.speaker; if (sp === 'sayori' && isCharDeleted('sayori')) return false; if (sp === 'yuri' && isCharDeleted('yuri')) return false; if (sp === 'natsuki' && isCharDeleted('natsuki')) return false; if (sp === 'monika' && isCharDeleted('monika')) return false; if (sp === 'scene2' && isCharDeleted('sayori')) return false; if (sp === 'scene4' && isCharDeleted('sayori')) return false; if (sp === 'confession' && isCharDeleted('sayori')) return false; if (sp === 'death' && isCharDeleted('sayori')) return false; if (sp === 'night' && isCharDeleted('sayori')) return false; if (sp === 'closetNatsuki' && isCharDeleted('natsuki')) return false; if (sp === 'stairsYuri' && isCharDeleted('yuri')) return false; if (sp === 'helpNatsukiScene' && isCharDeleted('natsuki')) return false; if (sp === 'helpYuriScene' && isCharDeleted('yuri')) return false; return true; }
+                    if (step.type === 'choice' && step.options) { step.options = step.options.filter(opt => { const lines = opt.lines || []; return lines.every(l => !( (l.speaker==='sayori'&&isCharDeleted('sayori'))||(l.speaker==='yuri'&&isCharDeleted('yuri'))||(l.speaker==='natsuki'&&isCharDeleted('natsuki'))||(l.speaker==='monika'&&isCharDeleted('monika')) ) ); }); return step.options.length > 0; }
+                    return true;
+                });
+            }
 
             const scriptAct1 = [
-                { title:1, onEnter(){ dayBgOverride=null; updateScene('heroRoom'); }, steps:()=>[
+                { title:1, onEnter(){ dayBgOverride=null; updateScene('heroRoom'); }, steps:()=> filterStepsForDeletedCharacters([
                     { type:'line', speaker:'heroRoom', text:'Утро. Будильник прозвенел слишком рано… Но сегодня мой первый день в новом клубе.', en:'Morning. The alarm rang too early… But today is my first day at the new club.' },
                     { type:'line', speaker:'street', text:'Выйдя из дома, я увидел бегущую навстречу Сайори — она, как всегда, опаздывала.', en:'Leaving the house, I saw Sayori running towards me — late, as always.' },
                     { type:'line', speaker:'sayori', text:'Ты опять не разбудил меня! Ну ничего, идём вместе, а то опоздаем!', bg:IMG.street, en:'You didn\'t wake me up again! Oh well, let\'s go together or we\'ll be late!' },
@@ -484,8 +350,8 @@
                             { speaker:'heroRoom', text:'Вечером я сел за стол, вспоминая глубокие метафоры Юри.', en:'In the evening I sat down, remembering Yuri\'s profound metaphors.', bg:IMG.poemYuri }
                         ]}
                     ]}
-                ]},
-                { title:2, onEnter(){ dayBgOverride=null; updateScene('street'); }, steps:()=>{
+                ]) },
+                { title:2, onEnter(){ dayBgOverride=null; updateScene('street'); }, steps:()=> filterStepsForDeletedCharacters((()=>{
                     if(state.route==='natsuki') return [
                         { type:'line', speaker:'street', text:'Утром я, как обычно, встретил Сайори по пути в школу.', en:'In the morning, as usual, I met Sayori on the way to school.' },
                         { type:'line', speaker:'natsuki', text:'Эй, ты! Помоги — кто-то закинул мою мангу в кладовку класса.', en:'Hey, you! Help — someone tossed my manga into the classroom closet.', bg:IMG.closetNatsuki },
@@ -520,8 +386,8 @@
                         { speaker:'monika', text:'Моника заметила, что стихотворение сегодня очень похоже на манеру письма Сайори.', en:'Monika noticed that today\'s poem closely resembles Sayori\'s writing style.' },
                         { speaker:'sayori', text:'Правда? Мне понравилось твоё стихотворение… Спасибо, что ты в клубе.', en:'Really? I liked your poem… Thank you for being in the club.' }
                     ].map(l=>(l.type?l:{type:'line',...l}));
-                }},
-                { title:3, onEnter(){ dayBgOverride=IMG.festivalRoom; updateScene('monika',dayBgOverride); }, steps:()=>{
+                })()) },
+                { title:3, onEnter(){ dayBgOverride=IMG.festivalRoom; updateScene('monika',dayBgOverride); }, steps:()=> filterStepsForDeletedCharacters((()=>{
                     const base=[
                         { type:'line', speaker:'monika', text:'Сегодня готовимся к фестивалю. Сайори, ты что-то хотела сказать?', en:'Today we\'re preparing for the festival. Sayori, did you want to say something?' },
                         { type:'line', speaker:'sayori', text:'Да! Я предлагаю украсить комнату гирляндами.', en:'Yes! I suggest decorating the room with garlands.' },
@@ -538,12 +404,10 @@
                             ]}
                         ]}
                     ];
-                    if(state.route==='natsuki'){ base.push({ type:'line', speaker:'heroRoom', text:'Вечером я снова сел писать стихотворение, вспоминая задорные строчки Нацуки.', en:'In the evening I sat down to write another poem, remembering Natsuki\'s lively lines.', bg:IMG.poemNatsuki2 }); base.push({ type:'line', speaker:'natsuki', text:'Опять что-то в моём духе? Ладно, ладно… мне понравилось, если честно.', en:'Something in my style again? Alright, alright… I liked it, honestly.' }); }
-                    else if(state.route==='yuri'){ base.push({ type:'line', speaker:'heroRoom', text:'Во второй раз я постарался писать ещё вдумчивее, помня слова Юри.', en:'The second time I tried to write even more thoughtfully, remembering Yuri\'s words.', bg:IMG.poemYuri2 }); base.push({ type:'line', speaker:'yuri', text:'Заметен явный прогресс… Мне правда приятно это читать.', en:'There\'s clear progress… I truly enjoy reading this.' }); }
-                    else { base.push({ type:'line', speaker:'sayori', text:'Ты опять писал стихи специально для меня? Мне так приятно…', en:'You wrote poems just for me again? That makes me so happy…' }); }
+                    if(state.route==='natsuki'){ base.push({ type:'line', speaker:'heroRoom', text:'Вечером я снова сел писать стихотворение, вспоминая задорные строчки Нацуки.', en:'In the evening I sat down to write another poem, remembering Natsuki\'s lively lines.', bg:IMG.poemNatsuki2 }); base.push({ type:'line', speaker:'natsuki', text:'Опять что-то в моём духе? Ладно, ладно… мне понравилось, если честно.', en:'Something in my style again? Alright, alright… I liked it, honestly.' }); } else if(state.route==='yuri'){ base.push({ type:'line', speaker:'heroRoom', text:'Во второй раз я постарался писать ещё вдумчивее, помня слова Юри.', en:'The second time I tried to write even more thoughtfully, remembering Yuri\'s words.', bg:IMG.poemYuri2 }); base.push({ type:'line', speaker:'yuri', text:'Заметен явный прогресс… Мне правда приятно это читать.', en:'There\'s clear progress… I truly enjoy reading this.' }); } else { base.push({ type:'line', speaker:'sayori', text:'Ты опять писал стихи специально для меня? Мне так приятно…', en:'You wrote poems just for me again? That makes me so happy…' }); }
                     return base;
-                }},
-                { title:4, onEnter(){ dayBgOverride=null; updateScene('scene4'); }, steps:()=>[
+                })()) },
+                { title:4, onEnter(){ dayBgOverride=null; updateScene('scene4'); }, steps:()=> filterStepsForDeletedCharacters([
                     { type:'line', speaker:'scene4', text:'Ой-ёй! Я ударилась головой о дверь… Кажется, будет шишка.', en:'Ouch! I hit my head on the door… I think there\'s going to be a bump.' },
                     { type:'line', speaker:'scene4', text:'Можешь принести что-нибудь холодное? Или пустяки, само пройдёт.', en:'Can you bring something cold? Or never mind, it\'ll go away on its own.' },
                     { type:'choice', options:[
@@ -571,8 +435,8 @@
                         ]}
                     ]},
                     { type:'line', speaker:'hero', text:'Закончив с делами, я решил заглянуть к Сайори — узнать, как у неё дела.', en:'Having finished, I decided to check on Sayori — to see how she was doing.' }
-                ]},
-                { title:5, onEnter(){ dayBgOverride=null; playOneShot(confessionMusic,()=>{if(state.started) playGameBg();}); updateScene('confession'); }, steps:()=>[
+                ]) },
+                { title:5, onEnter(){ dayBgOverride=null; playOneShot(confessionMusic,()=>{if(state.started) playGameBg();}); updateScene('confession'); }, steps:()=> filterStepsForDeletedCharacters([
                     { type:'line', speaker:'confession', text:'Послушай… я хочу, чтобы ты развлекался с другими девушками.', en:'Listen… I want you to have fun with the other girls.' },
                     { type:'line', speaker:'hero', text:'Сайори, почему ты так говоришь?', en:'Sayori, why are you saying that?' },
                     { type:'line', speaker:'confession', text:'Просто… Я не хочу тебя обременять. Но если честно…', en:'It\'s just… I don\'t want to be a burden. But honestly…' },
@@ -603,11 +467,11 @@
                             { speaker:'street', text:'Дверь открыта… О нет…', en:'The door is open… Oh no…' }
                         ]}
                     ]}
-                ], onComplete(s){ if(s.visitedAtNight) goodEnding(); else badEnding(); } }
+                ]), onComplete(s){ if(s.visitedAtNight) goodEnding(); else badEnding(); } }
             ];
 
             const scriptAct2 = [
-                { title:1, onEnter(){ dayBgOverride=null; updateScene('hallway'); }, steps:()=>[
+                { title:1, onEnter(){ dayBgOverride=null; updateScene('hallway'); }, steps:()=> filterStepsForDeletedCharacters([
                     { type:'line', speaker:'hallway', text:'Я шёл по школьному коридору, разыскивая какой-нибудь кружок, куда можно записаться.', en:'I walked down the school hallway, looking for some club to join.' },
                     { type:'line', speaker:'monika', text:'О, привет! Ты, кажется, ищешь, чем заняться? Я Моника, президент литературного клуба.', en:'Oh, hi! You look like you\'re looking for something to do? I\'m Monika, the literature club president.', bg:IMG.hallway },
                     { type:'line', speaker:'hero', text:'Литературный клуб? Никогда о таком не слышал…', en:'Literature club? Never heard of it…' },
@@ -617,8 +481,8 @@
                     { type:'line', speaker:'monika', text:'Добро пожаловать в Литературный клуб! Почему бы тебе не написать стихотворение?', en:'Welcome to the Literature Club! Why don\'t you write a poem?' },
                     { type:'poemgame' },
                     { type:'line', speaker:'monika', text:'Хороший выбор. Уверена, ей понравится.', en:'Good choice. I\'m sure she\'ll be pleased.' }
-                ]},
-                { title:2, onEnter(){ dayBgOverride=null; updateScene('monikaEvil'); }, steps:()=>{
+                ]) },
+                { title:2, onEnter(){ dayBgOverride=null; updateScene('monikaEvil'); }, steps:()=> filterStepsForDeletedCharacters((()=>{
                     state.routeAct2 = state.routeAct2 || 'yuri';
                     const base = [
                         { type:'line', speaker:'monikaEvil', text:'Вот мой стих. «Дыра в стене». Продолжение…', en:'Here\'s my poem. "Hole in the Wall". Continuation…' },
@@ -648,8 +512,8 @@
                         base.push({ type:'line', speaker:'monikaEvil', text:'Юри, не дави на него.', en:'Yuri, don\'t pressure him.' });
                     }
                     return base;
-                }},
-                { title:3, onEnter(){ dayBgOverride=null; updateScene('monikaEvil'); }, steps:()=>{
+                })()) },
+                { title:3, onEnter(){ dayBgOverride=null; updateScene('monikaEvil'); }, steps:()=> filterStepsForDeletedCharacters((()=>{
                     state.routeAct2 = state.routeAct2 || 'yuri';
                     const base = [
                         { type:'line', speaker:'monikaEvil', text:'Мой следующий стих — «Сохрани меня».', en:'My next poem — "Save Me".' },
@@ -670,12 +534,12 @@
                     if (state.routeAct2 === 'natsuki') { base.push({ type:'effect', effect:'natsuki_neck_break' }); }
                     base.push({ type:'line', speaker:'monikaEvil', text:'Думаю, на сегодня хватит. Пойдём.', en:'I think that\'s enough for today. Let\'s go.' });
                     return base;
-                }},
-                { title:4, onEnter(){ dayBgOverride=null; updateScene('monikaEvil'); }, steps:()=>[
+                })()) },
+                { title:4, onEnter(){ dayBgOverride=null; updateScene('monikaEvil'); }, steps:()=> filterStepsForDeletedCharacters([
                     { type:'line', speaker:'natsuki', text:'(передаёт записку) Помоги мне отвести Юри к психологу. Я боюсь её реакции.', en:'(passes a note) Help me take Yuri to a psychologist. I\'m scared of her reaction.' },
                     { type:'choice', options:[
-                        { label:'Согласиться помочь', enLabel:'Agree to help', apply:(s)=>{}, lines:[{ speaker:'hero', text:'Хорошо, я помогу.', en:'Okay, I\'ll help.' }] },
-                        { label:'Отказаться', enLabel:'Refuse', apply:(s)=>{}, lines:[{ speaker:'hero', text:'Я не хочу в это ввязываться.', en:'I don\'t want to get involved.' }] }
+                        { label:'Согласиться помочь', enLabel:'Agree to help', apply:(s)=>{}, lines:[ { speaker:'hero', text:'Хорошо, я помогу.', en:'Okay, I\'ll help.' } ] },
+                        { label:'Отказаться', enLabel:'Refuse', apply:(s)=>{}, lines:[ { speaker:'hero', text:'Я не хочу в это ввязываться.', en:'I don\'t want to get involved.' } ] }
                     ]},
                     { type:'effect', effect:'natsuki_face_disappear' },
                     { type:'line', speaker:'natsukiGlitch', text:'Игнорируй записку. Лучше проводи время с Моникой. Только Моника.', en:'Ignore the note. Spend time with Monika instead. Only Monika.', glitch:true },
@@ -684,8 +548,8 @@
                     { type:'line', speaker:'monikaEvil', text:'Не трать время на Юри. Она из-за тебя режет себя. Лучше будь со мной.', en:'Don\'t waste time on Yuri. She cuts herself because of you. Stay with me instead.' },
                     { type:'effect', effect:'blue_screen' },
                     { type:'line', speaker:'monikaEvil', text:'Ой, кажется, произошла ошибка. Просто продолжай.', en:'Oops, looks like an error occurred. Just continue.' }
-                ]},
-                { title:5, onEnter(){ dayBgOverride=null; updateScene('monikaEvil'); }, steps:()=>[
+                ]) },
+                { title:5, onEnter(){ dayBgOverride=null; updateScene('monikaEvil'); }, steps:()=> filterStepsForDeletedCharacters([
                     { type:'line', speaker:'yuriKnifeCh', text:'Вот мой стих… «mdpnfbo,jrfp:» … капли крови.', en:'Here\'s my poem… "mdpnfbo,jrfp:" … bloodstains.', glitch:true },
                     { type:'effect', effect:'yuri_real_eyes' },
                     { type:'line', speaker:'yuriRealEyesCh', text:'Нравится? Я пропитала его своим ароматом… Меня сейчас стошнит.', en:'Like it? I infused it with my scent… I feel like vomiting.', glitch:true },
@@ -710,80 +574,45 @@
                             { type:'jump', target:'act3_menu' }
                         ]}
                     ]}
-                ]}
+                ]), onComplete(s){ deleteYuriNatsukiByStory(); } }
             ];
             const scriptAct3 = [];
+
+            function deleteSayoriByStory() { fileStates.sayori = false; fileStates.storyDeletions.sayori = true; saveFileStates(fileStates); refreshExplorerModal(); }
+            function deleteYuriNatsukiByStory() { fileStates.yuri = false; fileStates.natsuki = false; fileStates.storyDeletions.yuri = true; fileStates.storyDeletions.natsuki = true; saveFileStates(fileStates); refreshExplorerModal(); }
 
             function typeText(text, glitch=false) { dialogueText.innerHTML=''; if(glitch) text=glitchText(text); const frag=document.createDocumentFragment(); [...text].forEach((ch,i)=>{ const span=document.createElement('span'); span.className='char'; span.textContent=ch; span.style.animationDelay=(i*12)+'ms'; frag.appendChild(span); }); dialogueText.appendChild(frag); }
             function glitchText(text) { return text.split('').map(c=>{ if(Math.random()<0.2) return String.fromCharCode(33+Math.floor(Math.random()*94)); if(Math.random()<0.1) return '█'; return c; }).join(''); }
             function getStepText(step) { if(!step) return ''; return currentLang==='en'?(step.en||step.text):step.text; }
-            function isChrDeleted(ch) { return chrFiles[ch] && chrFiles[ch].deleted; }
-            function renderCurrentStep() {
-                if(stepIndex>=activeSteps.length){ finishDay(); return; }
-                const step=activeSteps[stepIndex]; if(!step){ stepIndex++; renderCurrentStep(); return; }
-                if(step.type==='line'){
-                    let speaker=step.speaker;
-                    if(speaker==='sayori'&&isChrDeleted('sayori')) speaker='narrator';
-                    if(speaker==='yuri'&&isChrDeleted('yuri')) speaker='narrator';
-                    if(speaker==='natsuki'&&isChrDeleted('natsuki')) speaker='narrator';
-                    updateScene(speaker,step.bg||dayBgOverride);
-                    typeText(getStepText(step),step.glitch||false); clearChoices(); showNext(true); return;
-                }
-                if(step.type==='choice'){ showNext(false); clearChoices(); step.options.forEach(opt=>{ const label=currentLang==='en'?(opt.enLabel||opt.label):opt.label; addChoice(label,()=>{ opt.apply(state); const resolvedLines=opt.lines.map(l=>({type:'line',...l})); activeSteps.splice(stepIndex,1,...resolvedLines); renderCurrentStep(); }); }); return; }
-                if(step.type==='poemgame'){ renderPoemGame(); return; }
-                if(step.type==='effect'){ handleEffect(step.effect); return; }
-                if(step.type==='jump'){
-                    if(step.target==='act3_menu'){
-                        chrFiles.yuri.deleted=true; chrFiles.yuri.deletedByStory=true;
-                        chrFiles.natsuki.deleted=true; chrFiles.natsuki.deletedByStory=true;
-                        saveChrFiles();
-                        goToMenuActThree(); return;
-                    }
-                    stepIndex++; renderCurrentStep(); return;
-                }
-                stepIndex++; renderCurrentStep();
-            }
-            function handleEffect(effect) {
-                switch(effect) {
-                    case 'screen_shake': bodyEl.classList.add('glitch'); setTimeout(()=>bodyEl.classList.remove('glitch'),1500); playGlitch(); break;
-                    case 'natsuki_glitch_face': setSprite(IMG.natsukiBrokenNeck,'natsukiGlitch'); setTimeout(()=>setSprite(null),2000); break;
-                    case 'natsuki_neck_break': setSprite(IMG.natsukiBrokenNeck,'natsukiGlitch'); playGlitch(); break;
-                    case 'natsuki_blood_tears': staticOverlay.style.opacity='0.4'; setTimeout(()=>staticOverlay.style.opacity='0',2000); break;
-                    case 'natsuki_face_disappear': setSprite(null); break;
-                    case 'screen_restart': bodyEl.style.background='#000'; setTimeout(()=>bodyEl.style.background='',1000); break;
-                    case 'yuri_real_eyes': updateScene('yuriRealEyesCh'); break;
-                    case 'show_dead_yuri': updateScene('yuriDeadCh'); staticOverlay.style.opacity='0.5'; break;
-                    case 'natsuki_vomit': updateScene('natsukiVomitCh'); break;
-                    case 'delete_characters': staticOverlay.style.opacity='0.9'; setSprite(null); playGlitch(); break;
-                    case 'blue_screen': blueScreenOverlay.style.backgroundImage = `url("${IMG.blueScreen}")`; blueScreenOverlay.style.backgroundSize = 'contain'; blueScreenOverlay.style.backgroundRepeat = 'no-repeat'; blueScreenOverlay.style.backgroundPosition = 'center'; blueScreenOverlay.style.display = 'block'; setTimeout(() => { blueScreenOverlay.style.display = 'none'; blueScreenOverlay.style.backgroundImage = ''; }, 7000); break;
-                    case 'yuri_normal': updateScene('yuri'); break;
-                    default: console.log('Unknown effect:',effect);
-                }
-                stepIndex++; renderCurrentStep();
-            }
-
+            function renderCurrentStep() { if(stepIndex>=activeSteps.length){ finishDay(); return; } const step=activeSteps[stepIndex]; if(!step){ stepIndex++; renderCurrentStep(); return; } if(step.type==='line'){ updateScene(step.speaker,step.bg||dayBgOverride); typeText(getStepText(step),step.glitch||false); clearChoices(); showNext(true); return; } if(step.type==='choice'){ showNext(false); clearChoices(); step.options.forEach(opt=>{ const label=currentLang==='en'?(opt.enLabel||opt.label):opt.label; addChoice(label,()=>{ opt.apply(state); const resolvedLines=opt.lines.map(l=>({type:'line',...l})); activeSteps.splice(stepIndex,1,...resolvedLines); renderCurrentStep(); }); }); return; } if(step.type==='poemgame'){ renderPoemGame(); return; } if(step.type==='effect'){ handleEffect(step.effect); return; } if(step.type==='jump'){ if(step.target==='act3_menu'){ goToMenuActThree(); return; } stepIndex++; renderCurrentStep(); return; } stepIndex++; renderCurrentStep(); }
+            function handleEffect(effect) { switch(effect) { case 'screen_shake': bodyEl.classList.add('glitch'); setTimeout(()=>bodyEl.classList.remove('glitch'),1500); playGlitch(); break; case 'natsuki_glitch_face': setSprite(IMG.natsukiBrokenNeck,'natsukiGlitch'); setTimeout(()=>setSprite(null),2000); break; case 'natsuki_neck_break': setSprite(IMG.natsukiBrokenNeck,'natsukiGlitch'); playGlitch(); break; case 'natsuki_blood_tears': staticOverlay.style.opacity='0.4'; setTimeout(()=>staticOverlay.style.opacity='0',2000); break; case 'natsuki_face_disappear': setSprite(null); break; case 'screen_restart': bodyEl.style.background='#000'; setTimeout(()=>bodyEl.style.background='',1000); break; case 'yuri_real_eyes': updateScene('yuriRealEyesCh'); break; case 'show_dead_yuri': updateScene('yuriDeadCh'); staticOverlay.style.opacity='0.5'; break; case 'natsuki_vomit': updateScene('natsukiVomitCh'); break; case 'delete_characters': staticOverlay.style.opacity='0.9'; setSprite(null); playGlitch(); break; case 'blue_screen': blueScreenOverlay.style.backgroundImage = `url("${IMG.blueScreen}")`; blueScreenOverlay.style.backgroundSize = 'contain'; blueScreenOverlay.style.backgroundRepeat = 'no-repeat'; blueScreenOverlay.style.backgroundPosition = 'center'; blueScreenOverlay.style.display = 'block'; setTimeout(() => { blueScreenOverlay.style.display = 'none'; blueScreenOverlay.style.backgroundImage = ''; }, 7000); break; case 'yuri_normal': updateScene('yuri'); break; default: console.log('Unknown effect:',effect); } stepIndex++; renderCurrentStep(); }
             const poemWords = [ { word:'котёнок', enWord:'kitten', tag:'natsuki' }, { word:'кекс', enWord:'cupcake', tag:'natsuki' }, { word:'улыбка', enWord:'smile', tag:'sayori' }, { word:'солнце', enWord:'sun', tag:'sayori' }, { word:'праздник', enWord:'party', tag:'sayori' }, { word:'тень', enWord:'shadow', tag:'yuri' }, { word:'бездна', enWord:'abyss', tag:'yuri' }, { word:'тишина', enWord:'silence', tag:'yuri' }, { word:'книга', enWord:'book', tag:'yuri' }, { word:'смех', enWord:'laughter', tag:'natsuki' } ];
             function renderPoemGame() { updateScene('narrator',IMG.poemBg); speakerName.textContent=t('poemGameTitle'); speakerName.style.color='#3e2723'; typeText(t('poemPrompt')); showNext(false); clearChoices(); const words=state.act2?poemWords.filter(w=>w.tag!=='sayori'):poemWords; const selected=[]; const confirmBtn=document.createElement('button'); confirmBtn.className='choice-btn'; confirmBtn.textContent=t('ready')+' (0/5)'; confirmBtn.disabled=true; confirmBtn.style.opacity='0.5'; confirmBtn.style.flex='1 1 100%'; words.forEach(item=>{ const btn=document.createElement('button'); btn.className='choice-btn'; btn.textContent=currentLang==='en'?item.enWord:item.word; btn.onclick=(e)=>{ e.stopPropagation(); const idx=selected.indexOf(item); if(idx>=0){ selected.splice(idx,1); btn.style.background=''; }else if(selected.length<5){ selected.push(item); btn.style.background='#d7ccc8'; } confirmBtn.textContent=t('ready')+` (${selected.length}/5)`; confirmBtn.disabled=selected.length!==5; confirmBtn.style.opacity=selected.length===5?'1':'0.5'; }; choicesArea.appendChild(btn); }); confirmBtn.onclick=(e)=>{ e.stopPropagation(); if(selected.length!==5) return; clearChoices(); const counts={}; selected.forEach(w=>{ counts[w.tag]=(counts[w.tag]||0)+1; }); let winner='sayori',max=-1; Object.keys(counts).forEach(tag=>{ if(counts[tag]>max){ max=counts[tag]; winner=tag; } }); if(state.act2) state.routeAct2=winner; else state.route=winner; const reactions={ natsuki:{ ru:'Хм… а неплохо! Мне понравилось, тут есть характер.', en:'Hm… not bad! I liked it, it has character.' }, yuri:{ ru:'Очень… глубоко. Мне нравится атмосфера этих строк.', en:'Very… profound. I like the atmosphere of these lines.' }, sayori:{ ru:'Вау, как мило! У тебя получилось очень тёплое стихотворение!', en:'Wow, how cute! You wrote a really warm poem!' } }; const reactionText=currentLang==='en'?reactions[winner].en:reactions[winner].ru; const resultStep={ type:'line', speaker:winner, text:reactionText, en:reactions[winner].en }; activeSteps.splice(stepIndex,1,resultStep); renderCurrentStep(); }; choicesArea.appendChild(confirmBtn); }
-
             function advance() { if(!state||!state.started) return; if(choicesArea.children.length>0) return; const step=activeSteps[stepIndex]; if(step&&step.type==='line'){ stepIndex++; renderCurrentStep(); } }
             function startDay(idx) { dayIndex=idx; const day=currentScript[idx]; showDayTransition(day.title); activeSteps=day.steps(); stepIndex=0; if(day.onEnter) day.onEnter(); renderCurrentStep(); setTimeout(()=>autosave(),1800); }
             function finishDay() { const day=currentScript[dayIndex]; if(day.onComplete){ day.onComplete(state); return; } if(dayIndex+1<currentScript.length) startDay(dayIndex+1); }
-
             function badEnding() { stopAllMusic(); deathMusic.play().catch(e=>{}); updateScene('death'); typeText(td('Сайори повесилась…','Sayori hanged herself…')); speakerName.textContent=''; bodyEl.classList.add('corrupted'); staticOverlay.style.opacity='0.9'; showNext(false); clearChoices(); setTimeout(()=>{ updateScene('hero'); typeText(td('Я потерял самого дорогого человека. Я не смог её спасти…','I lost the most precious person. I couldn\'t save her…')); staticOverlay.style.opacity='0.8'; setTimeout(()=>{ typeText(td('И никогда не прощу себе этого.','And I will never forgive myself for it.')); bodyEl.classList.add('glitch'); state.started=false; setTimeout(()=>{ transitionToActTwoBad(); },5000); },2500); },3000); }
             function goodEnding() { stopAllMusic(); playGameBg(); updateScene('sayori',IMG.festivalRoom); const lines=[ { speaker:'sayori', text:'Я пришла на фестиваль! Спасибо тебе.', en:'I came to the festival! Thank you.' }, { speaker:'monika', text:'Сайори, ты сегодня светишься.', en:'Sayori, you\'re glowing today.' }, { speaker:'yuri', text:'Мы все рады, что ты с нами.', en:'We\'re all glad you\'re with us.' }, { speaker:'natsuki', text:'Ну наконец-то без опозданий.', en:'Finally, no delays.' }, { speaker:'hero', text:'Мы всегда будем рядом.', en:'We\'ll always be by your side.' } ]; activeSteps=lines.map(l=>({type:'line',...l})); stepIndex=0; dayIndex=-1; const onDialogueComplete=()=>{ document.getElementById('dialogueBox').style.display='none'; nextMarker.style.display='none'; transitionToActTwo(); }; renderCurrentStepWithEnd(onDialogueComplete); }
             function renderCurrentStepWithEnd(onEnd) { function step() { if(stepIndex>=activeSteps.length){ onEnd(); return; } const s=activeSteps[stepIndex]; updateScene(s.speaker,IMG.festivalRoom); typeText(getStepText(s)); showNext(true); } nextMarker.onclick=(e)=>{ e.stopPropagation(); stepIndex++; step(); }; step(); }
-
-            function goToMenuActTwo() { stopAllMusic(); if(terminalOverlay.style.display==='block') terminalOverlay.style.display='none'; if(!state) state=freshState(); state.started=false; state.paused=true; state.act2=true; state.act2Menu=false; state.act3=false; state.act3Menu=false; state.disableUI=false; state.disableSave=false; activeSteps=[]; stepIndex=0; dayIndex=0; dayBgOverride=null; bodyEl.classList.remove('corrupted','glitch'); staticOverlay.style.opacity='0'; setBg(IMG.titleAct2); setSprite(null); speakerName.textContent=''; typeText(t('clickToStart')); clearChoices(); showNext(false); nextMarker.onclick=null; titleScreen.classList.add('show'); document.getElementById('dialogueBox').style.display=''; document.getElementById('nextMarker').style.display=''; titleMusic.play().catch(()=>{}); updateAllUI(); if(saveModalOverlay.classList.contains('active')) closeSaveModal(); }
-            function goToMenuActThree() { stopAllMusic(); if(!state) state=freshState(); state.started=false; state.paused=true; state.act3=true; state.act3Menu=false; state.act2=false; state.act2Menu=false; activeSteps=[]; stepIndex=0; dayIndex=0; bodyEl.classList.remove('corrupted','glitch'); staticOverlay.style.opacity='0'; setBg(IMG.titleAct3); setSprite(null); speakerName.textContent=''; typeText(t('clickToStart')); clearChoices(); showNext(false); nextMarker.onclick=null; titleScreen.classList.add('show'); document.getElementById('dialogueBox').style.display=''; document.getElementById('nextMarker').style.display=''; updateAllUI(); if(saveModalOverlay.classList.contains('active')) closeSaveModal(); }
+            function goToMenuActTwo() { stopAllMusic(); if(terminalOverlay.style.display==='block') terminalOverlay.style.display='none'; if(!state) state=freshState(); state.started=false; state.paused=true; state.act2=true; state.act2Menu=false; state.act3=false; state.act3Menu=false; state.currentAct=2; state.disableUI=false; state.disableSave=false; activeSteps=[]; stepIndex=0; dayIndex=0; dayBgOverride=null; bodyEl.classList.remove('corrupted','glitch'); staticOverlay.style.opacity='0'; setBg(IMG.titleAct2); setSprite(null); speakerName.textContent=''; typeText(t('clickToStart')); clearChoices(); showNext(false); nextMarker.onclick=null; titleScreen.classList.add('show'); document.getElementById('dialogueBox').style.display=''; document.getElementById('nextMarker').style.display=''; document.getElementById('explorerButton').classList.remove('hidden'); titleMusic.play().catch(()=>{}); updateAllUI(); if(saveModalOverlay.classList.contains('active')) closeSaveModal(); }
+            function goToMenuActThree() { stopAllMusic(); if(!state) state=freshState(); state.started=false; state.paused=true; state.act3=true; state.act3Menu=false; state.act2=false; state.act2Menu=false; state.currentAct=3; activeSteps=[]; stepIndex=0; dayIndex=0; bodyEl.classList.remove('corrupted','glitch'); staticOverlay.style.opacity='0'; setBg(IMG.titleAct3); setSprite(null); speakerName.textContent=''; typeText(t('clickToStart')); clearChoices(); showNext(false); nextMarker.onclick=null; titleScreen.classList.add('show'); document.getElementById('dialogueBox').style.display=''; document.getElementById('nextMarker').style.display=''; document.getElementById('explorerButton').classList.remove('hidden'); updateAllUI(); if(saveModalOverlay.classList.contains('active')) closeSaveModal(); }
             function chooseTitleBg() { if(Math.random()<0.01) return IMG.titleAlt1; return IMG.title; }
-
-            function transitionToActTwo() { chrFiles.sayori.deleted=true; chrFiles.sayori.deletedByStory=true; saveChrFiles(); terminalOverlay.style.display='block'; terminalContent.innerHTML=''; terminalBgImage.style.backgroundImage='none'; terminalBgImage.style.opacity='0'; const seq=[ { text:'Первый Акт пройден, переход на второй...', delay:2500 }, { text:'', delay:800 }, { text:'> del sayori.chr', delay:1500 }, { text:'Удаление файла sayori.chr...', delay:2000 }, { text:'████████████████████████ 100%', delay:2000 }, { text:'sayori.chr успешно удалён.', delay:1500 }, { text:'> _', delay:500, blinking:true } ]; runTerminalSequence(seq,()=>{ setTimeout(()=>goToMenuActTwo(),10000); }); stopAllMusic(); }
-            function transitionToActTwoBad() { chrFiles.sayori.deleted=true; chrFiles.sayori.deletedByStory=true; saveChrFiles(); document.getElementById('dialogueBox').style.display='none'; nextMarker.style.display='none'; bodyEl.classList.remove('glitch'); staticOverlay.style.opacity='0'; terminalOverlay.style.display='block'; terminalContent.innerHTML=''; terminalBgImage.style.backgroundImage=`url("${IMG.deadSayori}")`; terminalBgImage.style.opacity='0'; requestAnimationFrame(()=>{ terminalBgImage.style.opacity='1'; }); const seq=[ { text:'Первый Акт пройден... Ты ужасен... Переход на второй...', delay:3200 }, { text:'', delay:800 }, { text:'> del sayori.chr', delay:1500 }, { text:'Удаление файла sayori.chr...', delay:2000 }, { text:'████████████████████████ 100%', delay:2000 }, { text:'sayori.chr успешно удалён.', delay:1500 }, { text:'> _', delay:500, blinking:true } ]; runTerminalSequence(seq,()=>{ setTimeout(()=>goToMenuActTwo(),10000); }); stopAllMusic(); }
+            function transitionToActTwo() { deleteSayoriByStory(); terminalOverlay.style.display='block'; terminalContent.innerHTML=''; terminalBgImage.style.backgroundImage='none'; terminalBgImage.style.opacity='0'; const seq=[ { text:'Первый Акт пройден, переход на второй...', delay:2500 }, { text:'', delay:800 }, { text:'> del sayori.chr', delay:1500 }, { text:'Удаление файла sayori.chr...', delay:2000 }, { text:'████████████████████████ 100%', delay:2000 }, { text:'sayori.chr успешно удалён.', delay:1500 }, { text:'> _', delay:500, blinking:true } ]; runTerminalSequence(seq,()=>{ setTimeout(()=>goToMenuActTwo(),10000); }); stopAllMusic(); }
+            function transitionToActTwoBad() { deleteSayoriByStory(); document.getElementById('dialogueBox').style.display='none'; nextMarker.style.display='none'; bodyEl.classList.remove('glitch'); staticOverlay.style.opacity='0'; terminalOverlay.style.display='block'; terminalContent.innerHTML=''; terminalBgImage.style.backgroundImage=`url("${IMG.deadSayori}")`; terminalBgImage.style.opacity='0'; requestAnimationFrame(()=>{ terminalBgImage.style.opacity='1'; }); const seq=[ { text:'Первый Акт пройден... Ты ужасен... Переход на второй...', delay:3200 }, { text:'', delay:800 }, { text:'> del sayori.chr', delay:1500 }, { text:'Удаление файла sayori.chr...', delay:2000 }, { text:'████████████████████████ 100%', delay:2000 }, { text:'sayori.chr успешно удалён.', delay:1500 }, { text:'> _', delay:500, blinking:true } ]; runTerminalSequence(seq,()=>{ setTimeout(()=>goToMenuActTwo(),10000); }); stopAllMusic(); }
             function runTerminalSequence(seq,onComplete) { let i=0; function next() { if(i>=seq.length){ if(onComplete) onComplete(); return; } const line=seq[i]; if(line.text==='') terminalContent.appendChild(document.createElement('br')); else { const span=document.createElement('span'); span.textContent=line.text; terminalContent.appendChild(span); if(line.blinking){ const cursor=document.createElement('span'); cursor.className='cursor-blink'; cursor.textContent='█'; terminalContent.appendChild(cursor); } } terminalContent.appendChild(document.createElement('br')); terminalOverlay.scrollTop=terminalOverlay.scrollHeight; i++; if(i<seq.length) setTimeout(next,line.delay); else if(onComplete) onComplete(); } next(); }
+
+            function showQuickEndingSayori() {
+                stopAllMusic(); deathMusic.play().catch(()=>{});
+                const blackout = document.getElementById('blackoutScreen'); const content = document.getElementById('blackoutContent');
+                content.innerHTML = `<img src="${IMG.deadSayori}" alt=""/><div style="font-size:2rem;color:#ffaaaa;">${t('quickEndSayori')}</div>`;
+                blackout.classList.add('show');
+                titleScreen.classList.remove('show'); document.getElementById('explorerButton').classList.add('hidden');
+                setTimeout(() => { blackout.classList.remove('show'); content.innerHTML = ''; titleScreen.classList.add('show'); document.getElementById('explorerButton').classList.remove('hidden'); setBg(chooseTitleBg()); titleMusic.play().catch(()=>{}); }, 10000);
+            }
 
             function startGame() {
                 if(state&&state.paused){
-                    state.paused=false; state.started=true; stopAllMusic(); playGameBg(); titleScreen.classList.remove('show');
+                    state.paused=false; state.started=true; stopAllMusic(); playGameBg(); titleScreen.classList.remove('show'); document.getElementById('explorerButton').classList.add('hidden');
                     nextMarker.onclick=(e)=>{ e.stopPropagation(); advance(); };
                     document.getElementById('dialogueBox').style.display=''; document.getElementById('nextMarker').style.display='';
                     updateAllUI();
@@ -796,64 +625,16 @@
                 }
                 if(state&&state.act3Menu){ alert('Акт 3 ещё не реализован.'); return; }
                 if(state&&state.act2Menu){ startAct2(); return; }
-                if(state&&state.started){ titleScreen.classList.remove('show'); if(bgGameMusic.paused){ stopAllMusic(); playGameBg(); } return; }
-
-                if(isChrDeleted('sayori')&&!chrFiles.sayori.deletedByStory){
-                    stopAllMusic(); state=freshState(); state.started=true;
-                    updateScene('death'); setBg(IMG.deadSayori); setSprite(null);
-                    typeText(td('Сайори повесилась…','Sayori hanged herself…'));
-                    speakerName.textContent=''; bodyEl.classList.add('corrupted'); staticOverlay.style.opacity='0.9';
-                    showNext(false); clearChoices();
-                    setTimeout(()=>{
-                        typeText(td('Теперь все будут счастливы.','Now everyone will be happy.'));
-                        bodyEl.classList.add('glitch');
-                        state.started=false;
-                        setTimeout(()=>{ titleScreen.classList.add('show'); updateAllUI(); },4000);
-                    },2500);
-                    return;
-                }
-                if(isChrDeleted('monika')&&!chrFiles.monika.deletedByStory){
-                    stopAllMusic(); state=freshState(); state.started=true;
-                    updateScene('sayori',IMG.club);
-                    typeText(td('ПОЖАЛУЙСТА, ОСТАНОВИТЕ ЭТО!','PLEASE MAKE IT STOP!'));
-                    setTimeout(()=>{
-                        bodyEl.style.background='black'; staticOverlay.style.opacity='1';
-                        typeText(''); speakerName.textContent='';
-                        setTimeout(()=>{
-                            typeText(td('КОНЕЦ','END'));
-                            setTimeout(()=>{ titleScreen.classList.add('show'); bodyEl.style.background=''; staticOverlay.style.opacity='0'; updateAllUI(); },3000);
-                        },2000);
-                    },2000);
-                    return;
-                }
-                if(Object.values(chrFiles).every(f=>f.deleted) && !chrFiles.sayori.deletedByStory){
-                    stopAllMusic(); state=freshState(); state.started=true;
-                    updateScene('sayori',IMG.club);
-                    typeText(td('ПОЖАЛУЙСТА, ОСТАНОВИТЕ ЭТО!','PLEASE MAKE IT STOP!'));
-                    setTimeout(()=>{
-                        bodyEl.style.background='black'; staticOverlay.style.opacity='1';
-                        typeText(''); speakerName.textContent='';
-                        setTimeout(()=>{
-                            typeText(td('КОНЕЦ','END'));
-                            setTimeout(()=>{
-                                setBg(IMG.deadSayori);
-                                typeText(td('Теперь все будут счастливы.','Now everyone will be happy.'));
-                                setTimeout(()=>{ titleScreen.classList.add('show'); bodyEl.style.background=''; staticOverlay.style.opacity='0'; updateAllUI(); },4000);
-                            },3000);
-                        },2000);
-                    },2000);
-                    return;
-                }
-
-                stopAllMusic(); playGameBg(); state=freshState(); state.started=true; dayBgOverride=null;
-                bodyEl.classList.remove('corrupted','glitch'); staticOverlay.style.opacity='0'; titleScreen.classList.remove('show');
+                if(state&&state.started){ titleScreen.classList.remove('show'); document.getElementById('explorerButton').classList.add('hidden'); if(bgGameMusic.paused){ stopAllMusic(); playGameBg(); } return; }
+                fileStates = loadFileStates();
+                if(!fileStates.sayori || !fileStates.monika || (!fileStates.sayori && !fileStates.yuri && !fileStates.natsuki && !fileStates.monika)) { showQuickEndingSayori(); return; }
+                stopAllMusic(); playGameBg(); state=freshState(); state.started=true; state.currentAct=1; dayBgOverride=null;
+                bodyEl.classList.remove('corrupted','glitch'); staticOverlay.style.opacity='0'; titleScreen.classList.remove('show'); document.getElementById('explorerButton').classList.add('hidden');
                 nextMarker.onclick=(e)=>{ e.stopPropagation(); advance(); }; currentScript=scriptAct1;
                 document.getElementById('dialogueBox').style.display=''; document.getElementById('nextMarker').style.display='';
                 updateAllUI(); startDay(0);
             }
-
-            function startAct2() { stopAllMusic(); playGameBg(); state=freshState(); state.started=true; state.act2=true; state.act2Menu=false; dayBgOverride=null; bodyEl.classList.remove('corrupted','glitch'); staticOverlay.style.opacity='0'; titleScreen.classList.remove('show'); nextMarker.onclick=(e)=>{ e.stopPropagation(); advance(); }; currentScript=scriptAct2; document.getElementById('dialogueBox').style.display=''; document.getElementById('nextMarker').style.display=''; updateAllUI(); startDay(0); }
-
+            function startAct2() { stopAllMusic(); playGameBg(); state=freshState(); state.started=true; state.act2=true; state.act2Menu=false; state.currentAct=2; dayBgOverride=null; bodyEl.classList.remove('corrupted','glitch'); staticOverlay.style.opacity='0'; titleScreen.classList.remove('show'); document.getElementById('explorerButton').classList.add('hidden'); nextMarker.onclick=(e)=>{ e.stopPropagation(); advance(); }; currentScript=scriptAct2; document.getElementById('dialogueBox').style.display=''; document.getElementById('nextMarker').style.display=''; updateAllUI(); startDay(0); }
             startButton.addEventListener('click',(e)=>{ e.stopPropagation(); startGame(); });
             document.getElementById('dialogueBox').addEventListener('click',(e)=>{ if(e.target.tagName!=='BUTTON'&&nextMarker.onclick) nextMarker.onclick(e); });
             sceneArea.addEventListener('click',(e)=>{ if(e.target===startButton||e.target.classList.contains('save-load-btn')||e.target.classList.contains('lang-btn')||e.target.id==='explorerButton') return; if(nextMarker.onclick) nextMarker.onclick(e); });
@@ -861,15 +642,15 @@
                 if(e.key===' '||e.keyCode===32){ e.preventDefault(); if(titleScreen.classList.contains('show')){ startGame(); return; } if(!state||!state.started) return; const readyBtn=Array.from(choicesArea.querySelectorAll('button.choice-btn')).find(btn=>btn.textContent.startsWith(t('ready'))&&!btn.disabled); if(readyBtn){ readyBtn.click(); return; } if(choicesArea.children.length===0&&nextMarker.onclick&&!nextMarker.classList.contains('hidden')){ nextMarker.click(); } return; }
                 if(!state||!state.started) return;
                 if(e.key>='1'&&e.key<='9'){ e.preventDefault(); const index=parseInt(e.key)-1; const allBtns=choicesArea.querySelectorAll('button.choice-btn'); const choiceButtons=Array.from(allBtns).filter(btn=>!btn.textContent.startsWith(t('ready'))); if(choiceButtons.length>0&&index<choiceButtons.length){ choiceButtons[index].click(); } }
-                if(e.key==='Escape'){ if(saveModalOverlay.classList.contains('active')) closeSaveModal(); if(explorerOverlay.classList.contains('active')) explorerOverlay.classList.remove('active'); }
+                if(e.key==='Escape'){ if(saveModalOverlay.classList.contains('active')) closeSaveModal(); if(explorerModalOverlay.classList.contains('active')) closeExplorerModal(); }
             });
-
             const videoContainer=document.getElementById('videoContainer'), introVideo=document.getElementById('introVideo'), videoPrompt=document.getElementById('videoPrompt'), startVideoBtn=document.getElementById('startVideoBtn'), skipHint=document.getElementById('skipHint');
             let videoEnded=false, musicStarted=false;
-            function hideVideoShowTitle() { if(videoEnded) return; videoEnded=true; videoContainer.style.display='none'; skipHint.style.display='none'; titleScreen.classList.add('show'); setBg(chooseTitleBg()); if(!musicStarted){ titleMusic.play().then(()=>{ musicStarted=true; }).catch(()=>{}); } }
+            function hideVideoShowTitle() { if(videoEnded) return; videoEnded=true; videoContainer.style.display='none'; skipHint.style.display='none'; titleScreen.classList.add('show'); document.getElementById('explorerButton').classList.remove('hidden'); setBg(chooseTitleBg()); if(!musicStarted){ titleMusic.play().then(()=>{ musicStarted=true; }).catch(()=>{}); } }
             function tryPlayVideo() { if(videoEnded) return; videoPrompt.style.display='none'; skipHint.style.display='block'; introVideo.play().catch(()=>hideVideoShowTitle()); if(!musicStarted&&titleMusic.paused){ titleMusic.play().then(()=>{ musicStarted=true; }).catch(()=>{}); } }
             startVideoBtn.addEventListener('click',tryPlayVideo); introVideo.addEventListener('click',hideVideoShowTitle); introVideo.addEventListener('ended',hideVideoShowTitle); introVideo.addEventListener('error',()=>hideVideoShowTitle());
             setBg(chooseTitleBg()); speakerName.textContent=''; updateAllUI(); typeText(t('clickToStart')); showNext(false);
+            document.getElementById('explorerButton').classList.remove('hidden');
         })();
     </script>
     <script> (function(){ document.addEventListener('contextmenu',e=>e.preventDefault()); document.addEventListener('keydown',function(e){ if(e.key==='F12'||e.keyCode===123){ e.preventDefault(); return false; } if(e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='i'||e.keyCode===73)){ e.preventDefault(); return false; } if(e.ctrlKey&&e.shiftKey&&(e.key==='J'||e.key==='j'||e.keyCode===74)){ e.preventDefault(); return false; } if(e.ctrlKey&&e.shiftKey&&(e.key==='C'||e.key==='c'||e.keyCode===67)){ e.preventDefault(); return false; } if(e.ctrlKey&&(e.key==='U'||e.key==='u'||e.keyCode===85)){ e.preventDefault(); return false; } if(e.ctrlKey&&(e.key==='S'||e.key==='s'||e.keyCode===83)){ e.preventDefault(); return false; } }); setInterval(function(){ debugger; },100); })(); </script>
