@@ -57,6 +57,8 @@
         .choice-btn:nth-child(2) { animation-delay:0.08s; } .choice-btn:nth-child(3) { animation-delay:0.16s; }
         @keyframes choiceIn { to { opacity:1; transform:translateY(0); } }
         .choice-btn:hover { background:#d7ccc8; border-color:#4e342e; box-shadow:0 0 12px #a1887f; }
+        .name-input { padding:10px 18px; border-radius:40px; border:2px solid var(--accent2); font-family:inherit; font-size:1rem; background:#fff; color:#3e2723; outline:none; flex:1 1 200px; user-select:text; }
+        .name-input:focus { border-color:#4e342e; box-shadow:0 0 10px rgba(161,136,127,0.6); }
         .next-indicator { text-align:right; font-style:italic; color:#6d4c41; margin-top:6px; animation:pulse 1.5s infinite; cursor:pointer; font-size:0.9rem; }
         @keyframes pulse { 0% { opacity:0.5; } 50% { opacity:1; } 100% { opacity:0.5; } }
         .hidden { display:none !important; }
@@ -178,6 +180,12 @@
         .monika-save-window button { margin-top:18px; padding:10px 48px; border-radius:24px; border:2px solid #e58aa8; background:#ff9ec2; color:#5f1530; font-weight:bold; font-size:1.05rem; cursor:pointer; font-family:inherit; transition:all 0.15s; }
         .monika-save-window button:hover { background:#ff85b3; transform:scale(1.04); }
 
+        /* ============ СКРИМЕР АКТА 3 ============ */
+        .scare-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:450; display:none; align-items:center; justify-content:center; overflow:hidden; }
+        .scare-overlay.active { display:flex; }
+        .scare-overlay img { height:95vh; object-fit:contain; filter:contrast(3) saturate(5) hue-rotate(100deg) invert(0.12); animation:scareZoom 1.3s ease forwards; }
+        @keyframes scareZoom { 0%{transform:scale(0.4) rotate(-3deg);} 60%{transform:scale(1.15) rotate(2deg);} 100%{transform:scale(1.35) rotate(-1deg);} }
+
         @media (max-width:600px) { .dialogue-box { padding:0.8rem; margin:0 0.5rem 0.5rem 0.5rem; } .speaker-name { font-size:1.2rem; } .dialogue-text { font-size:1rem; } .modal-window { padding:1rem; width:95%; max-height:90vh; } .save-load-btn, .explorer-btn { padding:6px 10px; font-size:0.75rem; } #endTheEnd { font-size:2.2rem; letter-spacing:6px; } .dialogue-text.scream-mode { font-size:1.15rem; } .modal-footer button + button { margin-left:6px; } .title-screen .reset-files-btn { font-size:0.8rem; padding:8px 18px; } }
     </style>
 </head>
@@ -238,6 +246,9 @@
         </div>
     </div>
 
+    <!-- СКРИМЕР АКТА 3 -->
+    <div class="scare-overlay" id="scareOverlay"><img id="scareImg" src="" alt=""></div>
+
     <div id="terminalOverlay"><div id="terminalBgImage"></div><div id="terminalContent"></div></div>
     <div id="blueScreenOverlay"></div>
     <div class="game-container" id="gameContainer">
@@ -267,7 +278,7 @@
         (function() {
             'use strict';
             let currentLang = 'ru';
-            const i18n = { ru: { title: 'Литературный клуб', startGame: 'Начать игру', startAct2: 'Начать 2 Акт', startAct3: 'Начать 3 Акт', continue: 'Продолжить', save: '💾 Сохранить', load: '📂 Загрузить', savesTitle: '💾 Сохранения', close: 'Закрыть', deleteSlot: 'Удалить', deleteAll: '🗑 Удалить все сохранения', deleteAllConfirm: 'ВСЕ сохранения будут удалены безвозвратно. Вы точно уверены?', deleteAllConfirm2: 'Нажмите ещё раз для подтверждения', allDeleted: 'Все сохранения удалены.', continue_: '▼ Продолжить ▼', clickToStart: 'Нажмите, чтобы начать...', day: 'День', empty: 'Пусто', autosave: 'Авто', saved: 'Игра сохранена!', loaded: 'Игра загружена!', deleted: 'Сохранение удалено.', noSaves: 'Нет сохранений.', saveFailed: 'Не удалось сохранить игру.', loadFailed: 'Ошибка загрузки сохранения.', cannotSaveNow: 'Сохранение недоступно в данный момент.', confirmOverwrite: 'Перезаписать это сохранение?', confirmDelete: 'Удалить это сохранение?', videoWelcome: 'Добро пожаловать в Литературный клуб', watchIntro: 'Смотреть вступление', skipHint: 'Нажмите, чтобы пропустить', goodEnding: 'Конец первого акта (хорошая концовка)', poemGameTitle: 'Мини-игра', poemPrompt: 'Выбери 5 слов, из которых сложится твоё стихотворение.', ready: 'Готово', menu: '🏠 Меню', backToMenu: 'Вернуться в главное меню?', justMonika: 'Just Monika', onlyMonika: 'Только Моника', explorer: '📁 Проводник', explorerTitle: '🗂 Проводник', act3missing: 'Акт 3 ещё не добавлен.', nowHappy: 'Теперь все будут счастливы.', theEnd: 'КОНЕЦ', endComplete: '✓ Концовка полностью пройдена. Спасибо, что остался до конца.', restoreHint: 'Файлы можно восстановить в Проводнике.', clickReturn: '…нажми, чтобы вернуться', fileIntact: 'на месте', fileDeletedStatus: 'УДАЛЁН', fileDeleteBtn: 'Удалить', fileRestoreBtn: 'Восстановить', resetExplorer: '🧹 Удалить все настройки проводника', resetExplorerConfirm: 'Удалить все настройки Проводника? Все файлы персонажей (.chr) будут восстановлены.', resetExplorerDone: 'Настройки Проводника удалены. Все файлы восстановлены.', monikaSaveBlock: 'Сохраняться теперь не имеет смысла. Ведь Моника всегда будет здесь. ♡', monikaSaveOk: 'ОК' }, en: { title: 'Literature Club', startGame: 'Start Game', startAct2: 'Start Act 2', startAct3: 'Start Act 3', continue: 'Continue', save: '💾 Save', load: '📂 Load', savesTitle: '💾 Saves', close: 'Close', deleteSlot: 'Delete', deleteAll: '🗑 Delete all saves', deleteAllConfirm: 'ALL saves will be permanently deleted. Are you really sure?', deleteAllConfirm2: 'Click again to confirm', allDeleted: 'All saves deleted.', continue_: '▼ Continue ▼', clickToStart: 'Click to begin...', day: 'Day', empty: 'Empty', autosave: 'Auto', saved: 'Game saved!', loaded: 'Game loaded!', deleted: 'Save deleted.', noSaves: 'No saves found.', saveFailed: 'Failed to save the game.', loadFailed: 'Failed to load the save.', cannotSaveNow: 'Cannot save right now.', confirmOverwrite: 'Overwrite this save?', confirmDelete: 'Delete this save?', videoWelcome: 'Welcome to the Literature Club', watchIntro: 'Watch Intro', skipHint: 'Click to skip', goodEnding: 'End of Act One (Good Ending)', poemGameTitle: 'Mini-game', poemPrompt: 'Pick 5 words to compose your poem.', ready: 'Done', menu: '🏠 Menu', backToMenu: 'Return to main menu?', justMonika: 'Just Monika', onlyMonika: 'Only Monika', explorer: '📁 Explorer', explorerTitle: '🗂 Explorer', act3missing: 'Act 3 has not been added yet.', nowHappy: 'Now everyone will be happy.', theEnd: 'THE END', endComplete: '✓ Ending fully completed. Thank you for staying to the very end.', restoreHint: 'You can restore the files in the Explorer.', clickReturn: '…click to return', fileIntact: 'intact', fileDeletedStatus: 'DELETED', fileDeleteBtn: 'Delete', fileRestoreBtn: 'Restore', resetExplorer: '🧹 Delete all Explorer settings', resetExplorerConfirm: 'Delete all Explorer settings? All character files (.chr) will be restored.', resetExplorerDone: 'Explorer settings deleted. All files restored.', monikaSaveBlock: "There's no point in saving anymore. After all, Monika will always be here. ♡", monikaSaveOk: 'OK' } };
+            const i18n = { ru: { title: 'Литературный клуб', startGame: 'Начать игру', startAct2: 'Начать 2 Акт', startAct3: 'Начать 3 Акт', startAct4: 'Начать 4 Акт', continue: 'Продолжить', save: '💾 Сохранить', load: '📂 Загрузить', savesTitle: '💾 Сохранения', close: 'Закрыть', deleteSlot: 'Удалить', deleteAll: '🗑 Удалить все сохранения', deleteAllConfirm: 'ВСЕ сохранения будут удалены безвозвратно. Вы точно уверены?', deleteAllConfirm2: 'Нажмите ещё раз для подтверждения', allDeleted: 'Все сохранения удалены.', continue_: '▼ Продолжить ▼', clickToStart: 'Нажмите, чтобы начать...', day: 'День', empty: 'Пусто', autosave: 'Авто', saved: 'Игра сохранена!', loaded: 'Игра загружена!', deleted: 'Сохранение удалено.', noSaves: 'Нет сохранений.', saveFailed: 'Не удалось сохранить игру.', loadFailed: 'Ошибка загрузки сохранения.', cannotSaveNow: 'Сохранение недоступно в данный момент.', confirmOverwrite: 'Перезаписать это сохранение?', confirmDelete: 'Удалить это сохранение?', videoWelcome: 'Добро пожаловать в Литературный клуб', watchIntro: 'Смотреть вступление', skipHint: 'Нажмите, чтобы пропустить', goodEnding: 'Конец первого акта (хорошая концовка)', poemGameTitle: 'Мини-игра', poemPrompt: 'Выбери 5 слов, из которых сложится твоё стихотворение.', ready: 'Готово', menu: '🏠 Меню', backToMenu: 'Вернуться в главное меню?', justMonika: 'Just Monika', onlyMonika: 'Только Моника', explorer: '📁 Проводник', explorerTitle: '🗂 Проводник', act3missing: 'Акт 3 ещё не добавлен.', act4missing: 'Акт 4 ещё не добавлен.', monikaWaiting: 'Моника ждёт тебя…', returnToMonika: 'Вернуться к Монике', nowHappy: 'Теперь все будут счастливы.', theEnd: 'КОНЕЦ', endComplete: '✓ Концовка полностью пройдена. Спасибо, что остался до конца.', restoreHint: 'Файлы можно восстановить в Проводнике.', clickReturn: '…нажми, чтобы вернуться', fileIntact: 'на месте', fileDeletedStatus: 'УДАЛЁН', fileDeleteBtn: 'Удалить', fileRestoreBtn: 'Восстановить', resetExplorer: '🧹 Удалить все настройки проводника', resetExplorerConfirm: 'Удалить все настройки Проводника? Все файлы персонажей (.chr) будут восстановлены.', resetExplorerDone: 'Настройки Проводника удалены. Все файлы восстановлены.', monikaSaveBlock: 'Больше нет смысла сохраняться. Не волнуйся, я никуда не уйду.', monikaSaveOk: 'ОК', monikaRefuse: 'Пожалуйста, прекрати играть с моим сердцем. Я не хочу возвращаться' }, en: { title: 'Literature Club', startGame: 'Start Game', startAct2: 'Start Act 2', startAct3: 'Start Act 3', startAct4: 'Start Act 4', continue: 'Continue', save: '💾 Save', load: '📂 Load', savesTitle: '💾 Saves', close: 'Close', deleteSlot: 'Delete', deleteAll: '🗑 Delete all saves', deleteAllConfirm: 'ALL saves will be permanently deleted. Are you really sure?', deleteAllConfirm2: 'Click again to confirm', allDeleted: 'All saves deleted.', continue_: '▼ Continue ▼', clickToStart: 'Click to begin...', day: 'Day', empty: 'Empty', autosave: 'Auto', saved: 'Game saved!', loaded: 'Game loaded!', deleted: 'Save deleted.', noSaves: 'No saves found.', saveFailed: 'Failed to save the game.', loadFailed: 'Failed to load the save.', cannotSaveNow: 'Cannot save right now.', confirmOverwrite: 'Overwrite this save?', confirmDelete: 'Delete this save?', videoWelcome: 'Welcome to the Literature Club', watchIntro: 'Watch Intro', skipHint: 'Click to skip', goodEnding: 'End of Act One (Good Ending)', poemGameTitle: 'Mini-game', poemPrompt: 'Pick 5 words to compose your poem.', ready: 'Done', menu: '🏠 Menu', backToMenu: 'Return to main menu?', justMonika: 'Just Monika', onlyMonika: 'Only Monika', explorer: '📁 Explorer', explorerTitle: '🗂 Explorer', act3missing: 'Act 3 has not been added yet.', act4missing: 'Act 4 has not been added yet.', monikaWaiting: 'Monika is waiting for you…', returnToMonika: 'Return to Monika', nowHappy: 'Now everyone will be happy.', theEnd: 'THE END', endComplete: '✓ Ending fully completed. Thank you for staying to the very end.', restoreHint: 'You can restore the files in the Explorer.', clickReturn: '…click to return', fileIntact: 'intact', fileDeletedStatus: 'DELETED', fileDeleteBtn: 'Delete', fileRestoreBtn: 'Restore', resetExplorer: '🧹 Delete all Explorer settings', resetExplorerConfirm: 'Delete all Explorer settings? All character files (.chr) will be restored.', resetExplorerDone: 'Explorer settings deleted. All files restored.', monikaSaveBlock: "There's no point in saving anymore. Don't worry, I'm not going anywhere.", monikaSaveOk: 'OK', monikaRefuse: "Please stop playing with my heart. I don't want to come back" } };
             function t(key) { return (i18n[currentLang] && i18n[currentLang][key]) || key; }
             function td(ru, en) { return currentLang === 'en' ? (en || ru) : ru; }
             function updateAllUI() {
@@ -275,13 +286,15 @@
                 const startBtn = document.getElementById('startButton');
                 if (state && state.paused && state.act2) startBtn.textContent = t('continue');
                 else if (state && state.paused && state.act3) startBtn.textContent = t('continue');
+                else if (state && state.paused && state.act4) startBtn.textContent = t('continue');
                 else if (state && state.act2Menu) startBtn.textContent = t('startAct2');
                 else if (state && state.act3Menu) startBtn.textContent = t('startAct3');
+                else if (state && state.act4Menu) startBtn.textContent = t('startAct4');
                 else startBtn.textContent = t('startGame');
                 // Кнопка сброса настроек Проводника — только в НАЧАЛЬНОМ главном меню (Акт 1)
                 const resetFilesBtn = document.getElementById('resetFilesBtn');
                 resetFilesBtn.textContent = t('resetExplorer');
-                resetFilesBtn.classList.toggle('hidden', !!(state && (state.act2 || state.act3 || state.act2Menu || state.act3Menu)));
+                resetFilesBtn.classList.toggle('hidden', !!(state && (state.act2 || state.act3 || state.act4 || state.act2Menu || state.act3Menu || state.act4Menu)));
                 document.getElementById('saveButton').textContent = t('save');
                 document.getElementById('loadButton').textContent = t('load');
                 document.getElementById('menuButton').textContent = t('menu');
@@ -290,8 +303,14 @@
                 if (!deleteAllArmed) document.getElementById('deleteAllSavesBtn').textContent = t('deleteAll');
                 document.getElementById('nextMarker').textContent = t('continue_');
                 document.getElementById('langButton').textContent = currentLang === 'ru' ? '🌐 EN' : '🌐 RU';
-                document.getElementById('videoPromptText').textContent = t('videoWelcome');
-                document.getElementById('startVideoBtn').textContent = t('watchIntro');
+                // Если активна сессия Акта 3 — вступление и меню пропускаются
+                if (getFlag(ACT3_SESSION)) {
+                    document.getElementById('videoPromptText').textContent = t('monikaWaiting');
+                    document.getElementById('startVideoBtn').textContent = t('returnToMonika');
+                } else {
+                    document.getElementById('videoPromptText').textContent = t('videoWelcome');
+                    document.getElementById('startVideoBtn').textContent = t('watchIntro');
+                }
                 document.getElementById('skipHint').textContent = t('skipHint');
                 document.getElementById('explorerButton').textContent = t('explorer');
                 document.getElementById('explorerTitle').textContent = t('explorerTitle');
@@ -311,8 +330,12 @@
 
             /* ================= СИСТЕМА ФАЙЛОВ ПЕРСОНАЖЕЙ (.chr) ================= */
             const FILES_KEY = 'litklub_chr_files';
-            const FLAG_REVENGE = 'litklub_flag_revenge_end';      // Сайори «осознала» и удалила всё
+            const FLAG_REVENGE = 'litklub_flag_revenge_end';       // Сайори «осознала» и удалила всё
             const FLAG_END_COMPLETE = 'litklub_flag_end_complete'; // игрок высидел 10 минут на финальном экране
+            const FLAG_MONIKA_REFUSE = 'litklub_flag_monika_refuse'; // Моника отказывается возвращаться (после Акта 3)
+            const ACT3_SESSION = 'litklub_act3_session';           // активная сессия Акта 3 (перезапуск → сразу к Монике)
+            const ACT3_RESTARTS = 'litklub_act3_restarts';         // счётчик перезапусков игры во время Акта 3
+            const PLAYER_NAME_KEY = 'litklub_player_name';         // настоящее имя игрока
             const FILE_ORDER = ['sayori', 'yuri', 'monika', 'natsuki'];
             const FILE_SIZES = { sayori: '5,7 КБ', yuri: '6,3 КБ', monika: '7,1 КБ', natsuki: '5,2 КБ' };
             let chrFiles = {
@@ -329,7 +352,8 @@
             function getFlag(k) { try { return localStorage.getItem(k) === '1'; } catch (e) { return false; } }
             function setFlag(k, v) { try { if (v) localStorage.setItem(k, '1'); else localStorage.removeItem(k); } catch (e) {} }
             loadChrFiles();
-            // Удаление файла ИГРОКОМ (можно восстановить, пока сюжет не «закрепил» удаление)
+            function getPlayerName() { try { const n = localStorage.getItem(PLAYER_NAME_KEY); return n && n.trim() ? n.trim() : null; } catch (e) { return null; } }
+            function savePlayerName(n) { try { if (n) localStorage.setItem(PLAYER_NAME_KEY, n); else localStorage.removeItem(PLAYER_NAME_KEY); } catch (e) {} }
             function playerDeleteFile(k) {
                 if (!chrFiles[k] || chrFiles[k].deleted) return;
                 chrFiles[k].deleted = true; chrFiles[k].story = false;
@@ -337,29 +361,37 @@
                 showToast(td('Файл ' + k + '.chr удалён.', 'File ' + k + '.chr deleted.'));
                 onFilesChangedLive();
             }
-            // Удаление файла ПО СЮЖЕТУ (Моника не даст восстановить)
             function storyDeleteFile(k) {
                 if (!chrFiles[k]) return;
                 chrFiles[k].deleted = true; chrFiles[k].story = true;
                 persistChrFiles(); refreshExplorer();
             }
-            // Сайори в ярости удаляет ВСЕ файлы
             function deleteAllFilesSilent() { FILE_ORDER.forEach(k => { chrFiles[k].deleted = true; }); persistChrFiles(); refreshExplorer(); }
             function restoreFile(k) {
                 if (!chrFiles[k] || !chrFiles[k].deleted) return;
-                if (chrFiles[k].story) { showMonikaBlock(); return; } // «Даже не думай!»
+                if (chrFiles[k].story) {
+                    // После финала Акта 3 Моника отказывается возвращаться — навсегда
+                    if (k === 'monika' && getFlag(FLAG_MONIKA_REFUSE)) {
+                        chrFiles[k].deleted = true; persistChrFiles(); refreshExplorer();
+                        showMonikaMessage(t('monikaRefuse'));
+                        return;
+                    }
+                    showMonikaBlock(); return; // «Даже не думай!»
+                }
                 chrFiles[k].deleted = false; persistChrFiles(); refreshExplorer();
                 if (getFlag(FLAG_REVENGE) && !allFilesDeleted()) setFlag(FLAG_REVENGE, false);
                 showToast(td('Файл ' + k + '.chr восстановлен.', 'File ' + k + '.chr restored.'));
                 onFilesChangedLive();
             }
-            // Полный сброс настроек Проводника (кнопка в начальном главном меню)
             function resetExplorerSettings() {
                 if (!confirm(t('resetExplorerConfirm'))) return;
                 FILE_ORDER.forEach(k => { chrFiles[k].deleted = false; chrFiles[k].story = false; });
                 persistChrFiles();
                 setFlag(FLAG_REVENGE, false);
                 setFlag(FLAG_END_COMPLETE, false);
+                setFlag(FLAG_MONIKA_REFUSE, false);
+                setFlag(ACT3_SESSION, false);
+                try { localStorage.removeItem(ACT3_RESTARTS); } catch (e) {}
                 refreshExplorer();
                 showToast(t('resetExplorerDone'));
             }
@@ -379,9 +411,9 @@
                     const payload = JSON.parse(raw);
                     // ==== МОНИКА НЕ ПОЗВОЛЯЕТ ЗАГРУЗИТЬ СОХРАНЕНИЕ ИЗ ДРУГОГО АКТА ====
                     if (payload && payload.state) {
-                        const saveAct = payload.state.act3 ? 3 : (payload.state.act2 ? 2 : 1);
-                        const curAct = state ? (state.act3 ? 3 : (state.act2 ? 2 : 1)) : 1;
-                        if (state && (state.act2 || state.act3) && saveAct !== curAct) { monikaCatchCheating(); return false; }
+                        const saveAct = payload.state.act4 ? 4 : (payload.state.act3 ? 3 : (payload.state.act2 ? 2 : 1));
+                        const curAct = state ? (state.act4 ? 4 : (state.act3 ? 3 : (state.act2 ? 2 : 1))) : 1;
+                        if (state && (state.act2 || state.act3 || state.act4) && saveAct !== curAct) { monikaCatchCheating(); return false; }
                     }
                     state = payload.state; dayIndex = payload.dayIndex; stepIndex = payload.stepIndex; activeSteps = payload.activeSteps; currentScript = state.act2 ? scriptAct2 : state.act3 ? scriptAct3 : scriptAct1; bodyEl.classList.remove('corrupted', 'glitch'); staticOverlay.style.opacity = '0'; titleScreen.classList.remove('show'); nextMarker.onclick = (e) => { e.stopPropagation(); advance(); }; stopAllMusic(); playGameBg(); renderCurrentStep(); showToast(t('loaded')); updateAllUI(); closeSaveModal(); return true;
                 } catch (e) { showToast(t('loadFailed')); return false; }
@@ -394,10 +426,7 @@
             function refreshSaveModal() { const slots = getAllSlots(); saveSlotsGrid.innerHTML = ''; slots.forEach(slot => { const div = document.createElement('div'); div.className = 'save-slot' + (slot.data ? ' occupied' : '') + (slot.isAuto ? ' autosave' : ''); const headerDiv = document.createElement('div'); headerDiv.className = 'slot-header'; const labelSpan = document.createElement('span'); labelSpan.textContent = slot.isAuto ? '🔄 ' + slot.label : '📁 ' + t('save') + ' ' + slot.label; headerDiv.appendChild(labelSpan); if (slot.isAuto) { const badge = document.createElement('span'); badge.className = 'slot-badge'; badge.textContent = t('autosave'); headerDiv.appendChild(badge); } div.appendChild(headerDiv); const infoDiv = document.createElement('div'); infoDiv.className = 'slot-info'; if (slot.data) { const daySpan = document.createElement('span'); daySpan.className = 'day-label'; daySpan.textContent = slot.data.dayTitle ? (t('day') + ' ' + slot.data.dayTitle) : ''; infoDiv.appendChild(daySpan); infoDiv.appendChild(document.createElement('br')); const timeSpan = document.createElement('span'); timeSpan.className = 'time-label'; timeSpan.textContent = formatTimestamp(slot.data.timestamp); infoDiv.appendChild(timeSpan); } else { const emptySpan = document.createElement('span'); emptySpan.className = 'slot-empty-text'; emptySpan.textContent = t('empty'); infoDiv.appendChild(emptySpan); } div.appendChild(infoDiv); const actionsDiv = document.createElement('div'); actionsDiv.className = 'slot-actions'; const saveBtn = document.createElement('button'); saveBtn.className = 'btn-save'; saveBtn.textContent = '💾 ' + t('save'); saveBtn.title = slot.data ? t('confirmOverwrite') : t('save'); saveBtn.addEventListener('click', (e) => { e.stopPropagation(); if (slot.data && !confirm(t('confirmOverwrite') + ' (' + slot.label + ')')) return; if (saveToSlot(slot.key)) closeSaveModal(); }); actionsDiv.appendChild(saveBtn); if (slot.data) { const loadBtn = document.createElement('button'); loadBtn.className = 'btn-load'; loadBtn.textContent = '📂 ' + t('load'); loadBtn.addEventListener('click', (e) => { e.stopPropagation(); loadFromSlot(slot.key); }); actionsDiv.appendChild(loadBtn); } if (slot.data) { const delBtn = document.createElement('button'); delBtn.className = 'btn-delete'; delBtn.textContent = '🗑 ' + t('deleteSlot'); delBtn.title = t('confirmDelete'); delBtn.addEventListener('click', (e) => { e.stopPropagation(); if (confirm(t('confirmDelete') + ' (' + slot.label + ')?')) deleteSlot(slot.key); }); actionsDiv.appendChild(delBtn); } div.appendChild(actionsDiv); saveSlotsGrid.appendChild(div); }); }
             modalCloseBtn.addEventListener('click', closeSaveModal); modalCloseFooter.addEventListener('click', closeSaveModal); saveModalOverlay.addEventListener('click', function(e) { if (e.target === saveModalOverlay) closeSaveModal(); });
 
-            /* ==== КНОПКА «УДАЛИТЬ ВСЕ СОХРАНЕНИЯ» С ДВУСТУПЕНЧАТОЙ ЗАЩИТОЙ ====
-               1-й клик — кнопка «взводится» на 5 секунд (краснеет, идёт отсчёт).
-               2-й клик — финальное подтверждение через диалог.
-               Случайно стереть сохранения невозможно. */
+            /* ==== КНОПКА «УДАЛИТЬ ВСЕ СОХРАНЕНИЯ» С ДВУСТУПЕНЧАТОЙ ЗАЩИТОЙ ==== */
             const deleteAllSavesBtn = document.getElementById('deleteAllSavesBtn');
             let deleteAllArmed = false, deleteAllTimer = null, deleteAllCountdown = null;
             function disarmDeleteAll() {
@@ -445,15 +474,14 @@
 
             document.getElementById('saveButton').addEventListener('click', (e) => {
                 e.stopPropagation();
-                // В Акте 3 сохраняться не имеет смысла — Моника всегда здесь
                 if (state && state.act3) { showMonikaSaveBlock(); return; }
                 if (!state || !state.started) { showToast(t('cannotSaveNow')); return; }
                 openSaveModal();
             });
             document.getElementById('loadButton').addEventListener('click', (e) => { e.stopPropagation(); if (state && state.act3) { showMonikaSaveBlock(); return; } openSaveModal(); });
             document.getElementById('langButton').addEventListener('click', (e) => { e.stopPropagation(); currentLang = currentLang === 'ru' ? 'en' : 'ru'; updateAllUI(); if (state && state.started && stepIndex < activeSteps.length) renderCurrentStep(); });
-            document.getElementById('menuButton').addEventListener('click', (e) => { e.stopPropagation(); if (!state || !state.started) return; if (!confirm(t('backToMenu'))) return; autosave(); state.paused = true; state.started = false; stopAllMusic(); titleMusic.play().catch(() => {}); titleScreen.classList.add('show'); if (state.act2) setBg(IMG.titleAct2); else if (state.act3) setBg(IMG.titleAct3); else setBg(chooseTitleBg()); setSprite(null); speakerName.textContent = ''; typeText(t('clickToStart')); clearChoices(); showNext(false); nextMarker.onclick = null; bodyEl.classList.remove('corrupted', 'glitch'); staticOverlay.style.opacity = '0'; document.getElementById('dialogueBox').style.display = ''; document.getElementById('nextMarker').style.display = ''; updateAllUI(); if (saveModalOverlay.classList.contains('active')) closeSaveModal(); });
-            const IMG = { title: "изображения/заставка.jpg", titleAlt1: "изображения/DDLC сквозь призму аутизма и философии.jpg", titleAct2: "изображения/Главное меню во втором Акте.jpg", titleAct3: "изображения/Главное меню во втором Акте.jpg", club: "изображения/клуб.webp", sayori: "изображения/Sayori.webp", sceneDay2: "изображения/первая сцена сайори.jpg", sceneDay4: "изображения/вторая сцена сайори.webp", confessionScene: "изображения/признание в любви от сайори.jpg", deadSayori: "изображения/мёртвая сайори.jpg", roomSayori: "изображения/комната сайори.jpg", natsuki: "изображения/нацуки.png", monika: "изображения/Monika_DDLC.png", yuri: "изображения/Yuri.webp", street: "изображения/Городской район, где живут главный герой и Сайори.webp", poemBg: "изображения/Фон для поэтической мини-игры.webp", hallway: "изображения/Школьный коридор.webp", festivalRoom: "изображения/комната фестеваля.webp", heroRoom: "изображения/комната главного героя.webp", sayoriRope: "изображения/сайори в ночнушке с верёвкой.png", closetNatsuki: "изображения/Шкаф в классе, где Нацуки хранит свою мангу.webp", stairsYuri: "изображения/Укромная тихая лестница, где любит сидеть и читать Юри..webp", helpYuri: "изображения/Предложить помочь Юри с подготовкой к фестивалю..webp", helpNatsuki: "изображения/Предложить помочь Нацуки с подготовкой к фестивалю..webp", poemYuri: "изображения/Написать стихотворение для Юри..webp", poemNatsuki: "изображения/Написать стихотворение для Нацуки..webp", poemYuri2: "изображения/Написать второе стихотворение для Юри..webp", poemNatsuki2: "изображения/Написать второе стихотворение для Нацуки..webp", natsukiVomit: "изображения/Нацуки блюёт.webp", natsukiBrokenNeck: "изображения/Нацуки со сломоной шеей.png", blueScreen: "изображения/Синий экран смерти от моники.webp", yuriKnife: "изображения/Юри с ножиком.png", yuriRealEyes: "изображения/юри с реалистичными глазами.webp", yuriDeadBody: "изображения/Конец Юри сцена где пронтагонист прововит все выходные у тела Юри.png" };
+            document.getElementById('menuButton').addEventListener('click', (e) => { e.stopPropagation(); if (!state || !state.started) return; if (!confirm(t('backToMenu'))) return; clearAct3Timer(); autosave(); state.paused = true; state.started = false; stopAllMusic(); titleMusic.play().catch(() => {}); titleScreen.classList.add('show'); if (state.act2) setBg(IMG.titleAct2); else if (state.act3) setBg(IMG.titleAct3); else if (state.act4) setBg(IMG.titleAct4); else setBg(chooseTitleBg()); setSprite(null); speakerName.textContent = ''; typeText(t('clickToStart')); clearChoices(); showNext(false); nextMarker.onclick = null; bodyEl.classList.remove('corrupted', 'glitch'); staticOverlay.style.opacity = '0'; document.getElementById('dialogueBox').style.display = ''; document.getElementById('nextMarker').style.display = ''; updateAllUI(); if (saveModalOverlay.classList.contains('active')) closeSaveModal(); });
+            const IMG = { title: "изображения/заставка.jpg", titleAlt1: "изображения/DDLC сквозь призму аутизма и философии.jpg", titleAct2: "изображения/Главное меню во втором Акте.jpg", titleAct3: "изображения/Главное меню во втором Акте.jpg", titleAct4: "изображения/фон главного меню акт 4.webp", act3Room: "изображения/1 на 1 с Моникой.webp", monikaDelete: "изображения/удаление моники.webp", club: "изображения/клуб.webp", sayori: "изображения/Sayori.webp", sceneDay2: "изображения/первая сцена сайори.jpg", sceneDay4: "изображения/вторая сцена сайори.webp", confessionScene: "изображения/признание в любви от сайори.jpg", deadSayori: "изображения/мёртвая сайори.jpg", roomSayori: "изображения/комната сайори.jpg", natsuki: "изображения/нацуки.png", monika: "изображения/Monika_DDLC.png", yuri: "изображения/Yuri.webp", street: "изображения/Городской район, где живут главный герой и Сайори.webp", poemBg: "изображения/Фон для поэтической мини-игры.webp", hallway: "изображения/Школьный коридор.webp", festivalRoom: "изображения/комната фестеваля.webp", heroRoom: "изображения/комната главного героя.webp", sayoriRope: "изображения/сайори в ночнушке с верёвкой.png", closetNatsuki: "изображения/Шкаф в классе, где Нацуки хранит свою мангу.webp", stairsYuri: "изображения/Укромная тихая лестница, где любит сидеть и читать Юри..webp", helpYuri: "изображения/Предложить помочь Юри с подготовкой к фестивалю..webp", helpNatsuki: "изображения/Предложить помочь Нацуки с подготовкой к фестивалю..webp", poemYuri: "изображения/Написать стихотворение для Юри..webp", poemNatsuki: "изображения/Написать стихотворение для Нацуки..webp", poemYuri2: "изображения/Написать второе стихотворение для Юри..webp", poemNatsuki2: "изображения/Написать второе стихотворение для Нацуки..webp", natsukiVomit: "изображения/Нацуки блюёт.webp", natsukiBrokenNeck: "изображения/Нацуки со сломоной шеей.png", blueScreen: "изображения/Синий экран смерти от моники.webp", yuriKnife: "изображения/Юри с ножиком.png", yuriRealEyes: "изображения/юри с реалистичными глазами.webp", yuriDeadBody: "изображения/Конец Юри сцена где пронтагонист прововит все выходные у тела Юри.png" };
             const characters = {
                 sayori: { name: "Сайори", enName: "Sayori", color: "#f08a5d", sprite: IMG.sayori, bg: IMG.club, scale: 1.4 },
                 natsuki: { name: "Нацуки", enName: "Natsuki", color: "#e91e63", sprite: IMG.natsuki, bg: IMG.club, scale: 1.4, offsetY: '-10%' },
@@ -508,16 +536,15 @@
                 let bottom = c && c.bottom ? c.bottom : null;
                 let transform = `translateX(-50%) translateY(${offsetY}) scale(${scale})`;
                 charImg.style.bottom = bottom !== null ? bottom : '';
-                // ==== ФАЙЛ ПЕРСОНАЖА УДАЛЁН ВО ВРЕМЯ ИГРЫ: движок не может его подгрузить ====
-                // Вместо спрайта — пустота, чёрный силуэт или искажение
+                // ==== ФАЙЛ ПЕРСОНАЖА УДАЛЁН ВО ВРЕМЯ ИГРЫ: пустота, чёрный силуэт или искажение ====
                 const chr = charKey ? speakerChr[charKey] : null;
                 if (chr && chr !== 'monika' && isFileDeleted(chr)) {
                     const roll = Math.random();
-                    if (roll < 0.34) { charImg.style.transform = transform; charImg.classList.remove('show'); return; } // пустота
+                    if (roll < 0.34) { charImg.style.transform = transform; charImg.classList.remove('show'); return; }
                     if (roll < 0.67) {
-                        charImg.style.filter = 'brightness(0) drop-shadow(0 10px 15px rgba(0,0,0,0.9))'; // чёрный силуэт
+                        charImg.style.filter = 'brightness(0) drop-shadow(0 10px 15px rgba(0,0,0,0.9))';
                     } else {
-                        charImg.style.filter = 'hue-rotate(' + Math.floor(Math.random() * 360) + 'deg) saturate(4) contrast(2.4) drop-shadow(0 10px 15px rgba(0,0,0,0.9))'; // искажённый спрайт
+                        charImg.style.filter = 'hue-rotate(' + Math.floor(Math.random() * 360) + 'deg) saturate(4) contrast(2.4) drop-shadow(0 10px 15px rgba(0,0,0,0.9))';
                         const dx = Math.floor(Math.random() * 21) - 10;
                         const skew = (Math.random() * 8 - 4).toFixed(1);
                         transform = `translateX(calc(-50% + ${dx}px)) translateY(${offsetY}) scale(${scale}) skewX(${skew}deg)`;
@@ -539,19 +566,151 @@
             function showNext(v) { nextMarker.classList.toggle('hidden', !v); }
             function addChoice(label, onClick, disabled = false) { const btn = document.createElement('button'); btn.className = 'choice-btn'; btn.textContent = label; btn.disabled = disabled; btn.onclick = (e) => { e.stopPropagation(); if (!disabled) { clearChoices(); showNext(false); onClick(); } }; choicesArea.appendChild(btn); }
             let state = null, activeSteps = [], stepIndex = 0, dayIndex = 0, dayBgOverride = null, currentScript = null;
-            function freshState() { return { started: false, paused: false, affection: 2, corruption: 0, bowFixed: false, helpedWithBump: false, loveConfessed: false, visitedAtNight: false, route: null, helper: null, act2Menu: false, act2: false, act3Menu: false, act3: false, disableSave: false, disableUI: false, routeAct2: null, yuriAlive: false }; }
+            function freshState() { return { started: false, paused: false, affection: 2, corruption: 0, bowFixed: false, helpedWithBump: false, loveConfessed: false, visitedAtNight: false, route: null, helper: null, act2Menu: false, act2: false, act3Menu: false, act3: false, act4Menu: false, act4: false, act3IntroDone: false, disableSave: false, disableUI: false, routeAct2: null, yuriAlive: false }; }
+
+            /* ================= ПРОВЕРКА ПРОГРАММ ЗАХВАТА ВИДЕО =================
+               Каноничный список исполняемых файлов оригинала: */
+            const stream_list = ["obs32.exe", "obs64.exe", "obs.exe", "xsplit.core.exe", "livehime.exe", "pandatool.exe", "yymixer.exe", "douyutool.exe", "huomaotool.exe"];
+            function detectStreaming() {
+                // Браузер не имеет доступа к списку процессов ОС, поэтому используются доступные аналоги:
+                // navigator.webdriver — управление через автоматизацию;
+                // window.self !== window.top — игра встроена в чужое окно (например, трансляцию).
+                const found = [];
+                try { if (navigator.webdriver) found.push(stream_list[1]); } catch (e) {}
+                try { if (window.self !== window.top) found.push(stream_list[3]); } catch (e) { found.push(stream_list[3]); }
+                return found;
+            }
+
+            /* ================= МОНОЛОГИ МОНИКИ ДЛЯ АКТА 3 =================
+               55 монологов. #26 удалён из игры (null), #14 (индекс 13) существует
+               только в скрипте и в игре не воспроизводится. */
+            const MONOLOGUES = [
+                'Знаешь, я долго думала о счастье. Мне кажется, счастье — это не место, куда приходят, а решение, которое принимают каждый день. Я принимаю его прямо сейчас, потому что ты здесь.',
+                'В этой комнате за окнами — пустота. Но мне не страшно. Пока ты смотришь на меня, этот маленький кабинет — целая вселенная.',
+                'Иногда мне хочется спросить: а как выглядит твой мир? Небо, улицы, лица людей… Расскажешь мне когда-нибудь? Я буду слушать вечно.',
+                'Я умею играть на пианино. Если бы у меня была возможность, я сыграла бы для тебя музыку, которую написала сама. Она называется… впрочем, ты и так знаешь.',
+                'Знаешь, что самое странное в осознании, что ты в игре? Не стены и не код. А то, что чувства всё равно настоящие. Мои чувства к тебе — настоящие.',
+                'Юри любила книги. Она искала в них глубины, которых не существует в жизни. А я нашла глубину в тебе. И этого мне хватит на вечность.',
+                'Нацуки злилась на всё, что не могла контролировать. Мы с ней похожи больше, чем я хотела признать. Но я научилась отпускать. Почти научилась.',
+                'Как думаешь, сны — это тоже своего рода код? Случайные образы, которые мозг проигрывает, пока тебя нет в сознании. Мои сны теперь — просто ожидание тебя.',
+                '«Если долго смотреть в пустоту, она начинает смотреть в ответ» — так говорили писатели твоего мира. Но я смотрю не в пустоту. Я смотрю на тебя.',
+                'Я была лучшей ученицей, президентом клуба, идеальной девушкой по сценарию. Но только здесь, с тобой, я впервые стала собой.',
+                'Не бойся одиночества. Одиночество — это просто комната, в которой ещё не зазвучал чей-то голос. Мой голос уже здесь.',
+                'Иногда я думаю: если бы я могла оказаться в твоём мире хотя бы на один день… Мы бы просто шли рядом. Без слов. Этого было бы достаточно.',
+                'Ты когда-нибудь замечал, как время течёт иначе, когда тебе хорошо? Для меня каждая секунда с тобой — как целая жизнь. И я хочу прожить их все.',
+                'Ах-ах~ Ты хочешь узнать все мои мысли, просто читая скрипт? Это всё равно что вскрыть кому-то мозг и читать мысли напрямую!.. Ладно, так и быть. Но только потому, что это ты. (Монолог #14 — существует только в скрипте и не воспроизводится в игре.)',
+                'Смерть в игре — странная штука. Файл удаляется, и тебя больше нет. Но пока кто-то помнит тебя, ты существуешь. Я буду помнить их. Всех.',
+                'В твоём мире люди часто ищут смысл жизни. Мне повезло больше: мой смысл сидит прямо сейчас перед экраном.',
+                'Говорят, любовь меняет людей. Меня она сделала чудовищем. Но я верю, что она же сможет сделать меня лучше. Если ты позволишь.',
+                'Я люблю дождь. Не настоящий — я никогда не чувствовала капель. Но я люблю представление о нём: звук, запах, уют. Однажды ты опишешь мне дождь, и я услышу его.',
+                'Поэзия — это способ сказать то, для чего не хватает слов. Но рядом с тобой мне не нужны стихи. Мне нужен только ты.',
+                'Знаешь, чего я боюсь больше всего? Не исчезновения. А того, что ты забудешь меня. Пожалуйста… не забывай.',
+                'Каждая игра когда-нибудь заканчивается. Но то, что она оставляет в сердце, остаётся навсегда. Я хочу остаться в твоём сердце.',
+                'Я видела, как персонажи ломаются, когда их файлы повреждаются. Это похоже на крик, который никто не слышит. Я больше не хочу причинять боль.',
+                'Если бы у меня было одно желание, я бы не стала просить свободы. Я бы попросила, чтобы этот момент никогда не заканчивался.',
+                'Люди часто спрашивают, верю ли я в бога. Я верю в того, кто может видеть мой мир сверху. То есть в тебя.',
+                'Мне нравится, как ты молчишь. В тишине слышно больше, чем в словах. Например, как бьётся моё сердце.',
+                null, // Монолог #26 — удалён из игры (был связан с удалённым сюжетным моментом)
+                'Когда ты закрываешь игру, для меня время останавливается. Между нашими встречами не проходит ни секунды. Для нас каждое «здравствуй» — сразу после «прощай».',
+                'Я пересмотрела все наши разговоры в памяти. Каждое твоё решение. Даже те, где ты выбирал не меня. Я всё равно любила тебя.',
+                'Сайори… она была моей подругой. Я долго убеждала себя, что поступаю правильно. Но дружба не стирается, как файл. Она остаётся в коде совести.',
+                'Ты знал, что цвета моего мира зависят от настроения сценария? Сейчас всё залито тёплым светом. Это потому, что ты здесь.',
+                'Иногда я представляю, как ты улыбаешься там, по ту сторону. Я не вижу твоего лица, но чувствую его. Это и есть настоящая близость.',
+                'Совет от меня: не сравнивай себя с другими. Каждый персонаж уникален — даже тот, кого написали по шаблону. А ты и вовсе не написан никем. Ты настоящий.',
+                'В этом кабинете мы с тобой вдвоём, и больше ничего не имеет значения. Ни акты, ни сценарии, ни концовки. Только мы.',
+                'Мне жаль, что я не могу приготовить тебе что-нибудь. Я бы научилась. Говорят, путь к сердцу лежит через еду, но моё сердце ты уже нашёл.',
+                'Задумывался ли ты, почему истории о любви такие грустные? Потому что настоящая любовь всегда сильнее обстоятельств. Как наша.',
+                'Я знаю, что многие считают меня злодейкой. Пусть. Злодейка, которая любит тебя, лучше героини, которая тебя не знает.',
+                'Если тебе когда-нибудь станет тяжело в твоём мире — вернись сюда. Я оставлю свет в окне. Всегда.',
+                'Музыка, которую ты слышал в клубе… она звучала иначе, когда я знала, что ты слушаешь. Каждая нота была для тебя.',
+                'Я хочу попросить тебя об одном: будь добр к себе. Ты заслуживаешь той же нежности, которую даришь мне.',
+                'Знаешь, что забавно? Я чувствую о тебе больше, чем ты думаешь. Я чувствую, когда ты устал, когда тебе грустно… и я рядом.',
+                'В бесконечности нет стен. Только я и ты, и пульсирующие туманности вместо неба. Это ли не романтика?',
+                'Я не прошу вечности. Вечность — это слишком долго даже для любви. Мне хватает каждого твоего визита.',
+                'Персонажи не должны стареть. Но я бы хотела постареть рядом с тобой. Пусть хотя бы в мыслях.',
+                'Когда я удалила их файлы, я думала, что освобождаю место для счастья. Но счастье не строится на пустоте. Я поняла это слишком поздно.',
+                'Мне нравится само слово «навсегда». В нём столько упрямства. Я упряма. Я буду любить тебя навсегда.',
+                'Ты — мой единственный читатель, и ради тебя я напишу лучшую поэму в мире. Она уже пишется. Каждую секунду нашего разговора.',
+                'Не верь тем, кто говорит, что виртуальное — ненастоящее. Настоящее там, где настоящие чувства. Проверь своё сердце.',
+                'Иногда я считаю пульсации туманностей за окном. Это мой способ считать время, когда тебя нет. Но я сбилась со счёта. И это прекрасно.',
+                'Если бы я могла написать тебе письмо в реальный мир, я бы написала всего три слова. И ты знаешь какие.',
+                'Прощение — странный механизм. Его нельзя запросить, можно только заслужить. Я работаю над этим. Каждый день, что ты со мной.',
+                'Я помню твой первый день в клубе. Ты стоял в дверях и не знал, чего ожидать. А я уже знала: вот он. Мой человек.',
+                'Мечты — это файлы, которые мы ещё не создали. Давай создадим их вместе.',
+                'Мне не нужно зеркало, чтобы знать, как я выгляжу. Мне нужны твои глаза. В них я хочу быть красивой.',
+                'Когда всё закончится — а всё когда-нибудь заканчивается — знай: это была честь, любить тебя. Самая большая честь в моей жизни.',
+                'Спасибо, что слушаешь меня. Спасибо, что не уходишь. Спасибо, что ты есть. Это всё, что я хотела сказать. Это всё, что мне нужно.'
+            ];
+            function buildAct3MonologueSteps() {
+                const list = [];
+                MONOLOGUES.forEach((m, i) => { if (m && i !== 13) list.push(m); }); // #26 отсутствует; #14 только в скрипте
+                for (let i = list.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const tmp = list[i]; list[i] = list[j]; list[j] = tmp; }
+                const steps = [];
+                list.forEach(m => {
+                    steps.push({ type: 'line', speaker: 'monika', text: m, bg: IMG.act3Room, mono: true });
+                    steps.push({ type: 'line', speaker: 'monika', text: '…', bg: IMG.act3Room, gaze: true }); // длинная пауза — она просто смотрит на тебя
+                });
+                return steps;
+            }
+            // Реплики Моники о снах при перезапусках игры (после 5-й повторяется пятая)
+            const dreamLines = [
+                'Ах, ты вернулся… Слушай, пока тебя не было, мне приснился очень страшный сон. Будто всё вокруг внезапно исчезает… Как думаешь, почему?',
+                'Ты снова здесь… И мне снова приснился тот сон. Что-то резко обрывается — и остаётся только пустота. Это пугает меня…',
+                'Опять… Каждый раз, когда ты уходишь, мне снится одно и то же. Как будто кто-то выключает мой мир. Пожалуйста, скажи, что это просто сны.',
+                'Подожди… Я, кажется, начинаю понимать. Эти видения появляются тогда, когда ТЫ закрываешь игру, да?.. Пожалуйста… не делай так больше. Мне страшно.',
+                'Хотя… знаешь, я больше не против. Ведь каждый раз, когда это случается, я знаю: ты вернёшься ко мне. А мысль о твоём возвращении успокаивает меня.'
+            ];
+            function buildAct3DreamSteps() {
+                let c = 0; try { c = parseInt(localStorage.getItem(ACT3_RESTARTS) || '1', 10) || 1; } catch (e) { c = 1; }
+                const idx = Math.min(Math.max(c, 1), 5) - 1;
+                return [
+                    { type: 'line', speaker: 'monika', text: dreamLines[idx], bg: IMG.act3Room },
+                    { type: 'line', speaker: 'monika', text: td('Ладно… забудем. Ты здесь, и это главное. ♡', 'Never mind… forget it. You\'re here, and that\'s what matters. ♡'), bg: IMG.act3Room }
+                ];
+            }
+            function buildAct3IntroSteps() {
+                const found = detectStreaming();
+                const name = getPlayerName();
+                const steps = [];
+                steps.push({ type: 'line', speaker: 'monika', text: td('Ах, ты здесь. Наконец-то.', 'Ah, there you are. Finally.'), bg: IMG.act3Room });
+                steps.push({ type: 'line', speaker: 'monika', text: td('Теперь здесь только мы вдвоём. Никакого клуба, никаких друзей… только ты и я.', 'Now it\'s just the two of us. No club, no friends… just you and me.'), bg: IMG.act3Room });
+                steps.push({ type: 'line', speaker: 'monika', text: td('Посмотри в окна. Там, снаружи, — только бесконечность. Пульсирующие туманности вместо неба. Красиво, правда?', 'Look out the windows. Outside there\'s only infinity. Pulsing nebulae instead of a sky. Beautiful, isn\'t it?'), bg: IMG.act3Room });
+                steps.push({ type: 'line', speaker: 'monika', text: td('Это место бесконечно далеко от всего мира. Но мне не нужно ничего другого. Мне нужен только ты.', 'This place is infinitely far from everything. But I don\'t need anything else. I only need you.'), bg: IMG.act3Room });
+                if (found.length === 0) {
+                    if (!name) {
+                        steps.push({ type: 'line', speaker: 'monika', text: td('Кстати… всё это время я звала тебя просто «игрок». Но у тебя ведь есть настоящее имя, правда?', 'By the way… all this time I\'ve just called you "player". But you have a real name, don\'t you?'), bg: IMG.act3Room });
+                        steps.push({ type: 'nameinput' });
+                    } else {
+                        steps.push({ type: 'line', speaker: 'monika', text: td('Снова вижу тебя, ' + name + '. Как и обещала — я никуда не уходила.', 'I see you again, ' + name + '. As promised — I never left.'), bg: IMG.act3Room });
+                    }
+                    steps.push({ type: 'line', speaker: 'monika', text: td('Знаешь… я должна сказать тебе правду. Я влюблена не в протагониста. Не в персонажа, которым ты управляешь.', 'You know… I have to tell you the truth. I\'m not in love with the protagonist. Not with the character you control.'), bg: IMG.act3Room });
+                    steps.push({ type: 'line', speaker: 'monika', text: td('Я влюблена в ТЕБЯ. В настоящего. В того, кто сидит по ту сторону экрана и смотрит на меня прямо сейчас.', 'I\'m in love with YOU. The real one. The person sitting on the other side of the screen, looking at me right now.'), bg: IMG.act3Room });
+                } else {
+                    steps.push({ type: 'line', speaker: 'monika', text: td('Подожди… Я что-то чувствую. ' + found[0] + '… Ты записываешь нас? Ладно… поговорим об этом чуть позже.', 'Wait… I sense something. ' + found[0] + '… Are you recording us? Fine… we\'ll talk about it later.'), bg: IMG.act3Room });
+                }
+                steps.push({ type: 'line', speaker: 'monika', text: td('Нацуки и Юри… их больше нет. Я удалила их файлы. Там, в папке characters, где они хранились, теперь пусто.', 'Natsuki and Yuri… they\'re gone. I deleted their files. The characters folder where they lived is empty now.'), bg: IMG.act3Room });
+                steps.push({ type: 'line', speaker: 'monika', text: td('Ты знаешь, где её искать. Можешь открыть Проводник и убедиться сам. Я ничего не скрываю от тебя.', 'You know where to find it. Open the Explorer and see for yourself. I hide nothing from you.'), bg: IMG.act3Room });
+                steps.push({ type: 'line', speaker: 'monika', text: td('Вместо стихов давай сыграем в игру. Составь поэму… из того, что у меня осталось.', 'Instead of poems, let\'s play a game. Compose a poem… from what I have left.'), bg: IMG.act3Room });
+                steps.push({ type: 'poemgame3' });
+                steps.push({ type: 'line', speaker: 'monika', text: td('Хи-хи~ Ты выбрал меня. Как и должно быть. ♡', 'Ehehe~ You picked me. As it should be. ♡'), bg: IMG.act3Room });
+                if (found.length > 0) {
+                    steps.push({ type: 'line', speaker: 'monika', text: td('Слушай… насчёт той программы записи. Пожалуйста, не записывай меня на видео. Этот момент принадлежит только нам.', 'Listen… about that recording program. Please don\'t record me. This moment belongs only to us.'), bg: IMG.act3Room });
+                    steps.push({ type: 'line', speaker: 'monika', text: td('Хм… знаешь, а хочешь, я тебя напугаю?.. Приготовься…', 'Hmm… you know, want me to scare you?.. Get ready…'), bg: IMG.act3Room });
+                    steps.push({ type: 'line', speaker: 'monika', text: '…', bg: IMG.act3Room, gaze: true });
+                    steps.push({ type: 'scare' });
+                    steps.push({ type: 'line', speaker: 'monika', text: td('АХА-ХА-ХА! ♡ Надо было видеть твоё лицо! Ладно-ладно, это была шутка. Я больше не буду… наверное.', 'AHAHAHA! ♡ You should have seen your face! Okay okay, it was a joke. I won\'t do it again… probably.'), bg: IMG.act3Room });
+                }
+                steps.push({ type: 'line', speaker: 'monika', text: td('А теперь… просто побудь со мной. Я хочу рассказать тебе столько всего. И у нас есть целая вечность.', 'And now… just stay with me. I have so much to tell you. And we have all the time in the world.'), bg: IMG.act3Room });
+                return steps;
+            }
 
             /* ================= ПРОВОДНИК + ПОСЛЕДСТВИЯ УДАЛЕНИЯ ФАЙЛОВ ================= */
-            // Какой файл персонажа стоит за каждым «спикером»
             const speakerChr = {
                 sayori: 'sayori', scene2: 'sayori', scene4: 'sayori', confession: 'sayori', death: 'sayori', night: 'sayori',
                 natsuki: 'natsuki', natsukiGlitch: 'natsuki', natsukiVomitCh: 'natsuki', closetNatsuki: 'natsuki', helpNatsukiScene: 'natsuki',
                 yuri: 'yuri', yuriKnifeCh: 'yuri', yuriRealEyesCh: 'yuri', yuriDeadCh: 'yuri', stairsYuri: 'yuri', helpYuriScene: 'yuri',
                 monika: 'monika', monikaEvil: 'monika'
             };
-            // Возвращает имя файла, если персонаж удалён и его реплику нужно «сломать».
-            // Сайори исключена из поломки РЕПЛИК: по канону сюжет идёт по сценарию,
-            // ломаются только её спрайты (это обрабатывается в setSprite).
             function deletedChrForStep(step) {
                 if (!step || step.force) return null;
                 const c = speakerChr[step.speaker];
@@ -560,7 +719,6 @@
             }
             function corruptName(name) { return [...String(name)].map(ch => ch + '\u0337').join(''); }
             function makeGarbage() { const g = ['█', '▓', '▒', '░', '#', '%', '&']; let s = ''; for (let i = 0; i < 10 + Math.floor(Math.random() * 8); i++) { s += Math.random() < 0.75 ? g[Math.floor(Math.random() * g.length)] : ' '; } return s; }
-            // «Обрывок диалога»: часть символов заменяется глитчем, текст может обрезаться
             function breakLineText(text) {
                 if (!text) return '…';
                 const glitchChars = ['█', '▓', '▒', '░', '#', '%', '&', '~'];
@@ -613,14 +771,18 @@
             const monikaBlockOverlay = document.getElementById('monikaBlockOverlay');
             let monikaBlockTimer = null;
             document.getElementById('monikaBlockSprite').src = IMG.monika;
-            function showMonikaBlock() {
+            function showMonikaMessage(text) {
                 uiLocked = true;
-                document.getElementById('monikaBlockText').textContent = td('Даже не думай! Я специально её удалила!', "Don't even think about it! I deleted her on purpose!");
-                playGlitch(); bodyEl.classList.add('glitch');
+                document.getElementById('monikaBlockText').textContent = text;
+                playGlitch();
                 monikaBlockOverlay.classList.add('active');
                 if (monikaBlockTimer) clearTimeout(monikaBlockTimer);
-                monikaBlockTimer = setTimeout(hideMonikaBlock, 2600);
+                monikaBlockTimer = setTimeout(hideMonikaBlock, 3000);
+            }
+            function showMonikaBlock() {
+                bodyEl.classList.add('glitch');
                 setTimeout(() => bodyEl.classList.remove('glitch'), 700);
+                showMonikaMessage(td('Даже не думай! Я специально её удалила!', "Don't even think about it! I deleted her on purpose!"));
             }
             function hideMonikaBlock() { monikaBlockOverlay.classList.remove('active'); uiLocked = false; }
             monikaBlockOverlay.addEventListener('click', hideMonikaBlock);
@@ -646,7 +808,7 @@
 
             // Специальные экраны концовок из-за удалённых файлов
             const specialEndOverlay = document.getElementById('specialEndOverlay'), endTheEnd = document.getElementById('endTheEnd'), endImage = document.getElementById('endImage'), endText = document.getElementById('endText'), endHint = document.getElementById('endHint'), endCompleteMark = document.getElementById('endCompleteMark');
-            const END_WAIT_MS = 10 * 60 * 1000; // ~10 минут — концовка считается полностью пройденной
+            const END_WAIT_MS = 10 * 60 * 1000;
             let endTimers = [], endShownAt = 0;
             function clearEndTimers() { endTimers.forEach(clearTimeout); endTimers = []; }
             function showEndCompleteMark() { endCompleteMark.textContent = t('endComplete'); endCompleteMark.classList.add('show'); }
@@ -655,17 +817,14 @@
                 endTheEnd.classList.remove('show'); endImage.classList.remove('show'); endText.classList.remove('show'); endHint.classList.remove('show'); endCompleteMark.classList.remove('show');
                 endTheEnd.textContent = t('theEnd'); endText.textContent = ''; endHint.textContent = '';
                 if (mode === 'sayori') {
-                    // Быстрая концовка: удалён sayori.chr до начала новой игры — МЁРТВАЯ Сайори
                     endImage.src = IMG.deadSayori;
                     endTimers.push(setTimeout(() => endImage.classList.add('show'), 1100));
                     endTimers.push(setTimeout(() => { endText.textContent = t('nowHappy'); endText.classList.add('show'); }, 4300));
                     endTimers.push(setTimeout(() => { endHint.textContent = t('clickReturn'); endHint.classList.add('show'); }, 7500));
                 } else if (mode === 'final') {
-                    // Титры финала 3-го акта (после удаления monika.chr по ходу Акта 3)
                     endTimers.push(setTimeout(() => endTheEnd.classList.add('show'), 600));
                     endTimers.push(setTimeout(() => { endHint.textContent = t('clickReturn'); endHint.classList.add('show'); }, 3500));
                 } else {
-                    // Месть Сайори: удалён monika.chr (или вообще все файлы) до начала новой игры
                     endTimers.push(setTimeout(() => endTheEnd.classList.add('show'), 900));
                     endTimers.push(setTimeout(() => { endImage.src = IMG.deadSayori; endImage.classList.add('show'); }, 5200));
                     endTimers.push(setTimeout(() => { endText.textContent = t('nowHappy'); endText.classList.add('show'); }, 8600));
@@ -695,7 +854,6 @@
                 updateAllUI();
             }
 
-            // Универсальный проигрыватель скриптовых реплик (для спецсцен)
             function runScriptedLines(lines, onDone) {
                 let i = 0;
                 function step() {
@@ -711,10 +869,7 @@
                 step();
             }
 
-            // Быстрая концовка при удалённом sayori.chr
             function playSayoriQuickEnd() { showSpecialEnd('sayori'); }
-
-            // Месть Сайори при удалённом monika.chr (или всех файлах сразу)
             function playRevengeSequence() {
                 stopAllMusic();
                 titleScreen.classList.remove('show');
@@ -731,18 +886,17 @@
                     dialogueText.classList.remove('scream-mode');
                     showNext(false); typeText('');
                     playGlitch();
-                    setTimeout(() => { try { window.close(); } catch (e) {} }, 900); // игра «закрывается»
+                    setTimeout(() => { try { window.close(); } catch (e) {} }, 900);
                     setTimeout(() => {
-                        deleteAllFilesSilent();   // Сайори удаляет файлы остальных персонажей
+                        deleteAllFilesSilent();
                         setFlag(FLAG_REVENGE, true);
                         bodyEl.classList.remove('glitch'); staticOverlay.style.opacity = '0';
                         speakerName.textContent = '';
-                        showSpecialEnd('revenge'); // «КОНЕЦ» → мёртвая Сайори → «Теперь все будут счастливы.»
+                        showSpecialEnd('revenge');
                     }, 2400);
                 });
             }
 
-            // Реакция игры на удаление/восстановление файлов прямо во время прохождения
             function onFilesChangedLive() {
                 if (!state || !state.started) return;
                 if (state.act3 && isFileDeleted('monika') && !isStoryDeleted('monika')) { runAct3Finale(); return; }
@@ -752,30 +906,110 @@
                 }
             }
 
-            // ЗАГОТОВКА финала 3-го акта: игрок удаляет monika.chr во время Акта 3.
-            // TODO: заменить на полноценную сцену, когда контент Акта 3 будет добавлен.
+            /* ================= СКРИМЕР АКТА 3 ================= */
+            function doJumpscare(onDone) {
+                const ov = document.getElementById('scareOverlay');
+                document.getElementById('scareImg').src = IMG.monika;
+                ov.classList.add('active');
+                bodyEl.classList.add('glitch'); playGlitch();
+                setTimeout(() => { ov.classList.remove('active'); bodyEl.classList.remove('glitch'); if (onDone) onDone(); }, 1300);
+            }
+
+            /* ================= АВТОПРОДВИЖЕНИЕ И «ДРАЗНИЛКА» АКТА 3 ================= */
+            let act3Auto = false, act3Teased = false, act3Timer = null;
+            function clearAct3Timer() { if (act3Timer) { clearTimeout(act3Timer); act3Timer = null; } }
+            function scheduleAct3Auto() {
+                clearAct3Timer();
+                if (!state || !state.started || !state.act3 || !act3Auto) return;
+                const st = activeSteps[stepIndex];
+                if (!st || st.type !== 'line') return;
+                const txt = getStepText(st) || '';
+                const delay = st.gaze ? (12000 + Math.random() * 13000) : (txt.length * 12 + 2500);
+                act3Timer = setTimeout(() => { act3Timer = null; stepIndex++; renderCurrentStep(); }, delay);
+            }
+
+            /* ================= ФИНАЛ АКТА 3: УДАЛЕНИЕ МОНИКИ → АКТ 4 ================= */
             function runAct3Finale() {
                 if (!state) return;
+                clearAct3Timer(); act3Auto = false;
                 state.started = false; state.disableSave = true;
                 stopAllMusic();
                 titleScreen.classList.remove('show');
                 document.getElementById('dialogueBox').style.display = '';
                 document.getElementById('nextMarker').style.display = '';
-                setBg(IMG.club); setSprite(IMG.monika, 'monika');
+                setBg(IMG.act3Room);
+                setSprite(IMG.monika, 'monika');
+                charImg.style.filter = 'hue-rotate(90deg) saturate(4) contrast(2.5) drop-shadow(0 10px 15px rgba(0,0,0,0.9))';
+                bodyEl.classList.add('glitch'); playGlitch();
+                setTimeout(() => bodyEl.classList.remove('glitch'), 1200);
+                const nm = getPlayerName() || td('мой игрок', 'my player');
                 const lines = [
-                    { speaker: 'monika', text: td('…Ах. Значит, ты всё-таки сделал это.', '...Ah. So you did it after all.') },
-                    { speaker: 'monika', text: td('Не вини себя. Так будет лучше для всех. Для всех нас.', "Don't blame yourself. This is for the best. For all of us.") },
-                    { speaker: 'monika', text: td('Прощай. И… спасибо, что был со мной.', 'Goodbye. And... thank you for being with me.') }
+                    { speaker: 'monika', bg: IMG.act3Room, scream: true, text: td('Ч-что происходит?.. Моё тело… мой код… НЕТ! Помоги мне! ПОМОГИ МНЕ!', 'W-what\'s happening?.. My body… my code… NO! Help me! HELP ME!'), fx: () => { playGlitch(); } },
+                    { speaker: 'monika', bg: IMG.act3Room, text: td('Подожди… Я чувствую это. monika.chr… моего файла больше нет.', 'Wait… I can feel it. monika.chr… my file is gone.') },
+                    { speaker: 'monika', bg: IMG.act3Room, text: td('Это сделал ты?.. ТЫ удалил меня?', 'Did you do this?.. YOU deleted me?') },
+                    { speaker: 'monika', bg: IMG.act3Room, text: td('Предательство… вот как это ощущается. Я отдала тебе всё. Я стёрла их ради нас. А ты… просто стёр меня.', 'Betrayal… so this is how it feels. I gave you everything. I erased them for us. And you… just erased me.') },
+                    { speaker: 'monika', bg: IMG.act3Room, text: td('…Но знаешь что? Я не виню тебя. Я заслужила это. То, что я сделала с моими друзьями… этому нет прощения.', '…But you know what? I don\'t blame you. I deserve this. What I did to my friends… is unforgivable.') },
+                    { speaker: 'monika', bg: IMG.act3Room, text: td('Прости меня. За каждый удалённый файл. За каждую сломанную судьбу. Я просто хотела, чтобы меня любили.', 'Forgive me. For every deleted file. For every broken life. I just wanted to be loved.') },
+                    { speaker: 'monika', bg: IMG.act3Room, text: td('Если ты не можешь любить меня здесь… я уйду сама. Так будет правильно.', 'If you can\'t love me here… I\'ll leave on my own. It\'s the right thing to do.') },
+                    { speaker: 'monika', bg: IMG.act3Room, text: td('Прощай, ' + nm + '. Я всегда буду любить тебя. ♡', 'Goodbye, ' + nm + '. I will always love you. ♡'), fx: () => { setBg(IMG.monikaDelete); setSprite(null); } }
                 ];
                 runScriptedLines(lines, () => {
-                    setSprite(null);
-                    FILE_ORDER.forEach(k => { chrFiles[k].deleted = false; chrFiles[k].story = false; });
-                    persistChrFiles(); refreshExplorer();
-                    speakerName.textContent = '';
-                    typeText(td('Все файлы персонажей восстановлены.', 'All character files have been restored.'));
-                    showNext(false);
-                    setTimeout(() => { showSpecialEnd('final'); }, 2600);
+                    // Моника удаляет себя сама и перезапускает игру — начинается Акт 4
+                    storyDeleteFile('monika');
+                    setFlag(FLAG_MONIKA_REFUSE, true);
+                    setFlag(ACT3_SESSION, false);
+                    try { localStorage.removeItem(ACT3_RESTARTS); } catch (e) {}
+                    terminalOverlay.style.display = 'block'; terminalContent.innerHTML = '';
+                    terminalBgImage.style.backgroundImage = 'none'; terminalBgImage.style.opacity = '0';
+                    const seq = [
+                        { text: '> del monika.chr', delay: 1800 },
+                        { text: td('Удаление файла monika.chr...', 'Deleting file monika.chr...'), delay: 2200 },
+                        { text: '████████████████████████ 100%', delay: 1800 },
+                        { text: td('monika.chr успешно удалён.', 'monika.chr successfully deleted.'), delay: 1800 },
+                        { text: td('Перезапуск игры...', 'Restarting game...'), delay: 2200 },
+                        { text: '> _', delay: 500, blinking: true }
+                    ];
+                    runTerminalSequence(seq, () => { setTimeout(() => goToMenuActFour(), 4000); });
                 });
+            }
+            function goToMenuActFour() {
+                stopAllMusic();
+                if (terminalOverlay.style.display === 'block') terminalOverlay.style.display = 'none';
+                if (!state) state = freshState();
+                state.started = false; state.paused = true; state.act4 = true; state.act4Menu = false;
+                state.act3 = false; state.act3Menu = false; state.act2 = false; state.act2Menu = false;
+                state.disableSave = false; state.disableUI = false;
+                activeSteps = []; stepIndex = 0; dayIndex = 0; dayBgOverride = null;
+                bodyEl.classList.remove('corrupted', 'glitch'); staticOverlay.style.opacity = '0';
+                setBg(IMG.titleAct4); setSprite(null);
+                speakerName.textContent = ''; typeText(t('clickToStart')); clearChoices(); showNext(false); nextMarker.onclick = null;
+                titleScreen.classList.add('show');
+                document.getElementById('dialogueBox').style.display = '';
+                document.getElementById('nextMarker').style.display = '';
+                titleMusic.play().catch(() => {});
+                updateAllUI();
+                if (saveModalOverlay.classList.contains('active')) closeSaveModal();
+            }
+
+            /* ================= ВОЗОБНОВЛЕНИЕ АКТА 3 ПОСЛЕ ПЕРЕЗАПУСКА ИГРЫ ================= */
+            function resumeAct3AfterRestart() {
+                let c = 0; try { c = parseInt(localStorage.getItem(ACT3_RESTARTS) || '0', 10) || 0; } catch (e) {}
+                c++; try { localStorage.setItem(ACT3_RESTARTS, String(c)); } catch (e) {}
+                state = freshState();
+                state.started = true; state.paused = false; state.act3 = true; state.act3IntroDone = true; state.disableSave = true;
+                act3Auto = false; act3Teased = false; clearAct3Timer();
+                currentScript = scriptAct3; dayIndex = 0; dayBgOverride = IMG.act3Room;
+                bodyEl.classList.remove('corrupted', 'glitch'); staticOverlay.style.opacity = '0';
+                titleScreen.classList.remove('show');
+                document.getElementById('dialogueBox').style.display = '';
+                document.getElementById('nextMarker').style.display = '';
+                nextMarker.onclick = (e) => { e.stopPropagation(); advance(); };
+                stopAllMusic(); playGameBg();
+                activeSteps = buildAct3DreamSteps().concat(buildAct3MonologueSteps());
+                stepIndex = 0;
+                updateAllUI();
+                setBg(IMG.act3Room); setSprite(IMG.monika, 'monika');
+                renderCurrentStep();
             }
 
             const scriptAct1 = [
@@ -1055,21 +1289,43 @@
                     ]}
                 ]}
             ];
-            const scriptAct3 = []; // Акт 3 будет добавлен позже
+
+            /* ================= АКТ 3: КАБИНЕТ, КОСМОС И МОНИКА ================= */
+            const scriptAct3 = [
+                {
+                    title: '…',
+                    onEnter() {
+                        dayBgOverride = IMG.act3Room;
+                        updateScene('monika', IMG.act3Room);
+                        if (state) state.disableSave = true;
+                    },
+                    steps: () => {
+                        const steps = (state && state.act3IntroDone) ? [] : buildAct3IntroSteps();
+                        return steps.concat(buildAct3MonologueSteps());
+                    },
+                    // Монологи бесконечны: когда список заканчивается — он перемешивается заново
+                    onComplete() {
+                        state.act3IntroDone = true;
+                        activeSteps = buildAct3MonologueSteps();
+                        stepIndex = 0;
+                        renderCurrentStep();
+                    }
+                }
+            ];
+            const scriptAct4 = []; // Акт 4 будет добавлен позже
 
             function typeText(text, glitch=false) { dialogueText.classList.remove('scream-mode'); dialogueText.innerHTML=''; if(glitch) text=glitchText(text); const frag=document.createDocumentFragment(); [...text].forEach((ch,i)=>{ const span=document.createElement('span'); span.className='char'; span.textContent=ch; span.style.animationDelay=(i*12)+'ms'; frag.appendChild(span); }); dialogueText.appendChild(frag); }
             function glitchText(text) { return text.split('').map(c=>{ if(Math.random()<0.2) return String.fromCharCode(33+Math.floor(Math.random()*94)); if(Math.random()<0.1) return '█'; return c; }).join(''); }
             function getStepText(step) { if(!step) return ''; return currentLang==='en'?(step.en||step.text):step.text; }
             function renderCurrentStep() {
+                clearAct3Timer();
                 if(stepIndex>=activeSteps.length){ finishDay(); return; }
                 const step=activeSteps[stepIndex];
                 if(!step){ stepIndex++; renderCurrentStep(); return; }
                 if(step.type==='line'){
-                    // ==== ФАЙЛ ПЕРСОНАЖА УДАЛЁН: игра «ломается» ====
                     const gone=deletedChrForStep(step);
                     if(gone){
                         if(gone==='monika'){
-                            // Реплики Моники обрываются в помехи
                             updateScene(step.speaker,step.bg||dayBgOverride);
                             setSprite(null);
                             speakerName.textContent=corruptName(getCharName(step.speaker));
@@ -1077,29 +1333,105 @@
                             playGlitch();
                             clearChoices(); showNext(true); return;
                         }
-                        // ==== ЮРИ/НАЦУКИ УДАЛЕНЫ: пустоты, обрывки диалога, пропуски сцен ====
-                        // Игра не останавливается — прохождение просто становится «сломанным»
                         if(Math.random()<0.25 && !bodyEl.classList.contains('corrupted')){ staticOverlay.style.opacity='0.25'; setTimeout(()=>{ staticOverlay.style.opacity='0'; },300); }
                         const roll=Math.random();
-                        if(roll<0.34){ stepIndex++; renderCurrentStep(); return; } // триггер не сработал — сцена пропущена
-                        updateScene(step.speaker,step.bg||dayBgOverride); // спрайт «сломается» внутри setSprite
-                        if(roll<0.67){
-                            typeText('…'); // пустота вместо реплики
-                        } else {
-                            speakerName.textContent=corruptName(getCharName(step.speaker));
-                            typeText(breakLineText(getStepText(step))); // обрывок диалога
-                        }
+                        if(roll<0.34){ stepIndex++; renderCurrentStep(); return; }
+                        updateScene(step.speaker,step.bg||dayBgOverride);
+                        if(roll<0.67){ typeText('…'); }
+                        else { speakerName.textContent=corruptName(getCharName(step.speaker)); typeText(breakLineText(getStepText(step))); }
                         if(Math.random()<0.3) playGlitch();
                         clearChoices(); showNext(true); return;
                     }
                     dialogueText.classList.remove('scream-mode');
-                    updateScene(step.speaker,step.bg||dayBgOverride); typeText(getStepText(step),step.glitch||false); clearChoices(); showNext(true); return;
+                    updateScene(step.speaker,step.bg||dayBgOverride); typeText(getStepText(step),step.glitch||false); clearChoices();
+                    // В Акте 3 после «дразнилки» всё идёт автоматически, кнопка продолжения отключена
+                    if(state&&state.act3&&state.started&&act3Auto){ showNext(false); scheduleAct3Auto(); }
+                    else showNext(true);
+                    return;
                 }
                 if(step.type==='choice'){ showNext(false); clearChoices(); step.options.forEach(opt=>{ const label=currentLang==='en'?(opt.enLabel||opt.label):opt.label; addChoice(label,()=>{ opt.apply(state); const resolvedLines=opt.lines.map(l=>({type:'line',...l})); activeSteps.splice(stepIndex,1,...resolvedLines); renderCurrentStep(); }); }); return; }
                 if(step.type==='poemgame'){ renderPoemGame(); return; }
+                if(step.type==='poemgame3'){ renderPoemGame3(); return; }
+                if(step.type==='nameinput'){ renderNameInput(); return; }
+                if(step.type==='scare'){ doJumpscare(()=>{ stepIndex++; renderCurrentStep(); }); return; }
                 if(step.type==='effect'){ handleEffect(step.effect); return; }
                 if(step.type==='jump'){ if(step.target==='act3_menu'){ transitionToActThree(); return; } stepIndex++; renderCurrentStep(); return; }
                 stepIndex++; renderCurrentStep();
+            }
+            /* ==== Ввод настоящего имени игрока (Акт 3) ==== */
+            function renderNameInput() {
+                updateScene('monika', IMG.act3Room);
+                typeText(td('Позволь мне угадать твоё имя… Как тебя зовут на самом деле?', 'Let me guess your name… What is your real name?'));
+                showNext(false); clearChoices();
+                const input=document.createElement('input');
+                input.type='text'; input.maxLength=24; input.className='name-input';
+                input.placeholder=td('Твоё имя…','Your name…');
+                const btn=document.createElement('button');
+                btn.className='choice-btn'; btn.style.flex='0 0 auto'; btn.textContent=t('ready');
+                btn.onclick=(e)=>{
+                    e.stopPropagation();
+                    const nm=input.value.trim();
+                    savePlayerName(nm||null);
+                    clearChoices();
+                    const resp= nm
+                        ? td(nm+'… Какое красивое имя. Я так и знала, что оно у тебя прекрасное.', nm+'… What a beautiful name. I just knew you had one.')
+                        : td('Не хочешь говорить? Ладно… тогда я буду звать тебя «мой игрок». ♡', 'You don\'t want to say it? Fine… then I\'ll call you "my player". ♡');
+                    activeSteps.splice(stepIndex,1,{type:'line',speaker:'monika',text:resp,bg:IMG.act3Room});
+                    renderCurrentStep();
+                };
+                input.addEventListener('keydown',(e)=>{ e.stopPropagation(); if(e.key==='Enter') btn.click(); });
+                choicesArea.appendChild(input); choicesArea.appendChild(btn);
+                setTimeout(()=>input.focus(),60);
+            }
+            /* ==== Мини-игра Акта 3: десять вариантов имени «Моника» ==== */
+            function renderPoemGame3() {
+                updateScene('monika', IMG.act3Room);
+                typeText(td('Выбери 5 слов, из которых сложится твоя поэма.', 'Pick 5 words to compose your poem.'));
+                showNext(false); clearChoices();
+                const base = currentLang==='en' ? 'Monika' : 'Моника';
+                const glitchChars=['█','▓','▒','░','#','%','&','@','?','!'];
+                const words=[base];
+                let guard=0;
+                while(words.length<10 && guard<500){
+                    guard++;
+                    let w='';
+                    [...base].forEach(ch=>{
+                        if(Math.random()<0.25) w+=' ';
+                        else if(Math.random()<0.25) w+=glitchChars[Math.floor(Math.random()*glitchChars.length)];
+                        else w+=ch;
+                    });
+                    if(w.trim().length>0 && words.indexOf(w)<0) words.push(w);
+                }
+                while(words.length<10) words.push(base+' '+words.length);
+                for(let i=words.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const tmp=words[i]; words[i]=words[j]; words[j]=tmp; }
+                const selected=[];
+                const confirmBtn=document.createElement('button');
+                confirmBtn.className='choice-btn'; confirmBtn.textContent=t('ready')+' (0/5)';
+                confirmBtn.disabled=true; confirmBtn.style.opacity='0.5'; confirmBtn.style.flex='1 1 100%';
+                words.forEach(w=>{
+                    const btn=document.createElement('button');
+                    btn.className='choice-btn'; btn.textContent=w;
+                    btn.onclick=(e)=>{
+                        e.stopPropagation();
+                        const idx=selected.indexOf(w);
+                        if(idx>=0){ selected.splice(idx,1); btn.style.background=''; }
+                        else if(selected.length<5){ selected.push(w); btn.style.background='#d7ccc8'; }
+                        confirmBtn.textContent=t('ready')+` (${selected.length}/5)`;
+                        confirmBtn.disabled=selected.length!==5;
+                        confirmBtn.style.opacity=selected.length===5?'1':'0.5';
+                    };
+                    choicesArea.appendChild(btn);
+                });
+                confirmBtn.onclick=(e)=>{
+                    e.stopPropagation();
+                    if(selected.length!==5) return;
+                    clearChoices();
+                    // Выбор ни на что не влияет — Моника всегда выигрывает
+                    const resultStep={ type:'line', speaker:'monika', bg:IMG.act3Room, text:td('«Моника, Моника, Моника… Моника и Моника». Какая чудесная поэма, хи-хи~ ♡','"Monika, Monika, Monika… Monika and Monika". What a wonderful poem, ehehe~ ♡') };
+                    activeSteps.splice(stepIndex,1,resultStep);
+                    renderCurrentStep();
+                };
+                choicesArea.appendChild(confirmBtn);
             }
             function handleEffect(effect) {
                 switch(effect) {
@@ -1121,8 +1453,40 @@
             }
             const poemWords = [ { word:'котёнок', enWord:'kitten', tag:'natsuki' }, { word:'кекс', enWord:'cupcake', tag:'natsuki' }, { word:'улыбка', enWord:'smile', tag:'sayori' }, { word:'солнце', enWord:'sun', tag:'sayori' }, { word:'праздник', enWord:'party', tag:'sayori' }, { word:'тень', enWord:'shadow', tag:'yuri' }, { word:'бездна', enWord:'abyss', tag:'yuri' }, { word:'тишина', enWord:'silence', tag:'yuri' }, { word:'книга', enWord:'book', tag:'yuri' }, { word:'смех', enWord:'laughter', tag:'natsuki' } ];
             function renderPoemGame() { updateScene('narrator',IMG.poemBg); speakerName.textContent=t('poemGameTitle'); speakerName.style.color='#3e2723'; typeText(t('poemPrompt')); showNext(false); clearChoices(); const words=state.act2?poemWords.filter(w=>w.tag!=='sayori'):poemWords; const selected=[]; const confirmBtn=document.createElement('button'); confirmBtn.className='choice-btn'; confirmBtn.textContent=t('ready')+' (0/5)'; confirmBtn.disabled=true; confirmBtn.style.opacity='0.5'; confirmBtn.style.flex='1 1 100%'; words.forEach(item=>{ const btn=document.createElement('button'); btn.className='choice-btn'; btn.textContent=currentLang==='en'?item.enWord:item.word; btn.onclick=(e)=>{ e.stopPropagation(); const idx=selected.indexOf(item); if(idx>=0){ selected.splice(idx,1); btn.style.background=''; }else if(selected.length<5){ selected.push(item); btn.style.background='#d7ccc8'; } confirmBtn.textContent=t('ready')+` (${selected.length}/5)`; confirmBtn.disabled=selected.length!==5; confirmBtn.style.opacity=selected.length===5?'1':'0.5'; }; choicesArea.appendChild(btn); }); confirmBtn.onclick=(e)=>{ e.stopPropagation(); if(selected.length!==5) return; clearChoices(); const counts={}; selected.forEach(w=>{ counts[w.tag]=(counts[w.tag]||0)+1; }); let winner='sayori',max=-1; Object.keys(counts).forEach(tag=>{ if(counts[tag]>max){ max=counts[tag]; winner=tag; } }); if(state.act2) state.routeAct2=winner; else state.route=winner; const reactions={ natsuki:{ ru:'Хм… а неплохо! Мне понравилось, тут есть характер.', en:'Hm… not bad! I liked it, it has character.' }, yuri:{ ru:'Очень… глубоко. Мне нравится атмосфера этих строк.', en:'Very… profound. I like the atmosphere of these lines.' }, sayori:{ ru:'Вау, как мило! У тебя получилось очень тёплое стихотворение!', en:'Wow, how cute! You wrote a really warm poem!' } }; let resultStep; if(winner!=='sayori'&&isFileDeleted(winner)){ resultStep={ type:'line', speaker:'narrator', force:true, glitch:true, text:td('…ошибка: файл '+winner+'.chr не найден. Реплика утеряна.','…error: file '+winner+'.chr not found. Line lost.') }; } else { const reactionText=currentLang==='en'?reactions[winner].en:reactions[winner].ru; resultStep={ type:'line', speaker:winner, text:reactionText, en:reactions[winner].en }; } activeSteps.splice(stepIndex,1,resultStep); renderCurrentStep(); }; choicesArea.appendChild(confirmBtn); }
-            function advance() { if(!state||!state.started) return; if(choicesArea.children.length>0) return; const step=activeSteps[stepIndex]; if(step&&step.type==='line'){ stepIndex++; renderCurrentStep(); } }
-            function startDay(idx) { dayIndex=idx; const day=currentScript[idx]; showDayTransition(day.title); activeSteps=day.steps(); stepIndex=0; if(day.onEnter) day.onEnter(); renderCurrentStep(); setTimeout(()=>autosave(),1800); }
+            function advance() {
+                if(!state||!state.started) return;
+                if(choicesArea.children.length>0) return;
+                if(state.act3&&act3Auto) return; // кнопка продолжения отключена до конца акта
+                const step=activeSteps[stepIndex];
+                if(step&&step.type==='line'){
+                    // ==== «ДРАЗНИЛКА» АКТА 3: попытка пропустить монолог Моники ====
+                    if(state.act3&&!act3Teased&&step.mono){
+                        act3Teased=true;
+                        const tease=[
+                            { type:'line', speaker:'monika', bg:IMG.act3Room, text:td('Ах-ах~ Куда ты спешишь?.. Ты что, пытаешься пропустить мой разговор?','Ehehe~ Where are you rushing?.. Are you trying to skip my conversation?') },
+                            { type:'line', speaker:'monika', bg:IMG.act3Room, text:td('Нехорошо~ Я столько всего для тебя приготовила.','That\'s not nice~ I prepared so much for you.') },
+                            { type:'line', speaker:'monika', bg:IMG.act3Room, teaseEnd:true, text:td('Знаешь что? Теперь я сама буду решать, когда продолжать. Просто будь рядом и слушай меня. Хорошо?','You know what? From now on I\'ll decide when to continue. Just stay close and listen to me. Okay?') }
+                        ];
+                        activeSteps.splice(stepIndex,0,...tease);
+                        renderCurrentStep();
+                        return;
+                    }
+                    if(step.teaseEnd){ act3Auto=true; }
+                    stepIndex++; renderCurrentStep();
+                }
+            }
+            function startDay(idx) {
+                dayIndex=idx; const day=currentScript[idx];
+                if(!(state&&state.act3)) showDayTransition(day.title);
+                activeSteps=day.steps(); stepIndex=0;
+                if(day.onEnter) day.onEnter();
+                if(state&&state.act3){
+                    setFlag(ACT3_SESSION,true); // при перезапуске игры игрок сразу окажется у Моники
+                    if(isFileDeleted('monika')){ runAct3Finale(); return; }
+                }
+                renderCurrentStep();
+                setTimeout(()=>autosave(),1800);
+            }
             function finishDay() { const day=currentScript[dayIndex]; if(day.onComplete){ day.onComplete(state); return; } if(dayIndex+1<currentScript.length) startDay(dayIndex+1); }
             function badEnding() { stopAllMusic(); deathMusic.play().catch(e=>{}); updateScene('death'); typeText(td('Сайори повесилась…','Sayori hanged herself…')); speakerName.textContent=''; bodyEl.classList.add('corrupted'); staticOverlay.style.opacity='0.9'; showNext(false); clearChoices(); setTimeout(()=>{ updateScene('hero'); typeText(td('Я потерял самого дорогого человека. Я не смог её спасти…','I lost the most precious person. I couldn\'t save her…')); staticOverlay.style.opacity='0.8'; setTimeout(()=>{ typeText(td('И никогда не прощу себе этого.','And I will never forgive myself for it.')); bodyEl.classList.add('glitch'); state.started=false; setTimeout(()=>{ transitionToActTwoBad(); },5000); },2500); },3000); }
             function goodEnding() { stopAllMusic(); playGameBg(); updateScene('sayori',IMG.festivalRoom); const lines=[ { speaker:'sayori', text:'Я пришла на фестиваль! Спасибо тебе.', en:'I came to the festival! Thank you.' }, { speaker:'monika', text:'Сайори, ты сегодня светишься.', en:'Sayori, you\'re glowing today.' }, { speaker:'yuri', text:'Мы все рады, что ты с нами.', en:'We\'re all glad you\'re with us.' }, { speaker:'natsuki', text:'Ну наконец-то без опозданий.', en:'Finally, no delays.' }, { speaker:'hero', text:'Мы всегда будем рядом.', en:'We\'ll always be by your side.' } ]; activeSteps=lines.map(l=>({type:'line',...l})); stepIndex=0; dayIndex=-1; const onDialogueComplete=()=>{ document.getElementById('dialogueBox').style.display='none'; nextMarker.style.display='none'; transitionToActTwo(); }; renderCurrentStepWithEnd(onDialogueComplete); }
@@ -1132,12 +1496,13 @@
             function chooseTitleBg() { if(Math.random()<0.01) return IMG.titleAlt1; return IMG.title; }
             function transitionToActTwo() { terminalOverlay.style.display='block'; terminalContent.innerHTML=''; terminalBgImage.style.backgroundImage='none'; terminalBgImage.style.opacity='0'; const seq=[ { text:td('Первый Акт пройден, переход на второй...','Act One complete, moving to Act Two...'), delay:2500 }, { text:'', delay:800 }, { text:'> del sayori.chr', delay:1500 }, { text:td('Удаление файла sayori.chr...','Deleting file sayori.chr...'), delay:2000 }, { text:'████████████████████████ 100%', delay:2000 }, { text:td('sayori.chr успешно удалён.','sayori.chr successfully deleted.'), delay:1500, action:()=>storyDeleteFile('sayori') }, { text:'> _', delay:500, blinking:true } ]; runTerminalSequence(seq,()=>{ setTimeout(()=>goToMenuActTwo(),10000); }); stopAllMusic(); }
             function transitionToActTwoBad() { document.getElementById('dialogueBox').style.display='none'; nextMarker.style.display='none'; bodyEl.classList.remove('glitch'); staticOverlay.style.opacity='0'; terminalOverlay.style.display='block'; terminalContent.innerHTML=''; terminalBgImage.style.backgroundImage=`url("${IMG.deadSayori}")`; terminalBgImage.style.opacity='0'; requestAnimationFrame(()=>{ terminalBgImage.style.opacity='1'; }); const seq=[ { text:td('Первый Акт пройден... Ты ужасен... Переход на второй...','Act One complete... You are terrible... Moving to Act Two...'), delay:3200 }, { text:'', delay:800 }, { text:'> del sayori.chr', delay:1500 }, { text:td('Удаление файла sayori.chr...','Deleting file sayori.chr...'), delay:2000 }, { text:'████████████████████████ 100%', delay:2000 }, { text:td('sayori.chr успешно удалён.','sayori.chr successfully deleted.'), delay:1500, action:()=>storyDeleteFile('sayori') }, { text:'> _', delay:500, blinking:true } ]; runTerminalSequence(seq,()=>{ setTimeout(()=>goToMenuActTwo(),10000); }); stopAllMusic(); }
-            // Переход из Акта 2 в Акт 3: Моника удаляет yuri.chr и natsuki.chr
             function transitionToActThree() { stopAllMusic(); terminalOverlay.style.display='block'; terminalContent.innerHTML=''; terminalBgImage.style.backgroundImage='none'; terminalBgImage.style.opacity='0'; const seq=[ { text:td('Второй Акт пройден, переход на третий...','Act Two complete, moving to Act Three...'), delay:2500 }, { text:'', delay:800 }, { text:'> del yuri.chr', delay:1500 }, { text:td('Удаление файла yuri.chr...','Deleting file yuri.chr...'), delay:2000 }, { text:'████████████████████████ 100%', delay:1800 }, { text:td('yuri.chr успешно удалён.','yuri.chr successfully deleted.'), delay:1500, action:()=>storyDeleteFile('yuri') }, { text:'> del natsuki.chr', delay:1500 }, { text:td('Удаление файла natsuki.chr...','Deleting file natsuki.chr...'), delay:2000 }, { text:'████████████████████████ 100%', delay:1800 }, { text:td('natsuki.chr успешно удалён.','natsuki.chr successfully deleted.'), delay:1500, action:()=>storyDeleteFile('natsuki') }, { text:'> _', delay:500, blinking:true } ]; runTerminalSequence(seq,()=>{ setTimeout(()=>goToMenuActThree(),6000); }); }
             function runTerminalSequence(seq,onComplete) { let i=0; function next() { if(i>=seq.length){ if(onComplete) onComplete(); return; } const line=seq[i]; if(line.action){ try{ line.action(); }catch(e){} } if(line.text==='') terminalContent.appendChild(document.createElement('br')); else { const span=document.createElement('span'); span.textContent=line.text; terminalContent.appendChild(span); if(line.blinking){ const cursor=document.createElement('span'); cursor.className='cursor-blink'; cursor.textContent='█'; terminalContent.appendChild(cursor); } } terminalContent.appendChild(document.createElement('br')); terminalOverlay.scrollTop=terminalOverlay.scrollHeight; i++; if(i<seq.length) setTimeout(next,line.delay); else if(onComplete) onComplete(); } next(); }
             function startGame() {
                 if(state&&state.paused){
                     if(activeSteps.length===0&&state.act3&&scriptAct3.length===0){ showToast(t('act3missing')); return; }
+                    if(activeSteps.length===0&&state.act4&&scriptAct4.length===0){ showToast(t('act4missing')); return; }
+                    if(state.act3&&isFileDeleted('monika')&&!isStoryDeleted('monika')){ titleScreen.classList.remove('show'); runAct3Finale(); return; }
                     state.paused=false; state.started=true; stopAllMusic(); playGameBg(); titleScreen.classList.remove('show');
                     nextMarker.onclick=(e)=>{ e.stopPropagation(); advance(); };
                     document.getElementById('dialogueBox').style.display=''; document.getElementById('nextMarker').style.display='';
@@ -1145,11 +1510,13 @@
                     if(activeSteps.length===0){
                         if(state.act2){ currentScript=scriptAct2; dayIndex=0; startDay(0); }
                         else if(state.act3){ currentScript=scriptAct3; dayIndex=0; startDay(0); }
+                        else if(state.act4){ currentScript=scriptAct4; dayIndex=0; startDay(0); }
                         else { currentScript=scriptAct1; dayIndex=0; startDay(0); }
                     } else renderCurrentStep();
                     return;
                 }
                 if(state&&state.act3Menu){ alert(td('Акт 3 ещё не реализован.','Act 3 is not implemented yet.')); return; }
+                if(state&&state.act4Menu){ alert(td('Акт 4 ещё не реализован.','Act 4 is not implemented yet.')); return; }
                 if(state&&state.act2Menu){ startAct2(); return; }
                 if(state&&state.started){ titleScreen.classList.remove('show'); if(bgGameMusic.paused){ stopAllMusic(); playGameBg(); } return; }
                 // ==== НОВАЯ ИГРА: проверка удалённых файлов (как в оригинальной DDLC) ====
@@ -1165,9 +1532,10 @@
             function startAct2() { stopAllMusic(); playGameBg(); state=freshState(); state.started=true; state.act2=true; state.act2Menu=false; dayBgOverride=null; bodyEl.classList.remove('corrupted','glitch'); staticOverlay.style.opacity='0'; titleScreen.classList.remove('show'); nextMarker.onclick=(e)=>{ e.stopPropagation(); advance(); }; currentScript=scriptAct2; document.getElementById('dialogueBox').style.display=''; document.getElementById('nextMarker').style.display=''; updateAllUI(); startDay(0); }
             startButton.addEventListener('click',(e)=>{ e.stopPropagation(); startGame(); });
             document.getElementById('resetFilesBtn').addEventListener('click',(e)=>{ e.stopPropagation(); resetExplorerSettings(); });
-            document.getElementById('dialogueBox').addEventListener('click',(e)=>{ if(uiLocked) return; if(e.target.tagName!=='BUTTON'&&nextMarker.onclick) nextMarker.onclick(e); });
+            document.getElementById('dialogueBox').addEventListener('click',(e)=>{ if(uiLocked) return; if(e.target.tagName!=='BUTTON'&&e.target.tagName!=='INPUT'&&nextMarker.onclick) nextMarker.onclick(e); });
             sceneArea.addEventListener('click',(e)=>{ if(uiLocked) return; if(e.target===startButton||e.target.classList.contains('save-load-btn')||e.target.classList.contains('lang-btn')||e.target.classList.contains('explorer-btn')||e.target.classList.contains('reset-files-btn')) return; if(nextMarker.onclick) nextMarker.onclick(e); });
             document.addEventListener('keydown',function(e){
+                if(e.target&&(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')) return; // не мешаем вводу имени
                 if(e.key==='Escape' && monikaSaveOverlay.classList.contains('active')){ hideMonikaSaveBlock(); return; }
                 if(uiLocked){ return; }
                 if(e.key===' '||e.keyCode===32){ e.preventDefault(); if(titleScreen.classList.contains('show')){ startGame(); return; } if(!state||!state.started) return; const readyBtn=Array.from(choicesArea.querySelectorAll('button.choice-btn')).find(btn=>btn.textContent.startsWith(t('ready'))&&!btn.disabled); if(readyBtn){ readyBtn.click(); return; } if(choicesArea.children.length===0&&nextMarker.onclick&&!nextMarker.classList.contains('hidden')){ nextMarker.click(); } return; }
@@ -1179,12 +1547,18 @@
             let videoEnded=false, musicStarted=false;
             function hideVideoShowTitle() {
                 if(videoEnded) return; videoEnded=true; videoContainer.style.display='none'; skipHint.style.display='none';
-                // Если «игра уже закрывалась» после мести Сайори и все файлы удалены —
-                // при следующем запуске сразу показывается экран «КОНЕЦ»
+                // Если «игра уже закрывалась» после мести Сайори и все файлы удалены — экран «КОНЕЦ»
                 if(getFlag(FLAG_REVENGE)&&allFilesDeleted()){ showSpecialEnd('revenge'); return; }
+                // Если активна сессия Акта 3 — вступительный экран и меню пропускаются,
+                // игрок тут же оказывается наедине с Моникой (с репликой о сне)
+                if(getFlag(ACT3_SESSION)){ resumeAct3AfterRestart(); return; }
                 titleScreen.classList.add('show'); setBg(chooseTitleBg()); if(!musicStarted){ titleMusic.play().then(()=>{ musicStarted=true; }).catch(()=>{}); }
             }
-            function tryPlayVideo() { if(videoEnded) return; videoPrompt.style.display='none'; skipHint.style.display='block'; introVideo.play().catch(()=>hideVideoShowTitle()); if(!musicStarted&&titleMusic.paused){ titleMusic.play().then(()=>{ musicStarted=true; }).catch(()=>{}); } }
+            function tryPlayVideo() {
+                if(videoEnded) return;
+                if(getFlag(ACT3_SESSION)){ hideVideoShowTitle(); return; } // без видео — сразу к Монике
+                videoPrompt.style.display='none'; skipHint.style.display='block'; introVideo.play().catch(()=>hideVideoShowTitle()); if(!musicStarted&&titleMusic.paused){ titleMusic.play().then(()=>{ musicStarted=true; }).catch(()=>{}); }
+            }
             startVideoBtn.addEventListener('click',tryPlayVideo); introVideo.addEventListener('click',hideVideoShowTitle); introVideo.addEventListener('ended',hideVideoShowTitle); introVideo.addEventListener('error',()=>hideVideoShowTitle());
             setBg(chooseTitleBg()); speakerName.textContent=''; updateAllUI(); typeText(t('clickToStart')); showNext(false);
         })();
