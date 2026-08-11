@@ -769,6 +769,7 @@
                     startGame: 'Начать игру',
                     startAct2: 'Начать 2 Акт',
                     startAct3: 'Начать 3 Акт',
+                    continue: 'Продолжить',
                     save: '💾 Сохранить',
                     load: '📂 Загрузить',
                     savesTitle: '💾 Сохранения',
@@ -804,6 +805,7 @@
                     startGame: 'Start Game',
                     startAct2: 'Start Act 2',
                     startAct3: 'Start Act 3',
+                    continue: 'Continue',
                     save: '💾 Save',
                     load: '📂 Load',
                     savesTitle: '💾 Saves',
@@ -842,10 +844,14 @@
             function updateAllUI() {
                 document.getElementById('titleHeading').textContent = t('title');
                 const startBtn = document.getElementById('startButton');
-                if (state && state.act3Menu) {
-                    startBtn.textContent = t('startAct3');
+                if (state && state.paused && state.act2) {
+                    startBtn.textContent = t('continue');
+                } else if (state && state.paused && state.act3) {
+                    startBtn.textContent = t('continue');
                 } else if (state && state.act2Menu) {
                     startBtn.textContent = t('startAct2');
+                } else if (state && state.act3Menu) {
+                    startBtn.textContent = t('startAct3');
                 } else {
                     startBtn.textContent = t('startGame');
                 }
@@ -1084,27 +1090,21 @@
 
             document.getElementById('menuButton').addEventListener('click', (e) => {
                 e.stopPropagation();
-                if (state && state.started) {
-                    if (!confirm(t('backToMenu'))) return;
-                    autosave();
-                }
-                if (state && state.act2Menu) {
-                    goToMenuActTwo();
-                    return;
-                }
-                if (state && state.act3Menu) {
-                    goToMenuActThree();
-                    return;
-                }
-                state = null;
-                activeSteps = [];
-                stepIndex = 0;
-                dayIndex = 0;
-                dayBgOverride = null;
+                if (!state || !state.started) return;
+                if (!confirm(t('backToMenu'))) return;
+                autosave();
+                state.paused = true;
+                state.started = false;
                 stopAllMusic();
                 titleMusic.play().catch(() => {});
                 titleScreen.classList.add('show');
-                setBg(chooseTitleBg());
+                if (state.act2) {
+                    setBg(IMG.titleAct2);
+                } else if (state.act3) {
+                    setBg(IMG.titleAct3);
+                } else {
+                    setBg(chooseTitleBg());
+                }
                 setSprite(null);
                 speakerName.textContent = '';
                 typeText(t('clickToStart'));
@@ -1115,8 +1115,8 @@
                 staticOverlay.style.opacity = '0';
                 document.getElementById('dialogueBox').style.display = '';
                 document.getElementById('nextMarker').style.display = '';
-                if (saveModalOverlay.classList.contains('active')) closeSaveModal();
                 updateAllUI();
+                if (saveModalOverlay.classList.contains('active')) closeSaveModal();
             });
 
             // ===== АССЕТЫ =====
@@ -1183,12 +1183,12 @@
                 poemNatsuki2Scene: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: IMG.poemNatsuki2 },
                 poemYuri2Scene: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: IMG.poemYuri2 },
                 narrator: { name: "", enName: "", color: "#3e2723", sprite: "", bg: null },
-                // второактные
+                // второактные (исправлено: спрайты убраны, фоны заданы)
                 natsukiGlitch: { name: "Нацуки", enName: "Natsuki", color: "#e91e63", sprite: IMG.natsukiBrokenNeck, bg: IMG.club },
                 natsukiVomitCh: { name: "Нацуки", enName: "Natsuki", color: "#e91e63", sprite: IMG.natsukiVomit, bg: IMG.club },
-                yuriKnifeCh: { name: "Юри", enName: "Yuri", color: "#9c27b0", sprite: IMG.yuriKnife, bg: IMG.club },
-                yuriRealEyesCh: { name: "Юри", enName: "Yuri", color: "#9c27b0", sprite: IMG.yuriRealEyes, bg: IMG.club },
-                yuriDeadCh: { name: "Юри", enName: "Yuri", color: "#555", sprite: IMG.yuriDeadBody, bg: IMG.club },
+                yuriKnifeCh: { name: "Юри", enName: "Yuri", color: "#9c27b0", sprite: "", bg: IMG.yuriKnife },
+                yuriRealEyesCh: { name: "Юри", enName: "Yuri", color: "#9c27b0", sprite: "", bg: IMG.yuriRealEyes },
+                yuriDeadCh: { name: "Юри", enName: "Yuri", color: "#555", sprite: "", bg: IMG.yuriDeadBody },
                 monikaEvil: { name: "Моника", enName: "Monika", color: "#4caf50", sprite: IMG.monika, bg: IMG.club },
             };
 
@@ -1294,6 +1294,7 @@
             function freshState() {
                 return {
                     started: false,
+                    paused: false,
                     affection: 2,
                     corruption: 0,
                     bowFixed: false,
@@ -1313,7 +1314,7 @@
                 };
             }
 
-            // ===== СЦЕНАРИЙ ПЕРВОГО АКТА (без изменений) =====
+            // ===== СЦЕНАРИЙ ПЕРВОГО АКТА =====
             const scriptAct1 = [{
                 title: 1,
                 onEnter() { dayBgOverride = null;
@@ -1509,18 +1510,21 @@
                 onComplete(s) { if (s.visitedAtNight) goodEnding(); else badEnding(); }
             }];
 
-            // ===== СЦЕНАРИЙ ВТОРОГО АКТА =====
+            // ===== СЦЕНАРИЙ ВТОРОГО АКТА (переработано начало) =====
             const scriptAct2 = [{
                 title: 1,
                 onEnter() { dayBgOverride = null;
-                    updateScene('monikaEvil'); },
+                    updateScene('hallway'); },
                 steps: () => [
-                    { type: 'line', speaker: 'monikaEvil', text: 'Добро пожаловать обратно. Сайори больше нет с нами, но не волнуйся — всё будет хорошо.', en: 'Welcome back. Sayori is no longer with us, but don\'t worry — everything will be fine.' },
-                    { type: 'line', speaker: 'yuri', text: 'Привет… Я рада, что ты здесь.', en: 'Hello… I\'m glad you\'re here.' },
-                    { type: 'line', speaker: 'natsuki', text: 'Ага, привет. Надеюсь, сегодня без глупостей.', en: 'Yeah, hi. Hope today is without nonsense.' },
-                    { type: 'line', speaker: 'monikaEvil', text: 'Почему бы тебе не написать стихотворение? Это поможет развеяться.', en: 'Why don\'t you write a poem? It might help you unwind.' },
+                    { type: 'line', speaker: 'hallway', text: 'Я шёл по школьному коридору, разыскивая какой-нибудь кружок, куда можно записаться.', en: 'I walked down the school hallway, looking for some club to join.' },
+                    { type: 'line', speaker: 'monika', text: 'О, привет! Ты, кажется, ищешь, чем заняться? Я Моника, президент литературного клуба.', en: 'Oh, hi! You look like you\'re looking for something to do? I\'m Monika, the literature club president.', bg: IMG.hallway },
+                    { type: 'line', speaker: 'hero', text: 'Литературный клуб? Никогда о таком не слышал…', en: 'Literature club? Never heard of it…' },
+                    { type: 'line', speaker: 'monika', text: 'Пойдём, я покажу. У нас очень уютно.', en: 'Come on, I\'ll show you. It\'s very cozy.', bg: IMG.club },
+                    { type: 'line', speaker: 'yuri', text: 'Здравствуй… Я Юри. Приятно познакомиться.', en: 'Hello… I\'m Yuri. Nice to meet you.' },
+                    { type: 'line', speaker: 'natsuki', text: 'Хмф. Ещё один новенький? Надеюсь, ты не такой нудный. Я Нацуки.', en: 'Hmph. Another newbie? I hope you\'re not as boring as the last one. I\'m Natsuki.' },
+                    { type: 'line', speaker: 'monika', text: 'Добро пожаловать в Литературный клуб! Почему бы тебе не написать стихотворение?', en: 'Welcome to the Literature Club! Why don\'t you write a poem?' },
                     { type: 'poemgame' },
-                    { type: 'line', speaker: 'monikaEvil', text: 'Хороший выбор. Уверена, ей понравится.', en: 'Good choice. I\'m sure she\'ll be pleased.' },
+                    { type: 'line', speaker: 'monika', text: 'Хороший выбор. Уверена, ей понравится.', en: 'Good choice. I\'m sure she\'ll be pleased.' },
                 ]
             }, {
                 title: 2,
@@ -1703,14 +1707,14 @@
                         setTimeout(() => bodyEl.style.background = '', 1000);
                         break;
                     case 'yuri_real_eyes':
-                        setSprite(IMG.yuriRealEyes);
+                        updateScene('yuriRealEyesCh'); // теперь это переключит фон на IMG.yuriRealEyes
                         break;
                     case 'show_dead_yuri':
-                        setSprite(IMG.yuriDeadBody);
+                        updateScene('yuriDeadCh'); // фон с телом Юри
                         staticOverlay.style.opacity = '0.5';
                         break;
                     case 'natsuki_vomit':
-                        setSprite(IMG.natsukiVomit);
+                        updateScene('natsukiVomitCh'); // покажет спрайт рвоты
                         break;
                     case 'delete_characters':
                         staticOverlay.style.opacity = '0.9';
@@ -1883,14 +1887,16 @@
                 step();
             }
 
-            // ===== ПЕРЕХОД В МЕНЮ ВТОРОГО АКТА =====
+            // ===== ПЕРЕХОД В МЕНЮ ВТОРОГО / ТРЕТЬЕГО АКТА =====
             function goToMenuActTwo() {
                 stopAllMusic();
                 if (terminalOverlay.style.display === 'block') terminalOverlay.style.display = 'none';
                 if (!state) state = freshState();
                 state.started = false;
-                state.act2Menu = true;
-                state.act2 = false;
+                state.paused = true; // игра на паузе
+                state.act2 = true;
+                state.act2Menu = false;
+                state.act3 = false;
                 state.act3Menu = false;
                 state.disableUI = false;
                 state.disableSave = false;
@@ -1919,9 +1925,11 @@
                 stopAllMusic();
                 if (!state) state = freshState();
                 state.started = false;
-                state.act3Menu = true;
-                state.act2Menu = false;
+                state.paused = true;
+                state.act3 = true;
+                state.act3Menu = false;
                 state.act2 = false;
+                state.act2Menu = false;
                 state.disableUI = false;
                 state.disableSave = false;
                 activeSteps = [];
@@ -2028,8 +2036,41 @@
                 typeNext();
             }
 
-            // ===== СТАРТ ИГРЫ =====
+            // ===== СТАРТ ИГРЫ / ПРОДОЛЖЕНИЕ =====
             function startGame() {
+                if (state && state.paused) {
+                    // Продолжаем игру после паузы (меню)
+                    state.paused = false;
+                    state.started = true;
+                    stopAllMusic();
+                    playGameBg();
+                    titleScreen.classList.remove('show');
+                    nextMarker.onclick = (e) => { e.stopPropagation();
+                        advance(); };
+                    document.getElementById('dialogueBox').style.display = '';
+                    document.getElementById('nextMarker').style.display = '';
+                    updateAllUI();
+                    // Восстанавливаем текущий день/шаг
+                    if (activeSteps.length === 0) {
+                        // Если шаги не сохранены (например, только что перешли в меню акта), запускаем акт заново
+                        if (state.act2) {
+                            currentScript = scriptAct2;
+                            dayIndex = 0;
+                            startDay(0);
+                        } else if (state.act3) {
+                            currentScript = scriptAct3;
+                            dayIndex = 0;
+                            startDay(0);
+                        } else {
+                            currentScript = scriptAct1;
+                            dayIndex = 0;
+                            startDay(0);
+                        }
+                    } else {
+                        renderCurrentStep();
+                    }
+                    return;
+                }
                 if (state && state.act3Menu) {
                     alert('Акт 3 ещё не реализован.');
                     return;
@@ -2044,6 +2085,7 @@
                         playGameBg(); }
                     return;
                 }
+                // Новая игра (Акт 1)
                 stopAllMusic();
                 playGameBg();
                 state = freshState();
