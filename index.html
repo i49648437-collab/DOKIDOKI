@@ -703,7 +703,7 @@
 
     <script>
         // ============================================================
-        //  ИГРОВОЙ ДВИЖОК С СОХРАНЕНИЯМИ, БЕЗ ГАЛЕРЕИ
+        //  ИГРОВОЙ ДВИЖОК С СОХРАНЕНИЯМИ, ПАСХАЛКОЙ И ПЕРЕХОДОМ ВО 2 АКТ
         // ============================================================
         (function() {
             'use strict';
@@ -715,6 +715,7 @@
                 ru: {
                     title: 'Литературный клуб',
                     startGame: 'Начать игру',
+                    startAct2: 'Начать 2 Акт',
                     save: '💾 Сохранить',
                     load: '📂 Загрузить',
                     savesTitle: '💾 Сохранения',
@@ -746,6 +747,7 @@
                 en: {
                     title: 'Literature Club',
                     startGame: 'Start Game',
+                    startAct2: 'Start Act 2',
                     save: '💾 Save',
                     load: '📂 Load',
                     savesTitle: '💾 Saves',
@@ -781,7 +783,12 @@
 
             function updateAllUI() {
                 document.getElementById('titleHeading').textContent = t('title');
-                document.getElementById('startButton').textContent = t('startGame');
+                const startBtn = document.getElementById('startButton');
+                if (state && state.act2Menu) {
+                    startBtn.textContent = t('startAct2');
+                } else {
+                    startBtn.textContent = t('startGame');
+                }
                 document.getElementById('saveButton').textContent = t('save');
                 document.getElementById('loadButton').textContent = t('load');
                 document.getElementById('menuButton').textContent = t('menu');
@@ -1015,8 +1022,16 @@
             // ===== КНОПКА "В ГЛАВНОЕ МЕНЮ" =====
             document.getElementById('menuButton').addEventListener('click', (e) => {
                 e.stopPropagation();
-                if (state && state.started) { if (!confirm(t('backToMenu'))) return;
-                    autosave(); }
+                if (state && state.started) {
+                    if (!confirm(t('backToMenu'))) return;
+                    autosave();
+                }
+                // Если мы были в меню второго акта – возвращаемся в него же
+                if (state && state.act2Menu) {
+                    goToMenuActTwo();
+                    return;
+                }
+                // Обычное возвращение в меню первого акта
                 state = null;
                 activeSteps = [];
                 stepIndex = 0;
@@ -1025,7 +1040,7 @@
                 stopAllMusic();
                 titleMusic.play().catch(() => {});
                 titleScreen.classList.add('show');
-                setBg(IMG.title);
+                setBg(chooseTitleBg());   // <-- пасхалка 1%
                 setSprite(null);
                 speakerName.textContent = '';
                 typeText(t('clickToStart'));
@@ -1041,6 +1056,8 @@
             // ===== АССЕТЫ =====
             const IMG = {
                 title: "изображения/заставка.jpg",
+                titleAlt1: "изображения/DDLC сквозь призму аутизма и философии.jpg",
+                titleAct2: "изображения/Главное меню во втором Акте.jpg",
                 club: "изображения/клуб.webp",
                 sayori: "изображения/Sayori.webp",
                 sceneDay2: "изображения/первая сцена сайори.jpg",
@@ -1197,7 +1214,8 @@
                     loveConfessed: false,
                     visitedAtNight: false,
                     route: null,
-                    helper: null
+                    helper: null,
+                    act2Menu: false
                 };
             }
 
@@ -1573,12 +1591,9 @@
                 activeSteps = lines.map(l => ({ type: 'line', ...l }));
                 stepIndex = 0;
                 dayIndex = -1;
-                // После финального диалога запускаем терминал
                 const onDialogueComplete = () => {
-                    // Скрываем диалоговое окно и индикатор
                     document.getElementById('dialogueBox').style.display = 'none';
                     nextMarker.style.display = 'none';
-                    // Запускаем сценарий терминала
                     transitionToActTwo();
                 };
                 renderCurrentStepWithEnd(onDialogueComplete);
@@ -1598,14 +1613,48 @@
                 step();
             }
 
+            // ===== ПЕРЕХОД В МЕНЮ ВТОРОГО АКТА =====
+            function goToMenuActTwo() {
+                stopAllMusic();
+                if (terminalOverlay.style.display === 'block') {
+                    terminalOverlay.style.display = 'none';
+                }
+                if (!state) state = freshState();
+                state.started = false;
+                state.act2Menu = true;
+                activeSteps = [];
+                stepIndex = 0;
+                dayIndex = 0;
+                dayBgOverride = null;
+                bodyEl.classList.remove('corrupted', 'glitch');
+                staticOverlay.style.opacity = '0';
+                setBg(IMG.titleAct2);
+                setSprite(null);
+                speakerName.textContent = '';
+                typeText(t('clickToStart'));
+                clearChoices();
+                showNext(false);
+                nextMarker.onclick = null;
+                titleScreen.classList.add('show');
+                titleMusic.play().catch(() => {});
+                updateAllUI();
+                if (saveModalOverlay.classList.contains('active')) closeSaveModal();
+            }
+
+            // ===== ВЫБОР ФОНА ГЛАВНОГО МЕНЮ С 1% ШАНСОМ =====
+            function chooseTitleBg() {
+                if (Math.random() < 0.01) {
+                    return IMG.titleAlt1;
+                }
+                return IMG.title;
+            }
+
             // ===== ПЕРЕХОД В ТЕРМИНАЛ (ХОРОШАЯ КОНЦОВКА) =====
             function transitionToActTwo() {
-                // Показываем терминал
                 terminalOverlay.style.display = 'block';
                 terminalContent.innerHTML = '';
                 terminalBgImage.style.backgroundImage = 'none';
                 terminalBgImage.style.opacity = '0';
-                // Последовательность сообщений
                 const terminalSequence = [
                     { text: 'Первый Акт пройден, переход на второй...', delay: 2500 },
                     { text: '', delay: 800 },
@@ -1615,27 +1664,25 @@
                     { text: 'sayori.chr успешно удалён.', delay: 1500 },
                     { text: '> _', delay: 500, blinking: true }
                 ];
-                runTerminalSequence(terminalSequence);
-                // Останавливаем музыку для атмосферы
+                runTerminalSequence(terminalSequence, () => {
+                    setTimeout(() => {
+                        goToMenuActTwo();
+                    }, 10000);
+                });
                 stopAllMusic();
             }
 
             // ===== ПЕРЕХОД В ТЕРМИНАЛ (ПЛОХАЯ КОНЦОВКА) =====
             function transitionToActTwoBad() {
-                // Скрываем диалоговое окно и индикатор, как и в хорошей концовке
                 document.getElementById('dialogueBox').style.display = 'none';
                 nextMarker.style.display = 'none';
                 bodyEl.classList.remove('glitch');
                 staticOverlay.style.opacity = '0';
-
-                // Показываем терминал с тусклой фотографией мёртвой Сайори на фоне
                 terminalOverlay.style.display = 'block';
                 terminalContent.innerHTML = '';
                 terminalBgImage.style.backgroundImage = `url("${IMG.deadSayori}")`;
                 terminalBgImage.style.opacity = '0';
                 requestAnimationFrame(() => { terminalBgImage.style.opacity = '1'; });
-
-                // Последовательность сообщений (изменённый текст для плохой концовки)
                 const terminalSequence = [
                     { text: 'Первый Акт пройден... Ты ужасен... Переход на второй...', delay: 3200 },
                     { text: '', delay: 800 },
@@ -1645,16 +1692,22 @@
                     { text: 'sayori.chr успешно удалён.', delay: 1500 },
                     { text: '> _', delay: 500, blinking: true }
                 ];
-                runTerminalSequence(terminalSequence);
+                runTerminalSequence(terminalSequence, () => {
+                    setTimeout(() => {
+                        goToMenuActTwo();
+                    }, 10000);
+                });
                 stopAllMusic();
             }
 
-            // ===== ОБЩАЯ ФУНКЦИЯ ПЕЧАТИ ТЕРМИНАЛА =====
-            function runTerminalSequence(terminalSequence) {
+            function runTerminalSequence(sequence, onComplete) {
                 let i = 0;
                 function typeNext() {
-                    if (i >= terminalSequence.length) return;
-                    const line = terminalSequence[i];
+                    if (i >= sequence.length) {
+                        if (onComplete) onComplete();
+                        return;
+                    }
+                    const line = sequence[i];
                     if (line.text === '') {
                         terminalContent.appendChild(document.createElement('br'));
                     } else {
@@ -1662,7 +1715,6 @@
                         span.textContent = line.text;
                         terminalContent.appendChild(span);
                         if (line.blinking) {
-                            // Добавляем мигающий курсор вместо подчёркивания
                             const cursor = document.createElement('span');
                             cursor.className = 'cursor-blink';
                             cursor.textContent = '█';
@@ -1672,24 +1724,20 @@
                     terminalContent.appendChild(document.createElement('br'));
                     terminalOverlay.scrollTop = terminalOverlay.scrollHeight;
                     i++;
-                    if (i < terminalSequence.length) {
+                    if (i < sequence.length) {
                         setTimeout(typeNext, line.delay);
+                    } else {
+                        if (onComplete) onComplete();
                     }
                 }
                 typeNext();
             }
 
-            function endGame(message) {
-                showNext(false);
-                clearChoices();
-                speakerName.textContent = '';
-                typeText(message);
-                state.started = false;
-                nextMarker.onclick = null;
-            }
-
             // ===== СТАРТ ИГРЫ =====
             function startGame() {
+                if (state && state.act2Menu) {
+                    state.act2Menu = false;
+                }
                 if (state && state.started) {
                     titleScreen.classList.remove('show');
                     if (bgGameMusic.paused) { stopAllMusic();
@@ -1755,6 +1803,7 @@
                 videoContainer.style.display = 'none';
                 skipHint.style.display = 'none';
                 titleScreen.classList.add('show');
+                setBg(chooseTitleBg());
                 if (!musicStarted) { titleMusic.play().then(() => { musicStarted = true; }).catch(() => {}); }
             }
             function tryPlayVideo() {
@@ -1768,7 +1817,7 @@
             introVideo.addEventListener('click', hideVideoShowTitle);
             introVideo.addEventListener('ended', hideVideoShowTitle);
             introVideo.addEventListener('error', () => hideVideoShowTitle());
-            setBg(IMG.title);
+            setBg(chooseTitleBg());
             speakerName.textContent = '';
             updateAllUI();
             typeText(t('clickToStart'));
