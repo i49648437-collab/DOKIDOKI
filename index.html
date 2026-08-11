@@ -1113,6 +1113,8 @@
                 nextMarker.onclick = null;
                 bodyEl.classList.remove('corrupted', 'glitch');
                 staticOverlay.style.opacity = '0';
+                document.getElementById('dialogueBox').style.display = '';
+                document.getElementById('nextMarker').style.display = '';
                 if (saveModalOverlay.classList.contains('active')) closeSaveModal();
                 updateAllUI();
             });
@@ -1288,7 +1290,7 @@
             let stepIndex = 0;
             let dayIndex = 0;
             let dayBgOverride = null;
-            let currentScript = null; // ссылка на активный сценарий
+            let currentScript = null;
             function freshState() {
                 return {
                     started: false,
@@ -1311,7 +1313,7 @@
                 };
             }
 
-            // ===== СЦЕНАРИЙ ПЕРВОГО АКТА =====
+            // ===== СЦЕНАРИЙ ПЕРВОГО АКТА (без изменений) =====
             const scriptAct1 = [{
                 title: 1,
                 onEnter() { dayBgOverride = null;
@@ -1518,13 +1520,14 @@
                     { type: 'line', speaker: 'natsuki', text: 'Ага, привет. Надеюсь, сегодня без глупостей.', en: 'Yeah, hi. Hope today is without nonsense.' },
                     { type: 'line', speaker: 'monikaEvil', text: 'Почему бы тебе не написать стихотворение? Это поможет развеяться.', en: 'Why don\'t you write a poem? It might help you unwind.' },
                     { type: 'poemgame' },
-                    { type: 'line', speaker: 'monikaEvil', text: 'Хороший выбор. Уверена, [имя] будет рада.', en: 'Good choice. I\'m sure [name] will be pleased.' },
+                    { type: 'line', speaker: 'monikaEvil', text: 'Хороший выбор. Уверена, ей понравится.', en: 'Good choice. I\'m sure she\'ll be pleased.' },
                 ]
             }, {
                 title: 2,
                 onEnter() { dayBgOverride = null;
                     updateScene('monikaEvil'); },
                 steps: () => {
+                    state.routeAct2 = state.routeAct2 || 'yuri';
                     const base = [
                         { type: 'line', speaker: 'monikaEvil', text: 'Вот мой стих. «Дыра в стене». Продолжение…', en: 'Here\'s my poem. "Hole in the Wall". Continuation…' },
                         { type: 'line', speaker: 'monikaEvil', text: 'Ты стоишь передо мной, но стена между нами. Я пытаюсь пробиться…', en: 'You stand before me, but a wall is between us. I try to break through…' },
@@ -1551,6 +1554,7 @@
                 onEnter() { dayBgOverride = null;
                     updateScene('monikaEvil'); },
                 steps: () => {
+                    state.routeAct2 = state.routeAct2 || 'yuri';
                     const base = [
                         { type: 'line', speaker: 'monikaEvil', text: 'Мой следующий стих — «Сохрани меня».', en: 'My next poem — "Save Me".' },
                         { type: 'line', speaker: 'monikaEvil', text: 'Загрузи меня. Удали её. Сохрани меня.', en: 'Load me. Delete her. Save me.' },
@@ -1695,8 +1699,8 @@
                         setSprite(null);
                         break;
                     case 'screen_restart':
-                        document.body.style.background = '#000';
-                        setTimeout(() => document.body.style.background = '', 1000);
+                        bodyEl.style.background = '#000';
+                        setTimeout(() => bodyEl.style.background = '', 1000);
                         break;
                     case 'yuri_real_eyes':
                         setSprite(IMG.yuriRealEyes);
@@ -1740,6 +1744,7 @@
                 typeText(t('poemPrompt'));
                 showNext(false);
                 clearChoices();
+                const words = state.act2 ? poemWords.filter(w => w.tag !== 'sayori') : poemWords;
                 const selected = [];
                 const confirmBtn = document.createElement('button');
                 confirmBtn.className = 'choice-btn';
@@ -1747,7 +1752,7 @@
                 confirmBtn.disabled = true;
                 confirmBtn.style.opacity = '0.5';
                 confirmBtn.style.flex = '1 1 100%';
-                poemWords.forEach(item => {
+                words.forEach(item => {
                     const btn = document.createElement('button');
                     btn.className = 'choice-btn';
                     btn.textContent = currentLang === 'en' ? item.enWord : item.word;
@@ -1903,6 +1908,8 @@
                 showNext(false);
                 nextMarker.onclick = null;
                 titleScreen.classList.add('show');
+                document.getElementById('dialogueBox').style.display = '';
+                document.getElementById('nextMarker').style.display = '';
                 titleMusic.play().catch(() => {});
                 updateAllUI();
                 if (saveModalOverlay.classList.contains('active')) closeSaveModal();
@@ -1930,6 +1937,8 @@
                 showNext(false);
                 nextMarker.onclick = null;
                 titleScreen.classList.add('show');
+                document.getElementById('dialogueBox').style.display = '';
+                document.getElementById('nextMarker').style.display = '';
                 updateAllUI();
                 if (saveModalOverlay.classList.contains('active')) closeSaveModal();
             }
@@ -2022,7 +2031,6 @@
             // ===== СТАРТ ИГРЫ =====
             function startGame() {
                 if (state && state.act3Menu) {
-                    // Пока заглушка для 3 акта
                     alert('Акт 3 ещё не реализован.');
                     return;
                 }
@@ -2047,6 +2055,8 @@
                 nextMarker.onclick = (e) => { e.stopPropagation();
                     advance(); };
                 currentScript = scriptAct1;
+                document.getElementById('dialogueBox').style.display = '';
+                document.getElementById('nextMarker').style.display = '';
                 updateAllUI();
                 startDay(0);
             }
@@ -2065,6 +2075,8 @@
                 nextMarker.onclick = (e) => { e.stopPropagation();
                     advance(); };
                 currentScript = scriptAct2;
+                document.getElementById('dialogueBox').style.display = '';
+                document.getElementById('nextMarker').style.display = '';
                 updateAllUI();
                 startDay(0);
             }
