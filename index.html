@@ -98,6 +98,11 @@
         .slot-actions button:hover { background:rgba(255,255,255,0.25); } .btn-save { border-color:#27ae60; color:#2ecc71; } .btn-save:hover { background:rgba(39,174,96,0.3); } .btn-load { border-color:#3498db; color:#5dade2; } .btn-load:hover { background:rgba(52,152,219,0.3); } .btn-delete { border-color:#c0392b; color:#e74c3c; } .btn-delete:hover { background:rgba(192,57,43,0.3); }
         .slot-empty-text { color:#777; font-style:italic; font-size:0.85rem; text-align:center; padding:8px 0; }
         .modal-footer { text-align:center; margin-top:1rem; } .modal-footer button { padding:8px 24px; border-radius:20px; border:1px solid #aaa; background:rgba(255,255,255,0.1); color:#eee; cursor:pointer; font-size:0.9rem; } .modal-footer button:hover { background:rgba(255,255,255,0.2); }
+        .modal-footer button + button { margin-left:10px; }
+        .delete-all-btn { border:1px solid #c0392b !important; background:rgba(192,57,43,0.12) !important; color:#e74c3c !important; font-weight:bold; transition:all 0.2s; }
+        .delete-all-btn:hover { background:rgba(192,57,43,0.35) !important; }
+        .delete-all-btn.armed { background:#c0392b !important; color:#fff !important; border-color:#ff6b5e !important; animation:armedPulse 0.7s infinite; }
+        @keyframes armedPulse { 0%,100% { box-shadow:0 0 0 rgba(231,76,60,0.6); } 50% { box-shadow:0 0 18px rgba(231,76,60,0.95); } }
         .toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(100px); background:#2a1f1f; color:#fbe9e7; padding:10px 24px; border-radius:30px; z-index:200; font-size:0.95rem; border:1px solid #6d4c41; opacity:0; transition:all 0.35s ease; pointer-events:none; text-align:center; max-width:90vw; }
         .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
         #terminalOverlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; color:#0f0; font-family:'Courier New',monospace; font-size:1.1rem; padding:2rem; overflow-y:auto; z-index:150; white-space:pre-wrap; word-break:break-word; }
@@ -164,7 +169,7 @@
         .cheat-monika-wrap img { height:34vh; object-fit:contain; filter:drop-shadow(0 0 18px rgba(76,175,80,0.35)); }
         .cheat-laugh { color:#cdeccb; font-style:italic; font-size:1.05rem; text-align:center; }
 
-        @media (max-width:600px) { .dialogue-box { padding:0.8rem; margin:0 0.5rem 0.5rem 0.5rem; } .speaker-name { font-size:1.2rem; } .dialogue-text { font-size:1rem; } .modal-window { padding:1rem; width:95%; max-height:90vh; } .save-load-btn, .explorer-btn { padding:6px 10px; font-size:0.75rem; } #endTheEnd { font-size:2.2rem; letter-spacing:6px; } .dialogue-text.scream-mode { font-size:1.15rem; } }
+        @media (max-width:600px) { .dialogue-box { padding:0.8rem; margin:0 0.5rem 0.5rem 0.5rem; } .speaker-name { font-size:1.2rem; } .dialogue-text { font-size:1rem; } .modal-window { padding:1rem; width:95%; max-height:90vh; } .save-load-btn, .explorer-btn { padding:6px 10px; font-size:0.75rem; } #endTheEnd { font-size:2.2rem; letter-spacing:6px; } .dialogue-text.scream-mode { font-size:1.15rem; } .modal-footer button + button { margin-left:6px; } }
     </style>
 </head>
 <body>
@@ -176,7 +181,7 @@
     <audio id="glitchSound" preload="auto"><source src="музыка/glitch.ogg" type="audio/ogg"></audio>
     <div class="static-overlay" id="staticEffect"></div>
     <div class="toast" id="toast"></div>
-    <div class="modal-overlay" id="saveModalOverlay"><div class="modal-window" id="saveModalWindow"><button class="modal-close" id="modalCloseBtn">&times;</button><h2 id="modalTitle">💾 Сохранения</h2><div class="save-slots-grid" id="saveSlotsGrid"></div><div class="modal-footer"><button id="modalCloseFooter">Закрыть</button></div></div></div>
+    <div class="modal-overlay" id="saveModalOverlay"><div class="modal-window" id="saveModalWindow"><button class="modal-close" id="modalCloseBtn">&times;</button><h2 id="modalTitle">💾 Сохранения</h2><div class="save-slots-grid" id="saveSlotsGrid"></div><div class="modal-footer"><button id="deleteAllSavesBtn" class="delete-all-btn">🗑 Удалить все сохранения</button><button id="modalCloseFooter">Закрыть</button></div></div></div>
 
     <!-- ПРОВОДНИК ФАЙЛОВ ПЕРСОНАЖЕЙ -->
     <div class="explorer-overlay" id="explorerOverlay">
@@ -245,7 +250,7 @@
         (function() {
             'use strict';
             let currentLang = 'ru';
-            const i18n = { ru: { title: 'Литературный клуб', startGame: 'Начать игру', startAct2: 'Начать 2 Акт', startAct3: 'Начать 3 Акт', continue: 'Продолжить', save: '💾 Сохранить', load: '📂 Загрузить', savesTitle: '💾 Сохранения', close: 'Закрыть', deleteSlot: 'Удалить', continue_: '▼ Продолжить ▼', clickToStart: 'Нажмите, чтобы начать...', day: 'День', empty: 'Пусто', autosave: 'Авто', saved: 'Игра сохранена!', loaded: 'Игра загружена!', deleted: 'Сохранение удалено.', noSaves: 'Нет сохранений.', saveFailed: 'Не удалось сохранить игру.', loadFailed: 'Ошибка загрузки сохранения.', cannotSaveNow: 'Сохранение недоступно в данный момент.', confirmOverwrite: 'Перезаписать это сохранение?', confirmDelete: 'Удалить это сохранение?', videoWelcome: 'Добро пожаловать в Литературный клуб', watchIntro: 'Смотреть вступление', skipHint: 'Нажмите, чтобы пропустить', goodEnding: 'Конец первого акта (хорошая концовка)', poemGameTitle: 'Мини-игра', poemPrompt: 'Выбери 5 слов, из которых сложится твоё стихотворение.', ready: 'Готово', menu: '🏠 Меню', backToMenu: 'Вернуться в главное меню?', justMonika: 'Just Monika', onlyMonika: 'Только Моника', explorer: '📁 Проводник', explorerTitle: '🗂 Проводник', act3missing: 'Акт 3 ещё не добавлен.', nowHappy: 'Теперь все будут счастливы.', theEnd: 'КОНЕЦ', endComplete: '✓ Концовка полностью пройдена. Спасибо, что остался до конца.', restoreHint: 'Файлы можно восстановить в Проводнике.', clickReturn: '…нажми, чтобы вернуться', fileIntact: 'на месте', fileDeletedStatus: 'УДАЛЁН', fileDeleteBtn: 'Удалить', fileRestoreBtn: 'Восстановить' }, en: { title: 'Literature Club', startGame: 'Start Game', startAct2: 'Start Act 2', startAct3: 'Start Act 3', continue: 'Continue', save: '💾 Save', load: '📂 Load', savesTitle: '💾 Saves', close: 'Close', deleteSlot: 'Delete', continue_: '▼ Continue ▼', clickToStart: 'Click to begin...', day: 'Day', empty: 'Empty', autosave: 'Auto', saved: 'Game saved!', loaded: 'Game loaded!', deleted: 'Save deleted.', noSaves: 'No saves found.', saveFailed: 'Failed to save the game.', loadFailed: 'Failed to load the save.', cannotSaveNow: 'Cannot save right now.', confirmOverwrite: 'Overwrite this save?', confirmDelete: 'Delete this save?', videoWelcome: 'Welcome to the Literature Club', watchIntro: 'Watch Intro', skipHint: 'Click to skip', goodEnding: 'End of Act One (Good Ending)', poemGameTitle: 'Mini-game', poemPrompt: 'Pick 5 words to compose your poem.', ready: 'Done', menu: '🏠 Menu', backToMenu: 'Return to main menu?', justMonika: 'Just Monika', onlyMonika: 'Only Monika', explorer: '📁 Explorer', explorerTitle: '🗂 Explorer', act3missing: 'Act 3 has not been added yet.', nowHappy: 'Now everyone will be happy.', theEnd: 'THE END', endComplete: '✓ Ending fully completed. Thank you for staying to the very end.', restoreHint: 'You can restore the files in the Explorer.', clickReturn: '…click to return', fileIntact: 'intact', fileDeletedStatus: 'DELETED', fileDeleteBtn: 'Delete', fileRestoreBtn: 'Restore' } };
+            const i18n = { ru: { title: 'Литературный клуб', startGame: 'Начать игру', startAct2: 'Начать 2 Акт', startAct3: 'Начать 3 Акт', continue: 'Продолжить', save: '💾 Сохранить', load: '📂 Загрузить', savesTitle: '💾 Сохранения', close: 'Закрыть', deleteSlot: 'Удалить', deleteAll: '🗑 Удалить все сохранения', deleteAllConfirm: 'ВСЕ сохранения будут удалены безвозвратно. Вы точно уверены?', deleteAllConfirm2: 'Нажмите ещё раз для подтверждения', allDeleted: 'Все сохранения удалены.', continue_: '▼ Продолжить ▼', clickToStart: 'Нажмите, чтобы начать...', day: 'День', empty: 'Пусто', autosave: 'Авто', saved: 'Игра сохранена!', loaded: 'Игра загружена!', deleted: 'Сохранение удалено.', noSaves: 'Нет сохранений.', saveFailed: 'Не удалось сохранить игру.', loadFailed: 'Ошибка загрузки сохранения.', cannotSaveNow: 'Сохранение недоступно в данный момент.', confirmOverwrite: 'Перезаписать это сохранение?', confirmDelete: 'Удалить это сохранение?', videoWelcome: 'Добро пожаловать в Литературный клуб', watchIntro: 'Смотреть вступление', skipHint: 'Нажмите, чтобы пропустить', goodEnding: 'Конец первого акта (хорошая концовка)', poemGameTitle: 'Мини-игра', poemPrompt: 'Выбери 5 слов, из которых сложится твоё стихотворение.', ready: 'Готово', menu: '🏠 Меню', backToMenu: 'Вернуться в главное меню?', justMonika: 'Just Monika', onlyMonika: 'Только Моника', explorer: '📁 Проводник', explorerTitle: '🗂 Проводник', act3missing: 'Акт 3 ещё не добавлен.', nowHappy: 'Теперь все будут счастливы.', theEnd: 'КОНЕЦ', endComplete: '✓ Концовка полностью пройдена. Спасибо, что остался до конца.', restoreHint: 'Файлы можно восстановить в Проводнике.', clickReturn: '…нажми, чтобы вернуться', fileIntact: 'на месте', fileDeletedStatus: 'УДАЛЁН', fileDeleteBtn: 'Удалить', fileRestoreBtn: 'Восстановить' }, en: { title: 'Literature Club', startGame: 'Start Game', startAct2: 'Start Act 2', startAct3: 'Start Act 3', continue: 'Continue', save: '💾 Save', load: '📂 Load', savesTitle: '💾 Saves', close: 'Close', deleteSlot: 'Delete', deleteAll: '🗑 Delete all saves', deleteAllConfirm: 'ALL saves will be permanently deleted. Are you really sure?', deleteAllConfirm2: 'Click again to confirm', allDeleted: 'All saves deleted.', continue_: '▼ Continue ▼', clickToStart: 'Click to begin...', day: 'Day', empty: 'Empty', autosave: 'Auto', saved: 'Game saved!', loaded: 'Game loaded!', deleted: 'Save deleted.', noSaves: 'No saves found.', saveFailed: 'Failed to save the game.', loadFailed: 'Failed to load the save.', cannotSaveNow: 'Cannot save right now.', confirmOverwrite: 'Overwrite this save?', confirmDelete: 'Delete this save?', videoWelcome: 'Welcome to the Literature Club', watchIntro: 'Watch Intro', skipHint: 'Click to skip', goodEnding: 'End of Act One (Good Ending)', poemGameTitle: 'Mini-game', poemPrompt: 'Pick 5 words to compose your poem.', ready: 'Done', menu: '🏠 Menu', backToMenu: 'Return to main menu?', justMonika: 'Just Monika', onlyMonika: 'Only Monika', explorer: '📁 Explorer', explorerTitle: '🗂 Explorer', act3missing: 'Act 3 has not been added yet.', nowHappy: 'Now everyone will be happy.', theEnd: 'THE END', endComplete: '✓ Ending fully completed. Thank you for staying to the very end.', restoreHint: 'You can restore the files in the Explorer.', clickReturn: '…click to return', fileIntact: 'intact', fileDeletedStatus: 'DELETED', fileDeleteBtn: 'Delete', fileRestoreBtn: 'Restore' } };
             function t(key) { return (i18n[currentLang] && i18n[currentLang][key]) || key; }
             function td(ru, en) { return currentLang === 'en' ? (en || ru) : ru; }
             function updateAllUI() {
@@ -261,6 +266,7 @@
                 document.getElementById('menuButton').textContent = t('menu');
                 document.getElementById('modalTitle').textContent = t('savesTitle');
                 document.getElementById('modalCloseFooter').textContent = t('close');
+                if (!deleteAllArmed) document.getElementById('deleteAllSavesBtn').textContent = t('deleteAll');
                 document.getElementById('nextMarker').textContent = t('continue_');
                 document.getElementById('langButton').textContent = currentLang === 'ru' ? '🌐 EN' : '🌐 RU';
                 document.getElementById('videoPromptText').textContent = t('videoWelcome');
@@ -351,9 +357,48 @@
             function autosave() { if (!canSaveNow()) return; try { const payload = buildSavePayload(); localStorage.setItem(AUTO_SLOT_KEY, JSON.stringify(payload)); updateSaveMeta(AUTO_SLOT_KEY, payload); } catch (e) {} }
             const saveModalOverlay = document.getElementById('saveModalOverlay'); const saveSlotsGrid = document.getElementById('saveSlotsGrid'); const modalCloseBtn = document.getElementById('modalCloseBtn'); const modalCloseFooter = document.getElementById('modalCloseFooter');
             function openSaveModal() { refreshSaveModal(); saveModalOverlay.classList.add('active'); }
-            function closeSaveModal() { saveModalOverlay.classList.remove('active'); }
+            function closeSaveModal() { saveModalOverlay.classList.remove('active'); disarmDeleteAll(); }
             function refreshSaveModal() { const slots = getAllSlots(); saveSlotsGrid.innerHTML = ''; slots.forEach(slot => { const div = document.createElement('div'); div.className = 'save-slot' + (slot.data ? ' occupied' : '') + (slot.isAuto ? ' autosave' : ''); const headerDiv = document.createElement('div'); headerDiv.className = 'slot-header'; const labelSpan = document.createElement('span'); labelSpan.textContent = slot.isAuto ? '🔄 ' + slot.label : '📁 ' + t('save') + ' ' + slot.label; headerDiv.appendChild(labelSpan); if (slot.isAuto) { const badge = document.createElement('span'); badge.className = 'slot-badge'; badge.textContent = t('autosave'); headerDiv.appendChild(badge); } div.appendChild(headerDiv); const infoDiv = document.createElement('div'); infoDiv.className = 'slot-info'; if (slot.data) { const daySpan = document.createElement('span'); daySpan.className = 'day-label'; daySpan.textContent = slot.data.dayTitle ? (t('day') + ' ' + slot.data.dayTitle) : ''; infoDiv.appendChild(daySpan); infoDiv.appendChild(document.createElement('br')); const timeSpan = document.createElement('span'); timeSpan.className = 'time-label'; timeSpan.textContent = formatTimestamp(slot.data.timestamp); infoDiv.appendChild(timeSpan); } else { const emptySpan = document.createElement('span'); emptySpan.className = 'slot-empty-text'; emptySpan.textContent = t('empty'); infoDiv.appendChild(emptySpan); } div.appendChild(infoDiv); const actionsDiv = document.createElement('div'); actionsDiv.className = 'slot-actions'; const saveBtn = document.createElement('button'); saveBtn.className = 'btn-save'; saveBtn.textContent = '💾 ' + t('save'); saveBtn.title = slot.data ? t('confirmOverwrite') : t('save'); saveBtn.addEventListener('click', (e) => { e.stopPropagation(); if (slot.data && !confirm(t('confirmOverwrite') + ' (' + slot.label + ')')) return; if (saveToSlot(slot.key)) closeSaveModal(); }); actionsDiv.appendChild(saveBtn); if (slot.data) { const loadBtn = document.createElement('button'); loadBtn.className = 'btn-load'; loadBtn.textContent = '📂 ' + t('load'); loadBtn.addEventListener('click', (e) => { e.stopPropagation(); loadFromSlot(slot.key); }); actionsDiv.appendChild(loadBtn); } if (slot.data) { const delBtn = document.createElement('button'); delBtn.className = 'btn-delete'; delBtn.textContent = '🗑 ' + t('deleteSlot'); delBtn.title = t('confirmDelete'); delBtn.addEventListener('click', (e) => { e.stopPropagation(); if (confirm(t('confirmDelete') + ' (' + slot.label + ')?')) deleteSlot(slot.key); }); actionsDiv.appendChild(delBtn); } div.appendChild(actionsDiv); saveSlotsGrid.appendChild(div); }); }
             modalCloseBtn.addEventListener('click', closeSaveModal); modalCloseFooter.addEventListener('click', closeSaveModal); saveModalOverlay.addEventListener('click', function(e) { if (e.target === saveModalOverlay) closeSaveModal(); });
+
+            /* ==== КНОПКА «УДАЛИТЬ ВСЕ СОХРАНЕНИЯ» С ДВУСТУПЕНЧАТОЙ ЗАЩИТОЙ ====
+               1-й клик — кнопка «взводится» на 5 секунд (краснеет, идёт отсчёт).
+               2-й клик — финальное подтверждение через диалог.
+               Случайно стереть сохранения невозможно. */
+            const deleteAllSavesBtn = document.getElementById('deleteAllSavesBtn');
+            let deleteAllArmed = false, deleteAllTimer = null, deleteAllCountdown = null;
+            function disarmDeleteAll() {
+                deleteAllArmed = false;
+                if (deleteAllTimer) { clearTimeout(deleteAllTimer); deleteAllTimer = null; }
+                if (deleteAllCountdown) { clearInterval(deleteAllCountdown); deleteAllCountdown = null; }
+                if (deleteAllSavesBtn) { deleteAllSavesBtn.classList.remove('armed'); deleteAllSavesBtn.textContent = t('deleteAll'); }
+            }
+            function deleteAllSaves() {
+                let count = 0;
+                try {
+                    for (let i = 0; i < MANUAL_SLOTS; i++) { const k = getSlotKey(i); if (localStorage.getItem(k)) { localStorage.removeItem(k); count++; } }
+                    if (localStorage.getItem(AUTO_SLOT_KEY)) { localStorage.removeItem(AUTO_SLOT_KEY); count++; }
+                    localStorage.removeItem(SAVE_META_KEY);
+                } catch (e) {}
+                disarmDeleteAll();
+                showToast(count > 0 ? t('allDeleted') : t('noSaves'));
+                refreshSaveModal();
+            }
+            deleteAllSavesBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!deleteAllArmed) {
+                    deleteAllArmed = true;
+                    deleteAllSavesBtn.classList.add('armed');
+                    let sec = 5;
+                    deleteAllSavesBtn.textContent = t('deleteAllConfirm2') + ' (' + sec + ')';
+                    deleteAllCountdown = setInterval(() => { sec--; if (sec > 0) { deleteAllSavesBtn.textContent = t('deleteAllConfirm2') + ' (' + sec + ')'; } }, 1000);
+                    deleteAllTimer = setTimeout(disarmDeleteAll, 5000);
+                } else {
+                    if (confirm(t('deleteAllConfirm'))) { deleteAllSaves(); }
+                    else { disarmDeleteAll(); }
+                }
+            });
+
             document.getElementById('saveButton').addEventListener('click', (e) => { e.stopPropagation(); if (!state || !state.started) { showToast(t('cannotSaveNow')); return; } openSaveModal(); });
             document.getElementById('loadButton').addEventListener('click', (e) => { e.stopPropagation(); openSaveModal(); });
             document.getElementById('langButton').addEventListener('click', (e) => { e.stopPropagation(); currentLang = currentLang === 'ru' ? 'en' : 'ru'; updateAllUI(); if (state && state.started && stepIndex < activeSteps.length) renderCurrentStep(); });
