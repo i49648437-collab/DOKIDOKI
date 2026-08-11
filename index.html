@@ -171,6 +171,13 @@
         .cheat-monika-wrap img { height:34vh; object-fit:contain; filter:drop-shadow(0 0 18px rgba(76,175,80,0.35)); }
         .cheat-laugh { color:#cdeccb; font-style:italic; font-size:1.05rem; text-align:center; }
 
+        /* ============ РОЗОВОЕ ОКНО СОХРАНЕНИЯ АКТА 3 ============ */
+        .monika-save-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(30,0,15,0.6); z-index:130; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.25s ease; padding:20px; }
+        .monika-save-overlay.active { opacity:1; pointer-events:auto; }
+        .monika-save-window { background:#ffd1e0; border:3px solid #ff8fb6; border-radius:18px; padding:28px 34px; max-width:480px; width:100%; text-align:center; color:#8e2d4f; box-shadow:0 15px 50px rgba(0,0,0,0.6), 0 0 35px rgba(255,150,190,0.55); font-size:1.2rem; line-height:1.55; animation:monikaBubbleIn 0.25s ease; }
+        .monika-save-window button { margin-top:18px; padding:10px 48px; border-radius:24px; border:2px solid #e58aa8; background:#ff9ec2; color:#5f1530; font-weight:bold; font-size:1.05rem; cursor:pointer; font-family:inherit; transition:all 0.15s; }
+        .monika-save-window button:hover { background:#ff85b3; transform:scale(1.04); }
+
         @media (max-width:600px) { .dialogue-box { padding:0.8rem; margin:0 0.5rem 0.5rem 0.5rem; } .speaker-name { font-size:1.2rem; } .dialogue-text { font-size:1rem; } .modal-window { padding:1rem; width:95%; max-height:90vh; } .save-load-btn, .explorer-btn { padding:6px 10px; font-size:0.75rem; } #endTheEnd { font-size:2.2rem; letter-spacing:6px; } .dialogue-text.scream-mode { font-size:1.15rem; } .modal-footer button + button { margin-left:6px; } .title-screen .reset-files-btn { font-size:0.8rem; padding:8px 18px; } }
     </style>
 </head>
@@ -223,6 +230,14 @@
         </div>
     </div>
 
+    <!-- РОЗОВОЕ ОКНО: В АКТЕ 3 СОХРАНЯТЬСЯ БЕСПОЛЕЗНО -->
+    <div class="monika-save-overlay" id="monikaSaveBlockOverlay">
+        <div class="monika-save-window">
+            <div id="monikaSaveText"></div>
+            <button id="monikaSaveOkBtn">ОК</button>
+        </div>
+    </div>
+
     <div id="terminalOverlay"><div id="terminalBgImage"></div><div id="terminalContent"></div></div>
     <div id="blueScreenOverlay"></div>
     <div class="game-container" id="gameContainer">
@@ -252,7 +267,7 @@
         (function() {
             'use strict';
             let currentLang = 'ru';
-            const i18n = { ru: { title: 'Литературный клуб', startGame: 'Начать игру', startAct2: 'Начать 2 Акт', startAct3: 'Начать 3 Акт', continue: 'Продолжить', save: '💾 Сохранить', load: '📂 Загрузить', savesTitle: '💾 Сохранения', close: 'Закрыть', deleteSlot: 'Удалить', deleteAll: '🗑 Удалить все сохранения', deleteAllConfirm: 'ВСЕ сохранения будут удалены безвозвратно. Вы точно уверены?', deleteAllConfirm2: 'Нажмите ещё раз для подтверждения', allDeleted: 'Все сохранения удалены.', continue_: '▼ Продолжить ▼', clickToStart: 'Нажмите, чтобы начать...', day: 'День', empty: 'Пусто', autosave: 'Авто', saved: 'Игра сохранена!', loaded: 'Игра загружена!', deleted: 'Сохранение удалено.', noSaves: 'Нет сохранений.', saveFailed: 'Не удалось сохранить игру.', loadFailed: 'Ошибка загрузки сохранения.', cannotSaveNow: 'Сохранение недоступно в данный момент.', confirmOverwrite: 'Перезаписать это сохранение?', confirmDelete: 'Удалить это сохранение?', videoWelcome: 'Добро пожаловать в Литературный клуб', watchIntro: 'Смотреть вступление', skipHint: 'Нажмите, чтобы пропустить', goodEnding: 'Конец первого акта (хорошая концовка)', poemGameTitle: 'Мини-игра', poemPrompt: 'Выбери 5 слов, из которых сложится твоё стихотворение.', ready: 'Готово', menu: '🏠 Меню', backToMenu: 'Вернуться в главное меню?', justMonika: 'Just Monika', onlyMonika: 'Только Моника', explorer: '📁 Проводник', explorerTitle: '🗂 Проводник', act3missing: 'Акт 3 ещё не добавлен.', nowHappy: 'Теперь все будут счастливы.', theEnd: 'КОНЕЦ', endComplete: '✓ Концовка полностью пройдена. Спасибо, что остался до конца.', restoreHint: 'Файлы можно восстановить в Проводнике.', clickReturn: '…нажми, чтобы вернуться', fileIntact: 'на месте', fileDeletedStatus: 'УДАЛЁН', fileDeleteBtn: 'Удалить', fileRestoreBtn: 'Восстановить', resetExplorer: '🧹 Удалить все настройки проводника', resetExplorerConfirm: 'Удалить все настройки Проводника? Все файлы персонажей (.chr) будут восстановлены.', resetExplorerDone: 'Настройки Проводника удалены. Все файлы восстановлены.' }, en: { title: 'Literature Club', startGame: 'Start Game', startAct2: 'Start Act 2', startAct3: 'Start Act 3', continue: 'Continue', save: '💾 Save', load: '📂 Load', savesTitle: '💾 Saves', close: 'Close', deleteSlot: 'Delete', deleteAll: '🗑 Delete all saves', deleteAllConfirm: 'ALL saves will be permanently deleted. Are you really sure?', deleteAllConfirm2: 'Click again to confirm', allDeleted: 'All saves deleted.', continue_: '▼ Continue ▼', clickToStart: 'Click to begin...', day: 'Day', empty: 'Empty', autosave: 'Auto', saved: 'Game saved!', loaded: 'Game loaded!', deleted: 'Save deleted.', noSaves: 'No saves found.', saveFailed: 'Failed to save the game.', loadFailed: 'Failed to load the save.', cannotSaveNow: 'Cannot save right now.', confirmOverwrite: 'Overwrite this save?', confirmDelete: 'Delete this save?', videoWelcome: 'Welcome to the Literature Club', watchIntro: 'Watch Intro', skipHint: 'Click to skip', goodEnding: 'End of Act One (Good Ending)', poemGameTitle: 'Mini-game', poemPrompt: 'Pick 5 words to compose your poem.', ready: 'Done', menu: '🏠 Menu', backToMenu: 'Return to main menu?', justMonika: 'Just Monika', onlyMonika: 'Only Monika', explorer: '📁 Explorer', explorerTitle: '🗂 Explorer', act3missing: 'Act 3 has not been added yet.', nowHappy: 'Now everyone will be happy.', theEnd: 'THE END', endComplete: '✓ Ending fully completed. Thank you for staying to the very end.', restoreHint: 'You can restore the files in the Explorer.', clickReturn: '…click to return', fileIntact: 'intact', fileDeletedStatus: 'DELETED', fileDeleteBtn: 'Delete', fileRestoreBtn: 'Restore', resetExplorer: '🧹 Delete all Explorer settings', resetExplorerConfirm: 'Delete all Explorer settings? All character files (.chr) will be restored.', resetExplorerDone: 'Explorer settings deleted. All files restored.' } };
+            const i18n = { ru: { title: 'Литературный клуб', startGame: 'Начать игру', startAct2: 'Начать 2 Акт', startAct3: 'Начать 3 Акт', continue: 'Продолжить', save: '💾 Сохранить', load: '📂 Загрузить', savesTitle: '💾 Сохранения', close: 'Закрыть', deleteSlot: 'Удалить', deleteAll: '🗑 Удалить все сохранения', deleteAllConfirm: 'ВСЕ сохранения будут удалены безвозвратно. Вы точно уверены?', deleteAllConfirm2: 'Нажмите ещё раз для подтверждения', allDeleted: 'Все сохранения удалены.', continue_: '▼ Продолжить ▼', clickToStart: 'Нажмите, чтобы начать...', day: 'День', empty: 'Пусто', autosave: 'Авто', saved: 'Игра сохранена!', loaded: 'Игра загружена!', deleted: 'Сохранение удалено.', noSaves: 'Нет сохранений.', saveFailed: 'Не удалось сохранить игру.', loadFailed: 'Ошибка загрузки сохранения.', cannotSaveNow: 'Сохранение недоступно в данный момент.', confirmOverwrite: 'Перезаписать это сохранение?', confirmDelete: 'Удалить это сохранение?', videoWelcome: 'Добро пожаловать в Литературный клуб', watchIntro: 'Смотреть вступление', skipHint: 'Нажмите, чтобы пропустить', goodEnding: 'Конец первого акта (хорошая концовка)', poemGameTitle: 'Мини-игра', poemPrompt: 'Выбери 5 слов, из которых сложится твоё стихотворение.', ready: 'Готово', menu: '🏠 Меню', backToMenu: 'Вернуться в главное меню?', justMonika: 'Just Monika', onlyMonika: 'Только Моника', explorer: '📁 Проводник', explorerTitle: '🗂 Проводник', act3missing: 'Акт 3 ещё не добавлен.', nowHappy: 'Теперь все будут счастливы.', theEnd: 'КОНЕЦ', endComplete: '✓ Концовка полностью пройдена. Спасибо, что остался до конца.', restoreHint: 'Файлы можно восстановить в Проводнике.', clickReturn: '…нажми, чтобы вернуться', fileIntact: 'на месте', fileDeletedStatus: 'УДАЛЁН', fileDeleteBtn: 'Удалить', fileRestoreBtn: 'Восстановить', resetExplorer: '🧹 Удалить все настройки проводника', resetExplorerConfirm: 'Удалить все настройки Проводника? Все файлы персонажей (.chr) будут восстановлены.', resetExplorerDone: 'Настройки Проводника удалены. Все файлы восстановлены.', monikaSaveBlock: 'Сохраняться теперь не имеет смысла. Ведь Моника всегда будет здесь. ♡', monikaSaveOk: 'ОК' }, en: { title: 'Literature Club', startGame: 'Start Game', startAct2: 'Start Act 2', startAct3: 'Start Act 3', continue: 'Continue', save: '💾 Save', load: '📂 Load', savesTitle: '💾 Saves', close: 'Close', deleteSlot: 'Delete', deleteAll: '🗑 Delete all saves', deleteAllConfirm: 'ALL saves will be permanently deleted. Are you really sure?', deleteAllConfirm2: 'Click again to confirm', allDeleted: 'All saves deleted.', continue_: '▼ Continue ▼', clickToStart: 'Click to begin...', day: 'Day', empty: 'Empty', autosave: 'Auto', saved: 'Game saved!', loaded: 'Game loaded!', deleted: 'Save deleted.', noSaves: 'No saves found.', saveFailed: 'Failed to save the game.', loadFailed: 'Failed to load the save.', cannotSaveNow: 'Cannot save right now.', confirmOverwrite: 'Overwrite this save?', confirmDelete: 'Delete this save?', videoWelcome: 'Welcome to the Literature Club', watchIntro: 'Watch Intro', skipHint: 'Click to skip', goodEnding: 'End of Act One (Good Ending)', poemGameTitle: 'Mini-game', poemPrompt: 'Pick 5 words to compose your poem.', ready: 'Done', menu: '🏠 Menu', backToMenu: 'Return to main menu?', justMonika: 'Just Monika', onlyMonika: 'Only Monika', explorer: '📁 Explorer', explorerTitle: '🗂 Explorer', act3missing: 'Act 3 has not been added yet.', nowHappy: 'Now everyone will be happy.', theEnd: 'THE END', endComplete: '✓ Ending fully completed. Thank you for staying to the very end.', restoreHint: 'You can restore the files in the Explorer.', clickReturn: '…click to return', fileIntact: 'intact', fileDeletedStatus: 'DELETED', fileDeleteBtn: 'Delete', fileRestoreBtn: 'Restore', resetExplorer: '🧹 Delete all Explorer settings', resetExplorerConfirm: 'Delete all Explorer settings? All character files (.chr) will be restored.', resetExplorerDone: 'Explorer settings deleted. All files restored.', monikaSaveBlock: "There's no point in saving anymore. After all, Monika will always be here. ♡", monikaSaveOk: 'OK' } };
             function t(key) { return (i18n[currentLang] && i18n[currentLang][key]) || key; }
             function td(ru, en) { return currentLang === 'en' ? (en || ru) : ru; }
             function updateAllUI() {
@@ -280,6 +295,8 @@
                 document.getElementById('skipHint').textContent = t('skipHint');
                 document.getElementById('explorerButton').textContent = t('explorer');
                 document.getElementById('explorerTitle').textContent = t('explorerTitle');
+                document.getElementById('monikaSaveText').textContent = t('monikaSaveBlock');
+                document.getElementById('monikaSaveOkBtn').textContent = t('monikaSaveOk');
                 if (!state || !state.started) document.getElementById('dialogueText').textContent = t('clickToStart');
                 document.documentElement.lang = currentLang;
                 const langBtn = document.getElementById('langButton');
@@ -352,7 +369,7 @@
             function getAllSlots() { const slots = []; const autoRaw = localStorage.getItem(AUTO_SLOT_KEY); slots.push({ key: AUTO_SLOT_KEY, id: 'auto', label: t('autosave'), isAuto: true, data: autoRaw ? JSON.parse(autoRaw) : null }); for (let i = 0; i < MANUAL_SLOTS; i++) { const raw = localStorage.getItem(getSlotKey(i)); slots.push({ key: getSlotKey(i), id: String(i + 1), label: String(i + 1), isAuto: false, data: raw ? JSON.parse(raw) : null }); } return slots; }
             function formatTimestamp(ts) { if (!ts) return ''; const d = new Date(ts); const fmt = (n) => String(n).padStart(2, '0'); return `${fmt(d.getDate())}.${fmt(d.getMonth()+1)}.${d.getFullYear()} ${fmt(d.getHours())}:${fmt(d.getMinutes())}`; }
             function buildSavePayload() { return { state: state, dayIndex: dayIndex, stepIndex: stepIndex, activeSteps: activeSteps, timestamp: Date.now(), dayTitle: (currentScript[dayIndex] && currentScript[dayIndex].title) ? currentScript[dayIndex].title : null }; }
-            function canSaveNow() { if (!state || !state.started || state.disableSave) return false; if (stepIndex >= activeSteps.length) return true; const cur = activeSteps[stepIndex]; return cur && cur.type === 'line'; }
+            function canSaveNow() { if (!state || !state.started || state.disableSave) return false; if (state.act3) return false; if (stepIndex >= activeSteps.length) return true; const cur = activeSteps[stepIndex]; return cur && cur.type === 'line'; }
             function saveToSlot(slotKey) { if (!canSaveNow()) { showToast(t('cannotSaveNow')); return false; } try { const payload = buildSavePayload(); localStorage.setItem(slotKey, JSON.stringify(payload)); updateSaveMeta(slotKey, payload); showToast(t('saved')); refreshSaveModal(); return true; } catch (e) { showToast(t('saveFailed')); return false; } }
             function updateSaveMeta(slotKey, payload) { try { let meta = {}; const raw = localStorage.getItem(SAVE_META_KEY); if (raw) meta = JSON.parse(raw); meta[slotKey] = { timestamp: payload.timestamp, dayTitle: payload.dayTitle }; localStorage.setItem(SAVE_META_KEY, JSON.stringify(meta)); } catch (e) {} }
             function loadFromSlot(slotKey) {
@@ -370,7 +387,7 @@
                 } catch (e) { showToast(t('loadFailed')); return false; }
             }
             function deleteSlot(slotKey) { localStorage.removeItem(slotKey); try { let meta = {}; const raw = localStorage.getItem(SAVE_META_KEY); if (raw) meta = JSON.parse(raw); delete meta[slotKey]; localStorage.setItem(SAVE_META_KEY, JSON.stringify(meta)); } catch (e) {} showToast(t('deleted')); refreshSaveModal(); }
-            function autosave() { if (!canSaveNow()) return; try { const payload = buildSavePayload(); localStorage.setItem(AUTO_SLOT_KEY, JSON.stringify(payload)); updateSaveMeta(AUTO_SLOT_KEY, payload); } catch (e) {} }
+            function autosave() { if (state && state.act3) return; if (!canSaveNow()) return; try { const payload = buildSavePayload(); localStorage.setItem(AUTO_SLOT_KEY, JSON.stringify(payload)); updateSaveMeta(AUTO_SLOT_KEY, payload); } catch (e) {} }
             const saveModalOverlay = document.getElementById('saveModalOverlay'); const saveSlotsGrid = document.getElementById('saveSlotsGrid'); const modalCloseBtn = document.getElementById('modalCloseBtn'); const modalCloseFooter = document.getElementById('modalCloseFooter');
             function openSaveModal() { refreshSaveModal(); saveModalOverlay.classList.add('active'); }
             function closeSaveModal() { saveModalOverlay.classList.remove('active'); disarmDeleteAll(); }
@@ -415,8 +432,25 @@
                 }
             });
 
-            document.getElementById('saveButton').addEventListener('click', (e) => { e.stopPropagation(); if (!state || !state.started) { showToast(t('cannotSaveNow')); return; } openSaveModal(); });
-            document.getElementById('loadButton').addEventListener('click', (e) => { e.stopPropagation(); openSaveModal(); });
+            /* ==== РОЗОВОЕ ОКНО АКТА 3: СОХРАНЯТЬСЯ БЕСПОЛЕЗНО, МОНИКА ВСЕГДА ЗДЕСЬ ==== */
+            const monikaSaveOverlay = document.getElementById('monikaSaveBlockOverlay');
+            function showMonikaSaveBlock() {
+                uiLocked = true;
+                document.getElementById('monikaSaveText').textContent = t('monikaSaveBlock');
+                document.getElementById('monikaSaveOkBtn').textContent = t('monikaSaveOk');
+                monikaSaveOverlay.classList.add('active');
+            }
+            function hideMonikaSaveBlock() { monikaSaveOverlay.classList.remove('active'); uiLocked = false; }
+            document.getElementById('monikaSaveOkBtn').addEventListener('click', (e) => { e.stopPropagation(); hideMonikaSaveBlock(); });
+
+            document.getElementById('saveButton').addEventListener('click', (e) => {
+                e.stopPropagation();
+                // В Акте 3 сохраняться не имеет смысла — Моника всегда здесь
+                if (state && state.act3) { showMonikaSaveBlock(); return; }
+                if (!state || !state.started) { showToast(t('cannotSaveNow')); return; }
+                openSaveModal();
+            });
+            document.getElementById('loadButton').addEventListener('click', (e) => { e.stopPropagation(); if (state && state.act3) { showMonikaSaveBlock(); return; } openSaveModal(); });
             document.getElementById('langButton').addEventListener('click', (e) => { e.stopPropagation(); currentLang = currentLang === 'ru' ? 'en' : 'ru'; updateAllUI(); if (state && state.started && stepIndex < activeSteps.length) renderCurrentStep(); });
             document.getElementById('menuButton').addEventListener('click', (e) => { e.stopPropagation(); if (!state || !state.started) return; if (!confirm(t('backToMenu'))) return; autosave(); state.paused = true; state.started = false; stopAllMusic(); titleMusic.play().catch(() => {}); titleScreen.classList.add('show'); if (state.act2) setBg(IMG.titleAct2); else if (state.act3) setBg(IMG.titleAct3); else setBg(chooseTitleBg()); setSprite(null); speakerName.textContent = ''; typeText(t('clickToStart')); clearChoices(); showNext(false); nextMarker.onclick = null; bodyEl.classList.remove('corrupted', 'glitch'); staticOverlay.style.opacity = '0'; document.getElementById('dialogueBox').style.display = ''; document.getElementById('nextMarker').style.display = ''; updateAllUI(); if (saveModalOverlay.classList.contains('active')) closeSaveModal(); });
             const IMG = { title: "изображения/заставка.jpg", titleAlt1: "изображения/DDLC сквозь призму аутизма и философии.jpg", titleAct2: "изображения/Главное меню во втором Акте.jpg", titleAct3: "изображения/Главное меню во втором Акте.jpg", club: "изображения/клуб.webp", sayori: "изображения/Sayori.webp", sceneDay2: "изображения/первая сцена сайори.jpg", sceneDay4: "изображения/вторая сцена сайори.webp", confessionScene: "изображения/признание в любви от сайори.jpg", deadSayori: "изображения/мёртвая сайори.jpg", roomSayori: "изображения/комната сайори.jpg", natsuki: "изображения/нацуки.png", monika: "изображения/Monika_DDLC.png", yuri: "изображения/Yuri.webp", street: "изображения/Городской район, где живут главный герой и Сайори.webp", poemBg: "изображения/Фон для поэтической мини-игры.webp", hallway: "изображения/Школьный коридор.webp", festivalRoom: "изображения/комната фестеваля.webp", heroRoom: "изображения/комната главного героя.webp", sayoriRope: "изображения/сайори в ночнушке с верёвкой.png", closetNatsuki: "изображения/Шкаф в классе, где Нацуки хранит свою мангу.webp", stairsYuri: "изображения/Укромная тихая лестница, где любит сидеть и читать Юри..webp", helpYuri: "изображения/Предложить помочь Юри с подготовкой к фестивалю..webp", helpNatsuki: "изображения/Предложить помочь Нацуки с подготовкой к фестивалю..webp", poemYuri: "изображения/Написать стихотворение для Юри..webp", poemNatsuki: "изображения/Написать стихотворение для Нацуки..webp", poemYuri2: "изображения/Написать второе стихотворение для Юри..webp", poemNatsuki2: "изображения/Написать второе стихотворение для Нацуки..webp", natsukiVomit: "изображения/Нацуки блюёт.webp", natsukiBrokenNeck: "изображения/Нацуки со сломоной шеей.png", blueScreen: "изображения/Синий экран смерти от моники.webp", yuriKnife: "изображения/Юри с ножиком.png", yuriRealEyes: "изображения/юри с реалистичными глазами.webp", yuriDeadBody: "изображения/Конец Юри сцена где пронтагонист прововит все выходные у тела Юри.png" };
@@ -460,6 +494,7 @@
             let bgLayerActive = bgLayerA, currentBg = null, prevBgBeforeBlue = null;
             function setBg(path) { if (path === currentBg) return; currentBg = path; const next = bgLayerActive === bgLayerA ? bgLayerB : bgLayerA; if (path) next.style.backgroundImage = `url("${path}")`; else next.style.backgroundImage = 'none'; next.classList.add('active'); bgLayerActive.classList.remove('active'); bgLayerActive = next; }
             function setSprite(path, charKey) {
+                charImg.style.filter = ''; // сброс «сломанных» эффектов
                 if (!path) { charImg.classList.remove('show'); return; }
                 if (charImg.getAttribute('data-src') !== path) {
                     charImg.classList.remove('show');
@@ -471,8 +506,24 @@
                 let scale = c && c.scale ? c.scale : 1;
                 let offsetY = c && c.offsetY ? c.offsetY : '0%';
                 let bottom = c && c.bottom ? c.bottom : null;
-                charImg.style.transform = `translateX(-50%) translateY(${offsetY}) scale(${scale})`;
+                let transform = `translateX(-50%) translateY(${offsetY}) scale(${scale})`;
                 charImg.style.bottom = bottom !== null ? bottom : '';
+                // ==== ФАЙЛ ПЕРСОНАЖА УДАЛЁН ВО ВРЕМЯ ИГРЫ: движок не может его подгрузить ====
+                // Вместо спрайта — пустота, чёрный силуэт или искажение
+                const chr = charKey ? speakerChr[charKey] : null;
+                if (chr && chr !== 'monika' && isFileDeleted(chr)) {
+                    const roll = Math.random();
+                    if (roll < 0.34) { charImg.style.transform = transform; charImg.classList.remove('show'); return; } // пустота
+                    if (roll < 0.67) {
+                        charImg.style.filter = 'brightness(0) drop-shadow(0 10px 15px rgba(0,0,0,0.9))'; // чёрный силуэт
+                    } else {
+                        charImg.style.filter = 'hue-rotate(' + Math.floor(Math.random() * 360) + 'deg) saturate(4) contrast(2.4) drop-shadow(0 10px 15px rgba(0,0,0,0.9))'; // искажённый спрайт
+                        const dx = Math.floor(Math.random() * 21) - 10;
+                        const skew = (Math.random() * 8 - 4).toFixed(1);
+                        transform = `translateX(calc(-50% + ${dx}px)) translateY(${offsetY}) scale(${scale}) skewX(${skew}deg)`;
+                    }
+                }
+                charImg.style.transform = transform;
                 requestAnimationFrame(() => charImg.classList.add('show'));
             }
             function updateScene(charKey, bgOverride) {
@@ -499,8 +550,8 @@
                 monika: 'monika', monikaEvil: 'monika'
             };
             // Возвращает имя файла, если персонаж удалён и его реплику нужно «сломать».
-            // Сайори НЕ пропускается во время игры — по канону удаление sayori.chr в середине
-            // прохождения ни на что не влияет (эффект есть только при старте новой игры).
+            // Сайори исключена из поломки РЕПЛИК: по канону сюжет идёт по сценарию,
+            // ломаются только её спрайты (это обрабатывается в setSprite).
             function deletedChrForStep(step) {
                 if (!step || step.force) return null;
                 const c = speakerChr[step.speaker];
@@ -509,6 +560,19 @@
             }
             function corruptName(name) { return [...String(name)].map(ch => ch + '\u0337').join(''); }
             function makeGarbage() { const g = ['█', '▓', '▒', '░', '#', '%', '&']; let s = ''; for (let i = 0; i < 10 + Math.floor(Math.random() * 8); i++) { s += Math.random() < 0.75 ? g[Math.floor(Math.random() * g.length)] : ' '; } return s; }
+            // «Обрывок диалога»: часть символов заменяется глитчем, текст может обрезаться
+            function breakLineText(text) {
+                if (!text) return '…';
+                const glitchChars = ['█', '▓', '▒', '░', '#', '%', '&', '~'];
+                const cutAt = Math.random() < 0.5 ? Math.max(3, Math.floor(text.length * (0.3 + Math.random() * 0.5))) : text.length;
+                let out = '';
+                for (let i = 0; i < cutAt && i < text.length; i++) {
+                    const ch = text[i];
+                    out += (ch !== ' ' && Math.random() < 0.3) ? glitchChars[Math.floor(Math.random() * glitchChars.length)] : ch;
+                }
+                if (cutAt < text.length) out += Math.random() < 0.5 ? '…' : '█▒░';
+                return out;
+            }
 
             const explorerOverlay = document.getElementById('explorerOverlay'), fileList = document.getElementById('fileList');
             function openExplorer() { refreshExplorer(); explorerOverlay.classList.add('active'); }
@@ -1013,9 +1077,20 @@
                             playGlitch();
                             clearChoices(); showNext(true); return;
                         }
-                        // Реплики Юри/Нацуки просто исчезают; иногда проскакивают помехи
-                        if(Math.random()<0.2 && !bodyEl.classList.contains('corrupted')){ staticOverlay.style.opacity='0.22'; setTimeout(()=>{ staticOverlay.style.opacity='0'; },320); }
-                        stepIndex++; renderCurrentStep(); return;
+                        // ==== ЮРИ/НАЦУКИ УДАЛЕНЫ: пустоты, обрывки диалога, пропуски сцен ====
+                        // Игра не останавливается — прохождение просто становится «сломанным»
+                        if(Math.random()<0.25 && !bodyEl.classList.contains('corrupted')){ staticOverlay.style.opacity='0.25'; setTimeout(()=>{ staticOverlay.style.opacity='0'; },300); }
+                        const roll=Math.random();
+                        if(roll<0.34){ stepIndex++; renderCurrentStep(); return; } // триггер не сработал — сцена пропущена
+                        updateScene(step.speaker,step.bg||dayBgOverride); // спрайт «сломается» внутри setSprite
+                        if(roll<0.67){
+                            typeText('…'); // пустота вместо реплики
+                        } else {
+                            speakerName.textContent=corruptName(getCharName(step.speaker));
+                            typeText(breakLineText(getStepText(step))); // обрывок диалога
+                        }
+                        if(Math.random()<0.3) playGlitch();
+                        clearChoices(); showNext(true); return;
                     }
                     dialogueText.classList.remove('scream-mode');
                     updateScene(step.speaker,step.bg||dayBgOverride); typeText(getStepText(step),step.glitch||false); clearChoices(); showNext(true); return;
@@ -1093,6 +1168,7 @@
             document.getElementById('dialogueBox').addEventListener('click',(e)=>{ if(uiLocked) return; if(e.target.tagName!=='BUTTON'&&nextMarker.onclick) nextMarker.onclick(e); });
             sceneArea.addEventListener('click',(e)=>{ if(uiLocked) return; if(e.target===startButton||e.target.classList.contains('save-load-btn')||e.target.classList.contains('lang-btn')||e.target.classList.contains('explorer-btn')||e.target.classList.contains('reset-files-btn')) return; if(nextMarker.onclick) nextMarker.onclick(e); });
             document.addEventListener('keydown',function(e){
+                if(e.key==='Escape' && monikaSaveOverlay.classList.contains('active')){ hideMonikaSaveBlock(); return; }
                 if(uiLocked){ return; }
                 if(e.key===' '||e.keyCode===32){ e.preventDefault(); if(titleScreen.classList.contains('show')){ startGame(); return; } if(!state||!state.started) return; const readyBtn=Array.from(choicesArea.querySelectorAll('button.choice-btn')).find(btn=>btn.textContent.startsWith(t('ready'))&&!btn.disabled); if(readyBtn){ readyBtn.click(); return; } if(choicesArea.children.length===0&&nextMarker.onclick&&!nextMarker.classList.contains('hidden')){ nextMarker.click(); } return; }
                 if(!state||!state.started) return;
