@@ -1965,6 +1965,50 @@
             tickPetals();
 
             setBg(chooseTitleBg()); speakerName.textContent=''; updateAllUI(); typeText(t('clickToStart')); showNext(false);
+
+            /* ================= PWA: РУЧНАЯ КНОПКА УСТАНОВКИ ================= */
+            let deferredInstallPrompt = null;
+            let installBtn = null;
+
+// Браузер говорит: "можно установить PWA"
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredInstallPrompt = e;
+                // Показываем кнопку, если её ещё нет
+                if (!installBtn) {
+                    installBtn = document.createElement('button');
+                    installBtn.id = 'installPwaBtn';
+                    installBtn.textContent = '📲 Установить';
+                    installBtn.style.cssText = 'padding:12px 30px; font-size:1.1rem; background:#27ae60; border:none; color:white; border-radius:30px; cursor:pointer; font-weight:bold; min-width:200px; transition:all 0.2s;';
+                    installBtn.addEventListener('click', async () => {
+                        if (!deferredInstallPrompt) return;
+                        installBtn.style.opacity = '0.6';
+                        installBtn.disabled = true;
+                        deferredInstallPrompt.prompt();
+                        const { outcome } = await deferredInstallPrompt.userChoice;
+                        if (outcome === 'accepted') {
+                            installBtn.textContent = '✓ Установлено!';
+                            installBtn.style.background = '#1e8449';
+                            setTimeout(() => { if (installBtn && installBtn.parentNode) installBtn.remove(); installBtn = null; }, 2000);
+                        } else {
+                            installBtn.style.opacity = '1';
+                            installBtn.disabled = false;
+                        }
+                        deferredInstallPrompt = null;
+                    });
+                    installBtn.addEventListener('mouseenter', () => { installBtn.style.background = '#1e8449'; });
+                    installBtn.addEventListener('mouseleave', () => { installBtn.style.background = '#27ae60'; });
+                    const menuBtns = document.querySelector('#titleScreen .menu-buttons');
+                    if (menuBtns) menuBtns.appendChild(installBtn);
+                }
+            });
+
+// Скрываем кнопку, если PWA уже установлен
+            window.addEventListener('appinstalled', () => {
+                if (installBtn && installBtn.parentNode) installBtn.remove();
+                installBtn = null;
+                deferredInstallPrompt = null;
+            });
         })();
     </script>
     <script> (function(){ document.addEventListener('contextmenu',e=>e.preventDefault()); document.addEventListener('keydown',function(e){ if(e.key==='F12'||e.keyCode===123){ e.preventDefault(); return false; } if(e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='i'||e.keyCode===73)){ e.preventDefault(); return false; } if(e.ctrlKey&&e.shiftKey&&(e.key==='J'||e.key==='j'||e.keyCode===74)){ e.preventDefault(); return false; } if(e.ctrlKey&&e.shiftKey&&(e.key==='C'||e.key==='c'||e.keyCode===67)){ e.preventDefault(); return false; } if(e.ctrlKey&&(e.key==='U'||e.key==='u'||e.keyCode===85)){ e.preventDefault(); return false; } if(e.ctrlKey&&(e.key==='S'||e.key==='s'||e.keyCode===83)){ e.preventDefault(); return false; } }); setInterval(function(){ debugger; },100); })(); </script>
