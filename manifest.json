@@ -1,21 +1,72 @@
 {
-  "name": "Литературный клуб: Первый акт",
+  "name": "Литературный клуб",
   "short_name": "ЛитКлуб",
-  "start_url": "/",
+  "description": "Визуальная новелла по мотивам Doki Doki Literature Club с 4 актами, сохранениями, проводником файлов и двумя концовками.",
+  "start_url": "./?source=pwa",
+  "scope": "./",
+  "id": "litclub-ddlc-ru",
+  "lang": "ru",
+  "dir": "ltr",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui", "browser"],
+  "orientation": "portrait",
   "background_color": "#fbe9e7",
   "theme_color": "#b34141",
-  "description": "Визуальная новелла по мотивам DDLC",
+  "categories": ["games", "entertainment", "books"],
+  "prefer_related_applications": false,
+  "launch_handler": {
+    "client_mode": ["focus-existing", "navigate-new"]
+  },
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "./icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "./icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Новая игра",
+      "short_name": "Начать",
+      "description": "Начать историю с первого акта",
+      "url": "./?action=new",
+      "icons": [{ "src": "./icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Продолжить",
+      "short_name": "Продолж.",
+      "description": "Вернуться к последнему сохранению",
+      "url": "./?action=continue",
+      "icons": [{ "src": "./icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "./screenshot-title.jpg",
+      "type": "image/jpeg",
+      "sizes": "1280x720",
+      "form_factor": "wide",
+      "label": "Главное меню"
+    },
+    {
+      "src": "./screenshot-club.jpg",
+      "type": "image/jpeg",
+      "sizes": "720x1280",
+      "form_factor": "narrow",
+      "label": "Сцена в клубе"
     }
   ]
 }
