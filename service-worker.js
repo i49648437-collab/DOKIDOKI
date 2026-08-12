@@ -1,11 +1,12 @@
-const CACHE_NAME = 'litclub-v2';
+const CACHE_NAME = 'litclub-v3';
+const CACHE_NAME_RUNTIME = 'litclub-runtime-v3';
 
-// Все файлы, которые нужны для работы без интернета
+// Все основные ресурсы для оффлайн-работы
 const ASSETS = [
-  // === Основные страницы и манифест ===
-  '/',
-  '/index.html',
-  '/manifest.json',
+  // === Основные страницы ===
+  './',
+  './index.html',
+  './manifest.json',
 
   // === Видео ===
   'видео/заставка видео.mp4',
@@ -34,7 +35,7 @@ const ASSETS = [
   'изображения/комната главного героя.webp',
   'изображения/Городской район, где живут главный герой и Сайори.webp',
 
-  // Сайори — сцены
+  // Сайори
   'изображения/Sayori.webp',
   'изображения/первая сцена сайори.jpg',
   'изображения/вторая сцена сайори.webp',
@@ -65,95 +66,120 @@ const ASSETS = [
   'изображения/юри с реалистичными глазами.webp',
   'изображения/Конец Юри сцена где пронтагонист прововит все выходные у тела Юри.png',
 
-  // Служебные экраны
+  // Служебное
   'изображения/Синий экран смерти от моники.webp',
 
   // === Музыка ===
-  // Главная/титульная
   'музыка/DDLC_-_Doki_Doki_(SkySound.cc).mp3',
   'музыка/фоновая музыка.ogg',
   'музыка/glitch.ogg',
   'музыка/Your Reality.mp3',
-
-  // Акт 1 — сюжетные
   'музыка/признание сайори.ogg',
   'музыка/смерть сайори.ogg',
-
-  // Поэмы и мини-игра
   'музыка/Тема обмена стихами.ogg',
   'музыка/Звуковое сопровождение мини-игры.ogg',
   'музыка/Тема стиха Сайори.ogg',
   'музыка/Тема стиха Нацуки.ogg',
   'музыка/Тема стиха Юри.ogg',
   'музыка/Тема стиха Моники.ogg',
-
-  // Локации
   'музыка/Рядовой саундтрек (коридор).ogg',
-
-  // Акт 2 — хоррор
   'музыка/Акт 2 (шанс 164), Акт 3 Тема призрачного меню и мини-игры в третьем акте.ogg',
   'музыка/Акт 2 Тема третьего стиха Юри (mdpnfbo,jrfp).ogg',
   'музыка/Сцена признания Юри протагонисту.ogg',
   'музыка/Отмотка событий после встречи с Юри, изрезавшей свою руку.ogg',
   'музыка/Выходные наедине с телом Юри.ogg',
   'музыка/Имитация вида из глаз повешенной Сайори (шанс 33% после закрытия второго секретного стиха).ogg',
-
-  // Акт 3
   'музыка/Главная тема третьего акта.ogg',
   'музыка/Звуковой эффект после выбора глитч-слова.ogg',
   'музыка/Сцена после удаления «monika.chr».ogg',
   'музыка/Голосовое обращение Моники к игроку перед титрами.ogg',
-
-  // Акт 4 / концовки
   'музыка/Благодарение Сайори за удаление Моники.ogg',
   'музыка/Фоновый саундтрек в случае удаления «sayori.chr» или «monika.chr» перед началом игры.ogg'
 ];
 
-// Установка — кешируем всё
+// ================= INSTALL =================
+// Пофайловое кеширование: один отсутствующий файл не ломает всё
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      console.log('Кеширую ресурсы...');
-      return cache.addAll(ASSETS).catch(err => {
-        console.warn('Не все файлы удалось закешировать:', err);
+      console.log('[SW] Кеширую ' + ASSETS.length + ' ресурсов...');
+      const promises = ASSETS.map(url =>
+        cache.add(url).catch(err => {
+          console.warn('[SW] Не удалось закешировать:', url, err.message);
+        })
+      );
+      return Promise.all(promises).then(() => {
+        console.log('[SW] Установка завершена');
       });
     })
   );
-  self.skipWaiting(); // активируем новый SW сразу
+  self.skipWaiting();
 });
 
-// Обслуживание — сначала кеш, если нет — сеть
+// ================= FETCH =================
 self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request).then(cached => {
-      return cached || fetch(event.request).then(response => {
-        // Кешируем новые файлы, которые встретились по ходу игры
-        if (response && response.status === 200 && response.type === 'basic') {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, clone);
-          });
-        }
-        return response;
-      }).catch(() => {
-        // Если запрос не удался и нет в кеше — можно вернуть fallback
-        if (event.request.destination === 'image') {
-          return caches.match('изображения/заставка.jpg');
-        }
-        return new Response('offline', { status: 503 });
-      });
-    })
-  );
+  const request = event.request;
+
+  // Не перехватываем не-GET запросы (POST и т.д.)
+  if (request.method !== 'GET') return;
+
+  event.respondWith((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    const runtimeCache = await caches.open(CACHE_NAME_RUNTIME);
+
+    // === HTML-страницы: network-first ===
+    // Обновления игры приходят сразу, а оффлайн работает через кеш
+    if (request.mode === 'navigate' || request.destination === 'document') {
+      try {
+        const fresh = await fetch(request);
+        runtimeCache.put(request, fresh.clone());
+        return fresh;
+      } catch (err) {
+        const cached = await caches.match(request) || await caches.match('./index.html');
+        if (cached) return cached;
+        return new Response('<h1>Литературный клуб — оффлайн</h1><p>Нет соединения, но игра должна работать.</p>', {
+          headers: { 'Content-Type': 'text/html; charset=utf-8' }
+        });
+      }
+    }
+
+    // === Статика (картинки, музыка, видео): cache-first ===
+    const cached = await cache.match(request) || await runtimeCache.match(request);
+    if (cached) return cached;
+
+    try {
+      const fresh = await fetch(request);
+      // Кешируем успешные ответы для будущих запусков
+      if (fresh && fresh.status === 200) {
+        runtimeCache.put(request, fresh.clone());
+      }
+      return fresh;
+    } catch (err) {
+      // Fallback: картинка не найдена — отдаём заставку
+      if (request.destination === 'image') {
+        const fallback = await cache.match('изображения/заставка.jpg');
+        if (fallback) return fallback;
+      }
+      // Прочее (музыка, видео) — просто 503
+      return new Response('', { status: 503, statusText: 'Offline' });
+    }
+  })());
 });
 
-// Очистка старых кешей при обновлении
+// ================= ACTIVATE =================
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(names => {
       return Promise.all(
-        names.filter(name => name !== CACHE_NAME).map(name => caches.delete(name))
+        names
+          .filter(name => name !== CACHE_NAME && name !== CACHE_NAME_RUNTIME)
+          .map(name => {
+            console.log('[SW] Удаляю старый кеш:', name);
+            return caches.delete(name);
+          })
       );
     })
   );
-  self.clients.claim(); // новый SW берёт контроль сразу
+  self.clients.claim();
+  console.log('[SW] v3 активен и управляет всеми клиентами');
 });
