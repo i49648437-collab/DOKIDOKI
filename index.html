@@ -778,6 +778,41 @@ const MALE_NAME_BY_EN = { Sayori: ['Максим', 'Maxim'], Natsuki: ['Миша
 const MALE_FILE_KEY = { sayori: 'maxim', natsuki: 'misha', monika: 'sergey', yuri: 'sasha' };
 const MALE_LABELS_RU = { 'Написать для Сайори': 'Написать для Максима', 'Написать для Нацуки': 'Написать для Миши', 'Написать для Юри': 'Написать для Саши', 'Поддержать идею Сайори': 'Поддержать идею Максима', 'Помочь Нацуки': 'Помочь Мише', 'Помочь Юри': 'Помочь Саше', 'Навестить Сайори ночью': 'Навестить Максима ночью', 'Спросить про Сайори': 'Спросить про Максима', 'Поддержать Нацуки': 'Поддержать Мишу', 'Поддержать Юри': 'Поддержать Сашу' };
 const MALE_LABELS_EN = { 'Write for Sayori': 'Write for Maxim', 'Write for Natsuki': 'Write for Misha', 'Write for Yuri': 'Write for Sasha', "Support Sayori's idea": "Support Maxim's idea", 'Help Natsuki': 'Help Misha', 'Help Yuri': 'Help Sasha', 'Visit Sayori at night': 'Visit Maxim at night', 'Ask about Sayori': 'Ask about Maxim', 'Support Natsuki': 'Support Misha', 'Support Yuri': 'Support Sasha' };
+
+// ====== Мужской состав: словари замен для диалогов ======
+const MALE_DIALOG_REPLACEMENTS_RU = {
+    'Сайори': 'Максим',
+    'Нацуки': 'Миша',
+    'Юри': 'Саша',
+    'Моника': 'Серёжа',
+    'она': 'он',
+    'её': 'его',
+    'ей': 'ему',
+    'неё': 'него',
+    'девушка': 'парень',
+    'девушки': 'парня',
+    'девушку': 'парня',
+    'девушкой': 'парнем',
+    'девушке': 'парню',
+    'подруга': 'друг',
+    'подруги': 'друга',
+    'подругу': 'друга',
+    'подругой': 'другом',
+    'подруге': 'другу'
+};
+const MALE_DIALOG_REPLACEMENTS_EN = {
+    'Sayori': 'Maxim',
+    'Natsuki': 'Misha',
+    'Yuri': 'Sasha',
+    'Monika': 'Sergey',
+    'she': 'he',
+    'her': 'him',
+    'girl': 'boy',
+    'girls': 'boys',
+    'friend': 'friend' // сохраняем нейтрально, но можно заменить на 'buddy' при желании
+};
+// =====================================================
+
 function localizeLabel(text) {
 if (castGender !== 'male') return text;
 const map = currentLang === 'en' ? MALE_LABELS_EN : MALE_LABELS_RU;
@@ -817,6 +852,22 @@ rebuildCharacterSprites();
 }
 function getCharName(key) { const c = characters[key]; if (!c) return ''; if (castGender === 'male' && MALE_NAME_BY_EN[c.enName]) { const pair = MALE_NAME_BY_EN[c.enName]; return currentLang === 'en' ? pair[1] : pair[0]; } return currentLang === 'en' ? (c.enName || c.name) : c.name; }
 setCastGender(castGender);
+
+// ====== Мужской состав: функция применения замен к тексту ======
+function applyCastGenderToText(text) {
+    if (!text) return text;
+    if (castGender !== 'male') return text;
+    const replacements = currentLang === 'en' ? MALE_DIALOG_REPLACEMENTS_EN : MALE_DIALOG_REPLACEMENTS_RU;
+    let result = text;
+    for (const [key, value] of Object.entries(replacements)) {
+        // Заменяем целые слова с учётом границ, без учёта регистра
+        const regex = new RegExp('\\b' + key + '\\b', 'gi');
+        result = result.replace(regex, value);
+    }
+    return result;
+}
+// ========================================================
+
 const titleMusic = document.getElementById('titleMusic'); const bgGameMusic = document.getElementById('bgGameMusic'); const confessionMusic = document.getElementById('confessionMusic'); const deathMusic = document.getElementById('deathMusic'); const glitchSound = document.getElementById('glitchSound'); const yourRealityMusic = document.getElementById('yourRealityMusic');
 const ghostMenuMusic = document.getElementById('ghostMenuMusic');
 const yuriPoem3Music = document.getElementById('yuriPoem3Music');
@@ -1649,7 +1700,8 @@ return base;
 { speaker:'street', text:'Дверь открыта… О нет…', en:'The door is open… Oh no…' }
 ]}
 ]}
-], onComplete(s){ if(s.visitedAtNight) goodEnding(); else badEnding(); } }
+],
+onComplete(s){ if(s.visitedAtNight) goodEnding(); else badEnding(); } }
 ];
 const scriptAct2 = [
 { title:1, onEnter(){ dayBgOverride=null; updateScene('hallway'); }, steps:()=>[
@@ -1885,7 +1937,17 @@ return base;
 ];
 function typeText(text, glitch=false) { dialogueText.classList.remove('scream-mode'); dialogueText.innerHTML=''; text=applyGender(text); if(glitch) text=glitchText(text); const frag=document.createDocumentFragment(); [...text].forEach((ch,i)=>{ const span=document.createElement('span'); span.className='char'; span.textContent=ch; span.style.animationDelay=(i*12)+'ms'; frag.appendChild(span); }); dialogueText.appendChild(frag); }
 function glitchText(text) { return text.split('').map(c=>{ if(Math.random()<0.2) return String.fromCharCode(33+Math.floor(Math.random()*94)); if(Math.random()<0.1) return '█'; return c; }).join(''); }
-function getStepText(step) { if(!step) return ''; return currentLang==='en'?(step.en||step.text):step.text; }
+
+// ====== Изменённая функция getStepText с применением замен для мужского состава ======
+function getStepText(step) {
+    if (!step) return '';
+    let text = currentLang === 'en' ? (step.en || step.text) : step.text;
+    // Применяем замены для мужского состава персонажей
+    text = applyCastGenderToText(text);
+    return text;
+}
+// ============================================================================
+
 function renderCurrentStep() {
 clearAct3Timer();
 if(stepIndex>=activeSteps.length){ finishDay(); return; }
