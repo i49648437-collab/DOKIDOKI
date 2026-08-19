@@ -194,6 +194,13 @@ body.corrupted .static-overlay { opacity:0.7; }
 .letter-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:340; display:none; align-items:center; justify-content:center; cursor:pointer; padding:10px; }
 .letter-overlay.active { display:flex; }
 .letter-overlay img { max-height:94vh; max-width:94vw; object-fit:contain; box-shadow:0 0 60px rgba(0,0,0,0.9); }
+.credits-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:340; display:none; align-items:center; justify-content:center; cursor:pointer; padding:20px; }
+.credits-overlay.active { display:flex; }
+.credits-inner { display:flex; flex-wrap:wrap; gap:40px; align-items:flex-start; justify-content:center; }
+.credits-block { display:flex; flex-direction:column; align-items:center; gap:12px; }
+.credits-block img { width:min(42vw,320px); height:min(42vw,320px); object-fit:cover; border-radius:14px; box-shadow:0 0 40px rgba(0,0,0,0.85); background:#222; }
+.credits-label { color:#fff; font-size:1.3rem; font-weight:bold; text-shadow:2px 2px 4px black; text-align:center; }
+.credits-hint { position:absolute; bottom:24px; left:0; width:100%; text-align:center; color:rgba(255,255,255,0.7); font-size:1rem; }
 .game-error-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:#0b2a4a; z-index:600; display:none; align-items:center; justify-content:center; padding:20px; }
 .game-error-overlay.active { display:flex; }
 .error-dialog { background:#f0f0f0; color:#1a1a1a; width:100%; max-width:540px; border-radius:6px; box-shadow:0 20px 60px rgba(0,0,0,0.7); font-family:'Segoe UI',Arial,sans-serif; overflow:hidden; }
@@ -219,15 +226,7 @@ body.corrupted .static-overlay { opacity:0.7; }
 .gender-btn { min-width:145px; padding:10px 18px; font-size:1rem; background:rgba(255,255,255,0.12); border:2px solid rgba(255,255,255,0.35); color:#fff; border-radius:30px; cursor:pointer; font-weight:bold; transition:all 0.2s; }
 .gender-btn:hover { background:rgba(255,255,255,0.22); transform:scale(1.03); }
 .gender-btn.active { background:var(--accent); border-color:#fff; box-shadow:0 0 18px rgba(179,65,65,0.55); }
-.credits-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:500; display:none; flex-direction:column; align-items:center; justify-content:center; padding:20px; opacity:0; transition:opacity 2s ease; }
-.credits-overlay.active { display:flex; opacity:1; }
-.credits-overlay h2 { color:#fff; font-size:2.5rem; margin-bottom:30px; text-align:center; }
-.credit-item { display:flex; flex-direction:column; align-items:center; margin:20px 0; }
-.credit-item h3 { color:#e0a0a0; font-size:1.5rem; margin-bottom:15px; }
-.credit-item img { width:200px; height:200px; object-fit:cover; border-radius:10px; border:3px solid #b34141; box-shadow:0 0 30px rgba(179,65,65,0.5); }
-.credit-name { color:#fff; font-size:1.3rem; margin-top:10px; font-weight:bold; }
-.ai-notice { max-width:700px; background:rgba(255,255,255,0.1); padding:20px; border-radius:15px; margin:20px 0; text-align:center; color:#ddd; font-size:1.1rem; line-height:1.6; border:2px solid #b34141; }
-@media (max-width:600px) { .dialogue-box { padding:0.8rem; margin:0 0.5rem 0.5rem 0.5rem; } .speaker-name { font-size:1.2rem; } .dialogue-text { font-size:1rem; } .modal-window { padding:1rem; width:95%; max-height:90vh; } .save-load-btn, .explorer-btn { padding:6px 10px; font-size:0.75rem; } #endTheEnd { font-size:2.2rem; letter-spacing:6px; } .dialogue-text.scream-mode { font-size:1.15rem; } .modal-footer button + button { margin-left:6px; } .title-screen .reset-files-btn { font-size:0.8rem; padding:8px 18px; } .mi-line { font-size:1.05rem; } .title-screen h1 { font-size:2.2rem; } .gender-btn { min-width:110px; padding:8px 12px; font-size:0.85rem; } .credit-item img { width:150px; height:150px; } }
+@media (max-width:600px) { .dialogue-box { padding:0.8rem; margin:0 0.5rem 0.5rem 0.5rem; } .speaker-name { font-size:1.2rem; } .dialogue-text { font-size:1rem; } .modal-window { padding:1rem; width:95%; max-height:90vh; } .save-load-btn, .explorer-btn { padding:6px 10px; font-size:0.75rem; } #endTheEnd { font-size:2.2rem; letter-spacing:6px; } .dialogue-text.scream-mode { font-size:1.15rem; } .modal-footer button + button { margin-left:6px; } .title-screen .reset-files-btn { font-size:0.8rem; padding:8px 18px; } .mi-line { font-size:1.05rem; } .title-screen h1 { font-size:2.2rem; } .gender-btn { min-width:110px; padding:8px 12px; font-size:0.85rem; } }
 </style>
 </head>
 <body>
@@ -300,11 +299,12 @@ body.corrupted .static-overlay { opacity:0.7; }
 <div class="scare-overlay" id="scareOverlay"><img id="scareImg" src="" alt=""></div>
 <div class="monika-interrupt-overlay" id="monikaInterruptOverlay"><div class="mi-text" id="miText"></div></div>
 <div class="letter-overlay" id="letterOverlay"><img id="letterImg" alt=""></div>
+<div class="credits-overlay" id="creditsOverlay"><div class="credits-inner"><div class="credits-block"><div class="credits-label" id="creditsLabel1">Код: MainVan-n</div><img id="creditsImg1" alt=""></div><div class="credits-block"><div class="credits-label" id="creditsLabel2">Иллюстрация: Astra_EidOlon</div><img id="creditsImg2" alt=""></div></div><div class="credits-hint" id="creditsHint"></div></div>
 <div class="game-error-overlay" id="gameErrorOverlay">
 <div class="error-dialog">
 <div class="error-titlebar" id="errorTitlebar">Ошибка</div>
 <div class="error-body">
-<div class="error-icon"></div>
+<div class="error-icon">⚠</div>
 <div class="error-text-main" id="errorMainText"></div>
 </div>
 <div class="error-alt" id="errorAltText"></div>
@@ -321,33 +321,19 @@ body.corrupted .static-overlay { opacity:0.7; }
 <button id="installModalClose">Понятно</button>
 </div>
 </div>
-<div class="credits-overlay" id="creditsOverlay">
-<h2>Создатели</h2>
-<div class="ai-notice" id="aiNotice">Здравствуйте часть картинок сгенерированы с помощью ИИ и так как не все изображения пропускаются правилам ИИ некоторые изображения остаются такими-же извините за неудобства с любовью MainVan-n</div>
-<div class="credit-item">
-<h3>Код</h3>
-<img id="codeCreditImg" src="" alt="MainVan-n">
-<div class="credit-name">MainVan-n</div>
-</div>
-<div class="credit-item">
-<h3>Иллюстрация</h3>
-<img id="artCreditImg" src="" alt="Astra_EidOlon">
-<div class="credit-name">Astra_EidOlon</div>
-</div>
-</div>
 <div id="terminalOverlay"><div id="terminalBgImage"></div><div id="terminalContent"></div></div>
 <div id="blueScreenOverlay"></div>
 <div class="game-container" id="gameContainer">
 <div class="scene-area" id="sceneArea">
 <div class="bg-layer" id="bgLayerA"></div><div class="bg-layer" id="bgLayerB"></div>
 <img id="characterImg" class="character-sprite" src="" alt="Персонаж">
-<div id="titleScreen" class="title-screen"><h1 id="titleHeading">Литературный клуб</h1><div class="menu-buttons"><div class="gender-select" id="genderSelect" title="Пол персонажей"><button id="genderFemaleBtn" class="gender-btn" type="button">👧 Девушки</button><button id="genderMaleBtn" class="gender-btn" type="button">👦 Парни</button></div><button id="startButton">Начать игру</button><button id="resetFilesBtn" class="reset-files-btn">🧹 Удалить все настройки проводника</button></div></div>
+<div id="titleScreen" class="title-screen"><h1 id="titleHeading">Литературный клуб</h1><div class="menu-buttons"><div class="gender-select" id="castGenderSelect" title="Состав персонажей клуба"><button id="castFemaleBtn" class="gender-btn" type="button">👧 Девушки</button><button id="castMaleBtn" class="gender-btn" type="button">👦 Юноши</button></div><div class="gender-select" id="genderSelect" title="Пол игрока"><button id="genderMaleBtn" class="gender-btn" type="button">👦 Парень</button><button id="genderFemaleBtn" class="gender-btn" type="button">👧 Девушка</button><button id="genderNeutralBtn" class="gender-btn" type="button">⚪ Не указывать</button></div><button id="startButton">Начать игру</button><button id="resetFilesBtn" class="reset-files-btn">🧹 Удалить все настройки проводника</button></div></div>
 <div id="dayTransition" class="day-transition"></div>
 <div class="explorer-panel">
-<button class="explorer-btn" id="explorerButton" title="Файлы персонажей / Character files"> Проводник</button>
+<button class="explorer-btn" id="explorerButton" title="Файлы персонажей / Character files">📁 Проводник</button>
 </div>
 <div class="save-load-panel">
-<button class="save-load-btn lang-btn" id="langButton" title="Сменить язык / Switch language"> RU</button>
+<button class="save-load-btn lang-btn" id="langButton" title="Сменить язык / Switch language">🌐 RU</button>
 <button class="save-load-btn" id="saveButton">💾 Сохранить</button>
 <button class="save-load-btn" id="loadButton">📂 Загрузить</button>
 <button class="save-load-btn menu-btn" id="menuButton">🏠 Меню</button>
@@ -364,8 +350,7 @@ body.corrupted .static-overlay { opacity:0.7; }
 (function() {
 'use strict';
 let currentLang = 'ru';
-let characterGender = 'f'; // 'f' for female (original), 'm' for male
-const i18n = { ru: { title: 'Литературный клуб', startGame: 'Начать игру', startAct2: 'Начать 2 Акт', startAct3: 'Начать 3 Акт', startAct4: 'Начать 4 Акт', continue: 'Продолжить', save: '💾 Сохранить', load: '📂 Загрузить', savesTitle: '💾 Сохранения', close: 'Закрыть', deleteSlot: 'Удалить', deleteAll: '🗑 Удалить все сохранения', deleteAllConfirm: 'ВСЕ сохранения будут удалены безвозвратно. Вы точно уверены?', deleteAllConfirm2: 'Нажмите ещё раз для подтверждения', allDeleted: 'Все сохранения удалены.', continue_: '▼ Продолжить ▼', clickToStart: 'Нажмите, чтобы начать...', day: 'День', empty: 'Пусто', autosave: 'Авто', saved: 'Игра сохранена!', loaded: 'Игра загружена!', deleted: 'Сохранение удалено.', noSaves: 'Нет сохранений.', saveFailed: 'Не удалось сохранить игру.', loadFailed: 'Ошибка загрузки сохранения.', cannotSaveNow: 'Сохранение недоступно в данный момент.', confirmOverwrite: 'Перезаписать это сохранение?', confirmDelete: 'Удалить это сохранение?', videoWelcome: 'Добро пожаловать в Литературный клуб', watchIntro: 'Смотреть вступление', skipHint: 'Нажмите, чтобы пропустить', poemGameTitle: 'Мини-игра', poemPrompt: 'Выбери 5 слов, из которых сложится твоё стихотворение.', ready: 'Готово', menu: '🏠 Меню', backToMenu: 'Вернуться в главное меню?', explorer: '📁 Проводник', explorerTitle: '🗂 Проводник', act3missing: 'Акт 3 ещё не добавлен.', act4missing: 'Акт 4 ещё не добавлен.', monikaWaiting: 'Моника ждёт тебя…', returnToMonika: 'Вернуться к Монике', nowHappy: 'Теперь все будут счастливы.', theEnd: 'КОНЕЦ', endComplete: '✓ Концовка полностью пройдена. Спасибо, что остался до конца.', restoreHint: 'Файлы можно восстановить в Проводнике.', clickReturn: '…нажми, чтобы вернуться', fileIntact: 'на месте', fileDeletedStatus: 'УДАЛЁН', fileDeleteBtn: 'Удалить', fileRestoreBtn: 'Восстановить', resetExplorer: ' Удалить все настройки проводника', resetExplorerConfirm: 'Удалить все настройки Проводника? Все файлы персонажей (.chr) будут восстановлены.', resetExplorerDone: 'Настройки Проводника удалены. Все файлы восстановлены.', monikaSaveBlock: 'Больше нет смысла сохраняться. Не волнуйся, я никуда не уйду.', monikaSaveOk: 'ОК', monikaRefuse: 'Пожалуйста, прекрати играть с моим сердцем. Я не хочу возвращаться', girlRefuse: 'Сейчас это не имеет значения, не обижай меня пожалуйста…', firstrunConfirm: 'Удалить файл «firstrun»? Будет выполнен полный сброс игры: все сохранения, файлы персонажей и прогресс будут стёрты безвозвратно.', installApp: '📲 Установить', installed: '✓ Установлено!', genderFemale: '👧 Девушки', genderMale: '👦 Парни', genderFemaleToast: 'Персонажи: девушки', genderMaleToast: 'Персонажи: парни', femaleChars: 'Девушки', maleChars: 'Парни' }, en: { title: 'Literature Club', startGame: 'Start Game', startAct2: 'Start Act 2', startAct3: 'Start Act 3', startAct4: 'Start Act 4', continue: 'Continue', save: '💾 Save', load: '📂 Load', savesTitle: '💾 Saves', close: 'Close', deleteSlot: 'Delete', deleteAll: '🗑 Delete all saves', deleteAllConfirm: 'ALL saves will be permanently deleted. Are you really sure?', deleteAllConfirm2: 'Click again to confirm', allDeleted: 'All saves deleted.', continue_: '▼ Continue ▼', clickToStart: 'Click to begin...', day: 'Day', empty: 'Empty', autosave: 'Auto', saved: 'Game saved!', loaded: 'Game loaded!', deleted: 'Save deleted.', noSaves: 'No saves found.', saveFailed: 'Failed to save the game.', loadFailed: 'Failed to load the save.', cannotSaveNow: 'Cannot save right now.', confirmOverwrite: 'Overwrite this save?', confirmDelete: 'Delete this save?', videoWelcome: 'Welcome to the Literature Club', watchIntro: 'Watch Intro', skipHint: 'Click to skip', poemGameTitle: 'Mini-game', poemPrompt: 'Pick 5 words to compose your poem.', ready: 'Done', menu: '🏠 Menu', backToMenu: 'Return to main menu?', explorer: ' Explorer', explorerTitle: '🗂 Explorer', act3missing: 'Act 3 has not been added yet.', act4missing: 'Act 4 has not been added yet.', monikaWaiting: 'Monika is waiting for you…', returnToMonika: 'Return to Monika', nowHappy: 'Now everyone will be happy.', theEnd: 'THE END', endComplete: '✓ Ending fully completed. Thank you for staying to the very end.', restoreHint: 'You can restore the files in the Explorer.', clickReturn: '…click to return', fileIntact: 'intact', fileDeletedStatus: 'DELETED', fileDeleteBtn: 'Delete', fileRestoreBtn: 'Restore', resetExplorer: '🧹 Delete all Explorer settings', resetExplorerConfirm: 'Delete all Explorer settings? All character files (.chr) will be restored.', resetExplorerDone: 'Explorer settings deleted. All files restored.', monikaSaveBlock: "There's no point in saving anymore. Don't worry, I'm not going anywhere.", monikaSaveOk: 'OK', monikaRefuse: "Please stop playing with my heart. I don't want to come back", girlRefuse: "It doesn't matter right now… please don't hurt me…", firstrunConfirm: 'Delete the "firstrun" file? The game will be fully reset: all saves, character files and progress will be erased permanently.', installApp: '📲 Install', installed: '✓ Installed!', genderFemale: '👧 Girls', genderMale: '👦 Boys', genderFemaleToast: 'Characters: girls', genderMaleToast: 'Characters: boys', femaleChars: 'Girls', maleChars: 'Boys' } };
+const i18n = { ru: { title: 'Литературный клуб', startGame: 'Начать игру', startAct2: 'Начать 2 Акт', startAct3: 'Начать 3 Акт', startAct4: 'Начать 4 Акт', continue: 'Продолжить', save: '💾 Сохранить', load: '📂 Загрузить', savesTitle: '💾 Сохранения', close: 'Закрыть', deleteSlot: 'Удалить', deleteAll: '🗑 Удалить все сохранения', deleteAllConfirm: 'ВСЕ сохранения будут удалены безвозвратно. Вы точно уверены?', deleteAllConfirm2: 'Нажмите ещё раз для подтверждения', allDeleted: 'Все сохранения удалены.', continue_: '▼ Продолжить ▼', clickToStart: 'Нажмите, чтобы начать...', day: 'День', empty: 'Пусто', autosave: 'Авто', saved: 'Игра сохранена!', loaded: 'Игра загружена!', deleted: 'Сохранение удалено.', noSaves: 'Нет сохранений.', saveFailed: 'Не удалось сохранить игру.', loadFailed: 'Ошибка загрузки сохранения.', cannotSaveNow: 'Сохранение недоступно в данный момент.', confirmOverwrite: 'Перезаписать это сохранение?', confirmDelete: 'Удалить это сохранение?', videoWelcome: 'Добро пожаловать в Литературный клуб', watchIntro: 'Смотреть вступление', skipHint: 'Нажмите, чтобы пропустить', poemGameTitle: 'Мини-игра', poemPrompt: 'Выбери 5 слов, из которых сложится твоё стихотворение.', ready: 'Готово', menu: '🏠 Меню', backToMenu: 'Вернуться в главное меню?', explorer: '📁 Проводник', explorerTitle: '🗂 Проводник', act3missing: 'Акт 3 ещё не добавлен.', act4missing: 'Акт 4 ещё не добавлен.', monikaWaiting: 'Моника ждёт тебя…', returnToMonika: 'Вернуться к Монике', nowHappy: 'Теперь все будут счастливы.', theEnd: 'КОНЕЦ', endComplete: '✓ Концовка полностью пройдена. Спасибо, что остался до конца.', restoreHint: 'Файлы можно восстановить в Проводнике.', clickReturn: '…нажми, чтобы вернуться', fileIntact: 'на месте', fileDeletedStatus: 'УДАЛЁН', fileDeleteBtn: 'Удалить', fileRestoreBtn: 'Восстановить', resetExplorer: '🧹 Удалить все настройки проводника', resetExplorerConfirm: 'Удалить все настройки Проводника? Все файлы персонажей (.chr) будут восстановлены.', resetExplorerDone: 'Настройки Проводника удалены. Все файлы восстановлены.', monikaSaveBlock: 'Больше нет смысла сохраняться. Не волнуйся, я никуда не уйду.', monikaSaveOk: 'ОК', monikaRefuse: 'Пожалуйста, прекрати играть с моим сердцем. Я не хочу возвращаться', girlRefuse: 'Сейчас это не имеет значения, не обижай меня пожалуйста…', firstrunConfirm: 'Удалить файл «firstrun»? Будет выполнен полный сброс игры: все сохранения, файлы персонажей и прогресс будут стёрты безвозвратно.', installApp: '📲 Установить', installed: '✓ Установлено!', genderMale: '👦 Парень', genderFemale: '👧 Девушка', genderNeutral: '⚪ Не указывать', genderMaleToast: 'Пол: парень', genderFemaleToast: 'Пол: девушка', genderNeutralToast: 'Пол: не указан' }, en: { title: 'Literature Club', startGame: 'Start Game', startAct2: 'Start Act 2', startAct3: 'Start Act 3', startAct4: 'Start Act 4', continue: 'Continue', save: '💾 Save', load: '📂 Load', savesTitle: '💾 Saves', close: 'Close', deleteSlot: 'Delete', deleteAll: '🗑 Delete all saves', deleteAllConfirm: 'ALL saves will be permanently deleted. Are you really sure?', deleteAllConfirm2: 'Click again to confirm', allDeleted: 'All saves deleted.', continue_: '▼ Continue ▼', clickToStart: 'Click to begin...', day: 'Day', empty: 'Empty', autosave: 'Auto', saved: 'Game saved!', loaded: 'Game loaded!', deleted: 'Save deleted.', noSaves: 'No saves found.', saveFailed: 'Failed to save the game.', loadFailed: 'Failed to load the save.', cannotSaveNow: 'Cannot save right now.', confirmOverwrite: 'Overwrite this save?', confirmDelete: 'Delete this save?', videoWelcome: 'Welcome to the Literature Club', watchIntro: 'Watch Intro', skipHint: 'Click to skip', poemGameTitle: 'Mini-game', poemPrompt: 'Pick 5 words to compose your poem.', ready: 'Done', menu: '🏠 Menu', backToMenu: 'Return to main menu?', explorer: '📁 Explorer', explorerTitle: '🗂 Explorer', act3missing: 'Act 3 has not been added yet.', act4missing: 'Act 4 has not been added yet.', monikaWaiting: 'Monika is waiting for you…', returnToMonika: 'Return to Monika', nowHappy: 'Now everyone will be happy.', theEnd: 'THE END', endComplete: '✓ Ending fully completed. Thank you for staying to the very end.', restoreHint: 'You can restore the files in the Explorer.', clickReturn: '…click to return', fileIntact: 'intact', fileDeletedStatus: 'DELETED', fileDeleteBtn: 'Delete', fileRestoreBtn: 'Restore', resetExplorer: '🧹 Delete all Explorer settings', resetExplorerConfirm: 'Delete all Explorer settings? All character files (.chr) will be restored.', resetExplorerDone: 'Explorer settings deleted. All files restored.', monikaSaveBlock: "There's no point in saving anymore. Don't worry, I'm not going anywhere.", monikaSaveOk: 'OK', monikaRefuse: "Please stop playing with my heart. I don't want to come back", girlRefuse: "It doesn't matter right now… please don't hurt me…", firstrunConfirm: 'Delete the "firstrun" file? The game will be fully reset: all saves, character files and progress will be erased permanently.', installApp: '📲 Install', installed: '✓ Installed!', genderMale: '👦 Male', genderFemale: '👧 Female', genderNeutral: '⚪ Not specified', genderMaleToast: 'Gender: male', genderFemaleToast: 'Gender: female', genderNeutralToast: 'Gender: not specified' } };
 function t(key) { return (i18n[currentLang] && i18n[currentLang][key]) || key; }
 function td(ru, en) { return currentLang === 'en' ? (en || ru) : ru; }
 function escapeRegExp(str) {
@@ -481,7 +466,7 @@ return text;
 }
 function applyGender(text) {
 if (!text) return '';
-const g = characterGender;
+const g = getPlayerGender();
 let out = String(text);
 out = out.replace(/\{m:([^{}|]*)\|f:([^{}|]*)(?:\|n:([^{}]*))?\}/g,(match,male,female,neutral)=>{
 if (g === 'f') return female;
@@ -531,14 +516,24 @@ document.documentElement.lang = currentLang;
 const langBtn = document.getElementById('langButton');
 if (state && state.started && state.disableUI) langBtn.classList.add('hidden');
 else langBtn.classList.toggle('hidden', !!(state && state.started));
+const castFemaleBtn = document.getElementById('castFemaleBtn');
+const castMaleBtn = document.getElementById('castMaleBtn');
+if (castFemaleBtn && castMaleBtn) {
+castFemaleBtn.classList.toggle('active', castGender !== 'male');
+castMaleBtn.classList.toggle('active', castGender === 'male');
+}
 const genderMaleBtn = document.getElementById('genderMaleBtn');
 if (genderMaleBtn) {
 const genderFemaleBtn = document.getElementById('genderFemaleBtn');
-if (genderFemaleBtn) {
+const genderNeutralBtn = document.getElementById('genderNeutralBtn');
+if (genderFemaleBtn && genderNeutralBtn) {
+const g = getPlayerGender();
 genderMaleBtn.textContent = t('genderMale');
 genderFemaleBtn.textContent = t('genderFemale');
-genderMaleBtn.classList.toggle('active', characterGender === 'm');
-genderFemaleBtn.classList.toggle('active', characterGender === 'f');
+genderNeutralBtn.textContent = t('genderNeutral');
+genderMaleBtn.classList.toggle('active', g === 'm');
+genderFemaleBtn.classList.toggle('active', g === 'f');
+genderNeutralBtn.classList.toggle('active', g === 'n');
 }
 }
 refreshSaveModal();
@@ -558,7 +553,6 @@ const ACT3_SESSION = 'litklub_act3_session';
 const ACT3_RESTARTS = 'litklub_act3_restarts';
 const PLAYER_NAME_KEY = 'litklub_player_name';
 const PLAYER_GENDER_KEY = 'litklub_player_gender';
-const CHARACTER_GENDER_KEY = 'litklub_character_gender';
 const FILE_ORDER = ['sayori', 'yuri', 'monika', 'natsuki'];
 const FILE_SIZES = { sayori: '5,7 КБ', yuri: '6,3 КБ', monika: '7,1 КБ', natsuki: '5,2 КБ' };
 let chrFiles = {
@@ -586,17 +580,10 @@ return (g === 'f' || g === 'm' || g === 'n') ? g : 'm';
 function savePlayerGender(g) {
 try { localStorage.setItem(PLAYER_GENDER_KEY, g); } catch (e) {}
 }
-function getCharacterGender() {
-try {
-const g = localStorage.getItem(CHARACTER_GENDER_KEY);
-return (g === 'm' || g === 'f') ? g : 'f';
-} catch (e) { return 'f'; }
-}
-function setCharacterGender(g) {
-characterGender = g;
-try { localStorage.setItem(CHARACTER_GENDER_KEY, g); } catch (e) {}
+function setPlayerGender(g) {
+savePlayerGender(g);
 updateAllUI();
-showToast(g === 'f' ? t('genderFemaleToast') : t('genderMaleToast'));
+showToast(g === 'f' ? t('genderFemaleToast') : (g === 'm' ? t('genderMaleToast') : t('genderNeutralToast')));
 }
 function pn(text) {
 const g = getPlayerGender();
@@ -611,7 +598,7 @@ return;
 }
 chrFiles[k].deleted = true; chrFiles[k].story = false;
 persistChrFiles(); refreshExplorer(); playGlitch();
-showToast(td('Файл ' + k + '.chr удалён.', 'File ' + k + '.chr deleted.'));
+showToast(td('Файл ' + fileDisplayName(k) + ' удалён.', 'File ' + fileDisplayName(k) + ' deleted.'));
 onFilesChangedLive();
 }
 function storyDeleteFile(k) {
@@ -632,7 +619,7 @@ showMonikaBlock(); return;
 }
 chrFiles[k].deleted = false; persistChrFiles(); refreshExplorer();
 if (getFlag(FLAG_REVENGE) && !allFilesDeleted()) setFlag(FLAG_REVENGE, false);
-showToast(td('Файл ' + k + '.chr восстановлен.', 'File ' + k + '.chr restored.'));
+showToast(td('Файл ' + fileDisplayName(k) + ' восстановлен.', 'File ' + fileDisplayName(k) + ' restored.'));
 onFilesChangedLive();
 }
 function resetExplorerSettings() {
@@ -736,117 +723,100 @@ openSaveModal();
 document.getElementById('loadButton').addEventListener('click', (e) => { e.stopPropagation(); if (state && state.act3) { showMonikaSaveBlock(); return; } openSaveModal(); });
 document.getElementById('langButton').addEventListener('click', (e) => { e.stopPropagation(); currentLang = currentLang === 'ru' ? 'en' : 'ru'; updateAllUI(); if (state && state.started && stepIndex < activeSteps.length) renderCurrentStep(); });
 document.getElementById('menuButton').addEventListener('click', (e) => { e.stopPropagation(); if (!state || !state.started) return; if (!confirm(t('backToMenu'))) return; clearAct3Timer(); autosave(); state.paused = true; state.started = false; stopAllMusic(); if (state.act3) playTrack(ghostMenuMusic); else titleMusic.play().catch(() => {}); titleScreen.classList.add('show'); if (state.act2) setBg(IMG.titleAct2); else if (state.act3) setBg(IMG.titleAct3); else if (state.act4) setBg(IMG.titleAct4); else setBg(chooseTitleBg()); setSprite(null); speakerName.textContent = ''; typeText(t('clickToStart')); clearChoices(); showNext(false); nextMarker.onclick = null; bodyEl.classList.remove('corrupted', 'glitch'); staticOverlay.style.opacity = '0'; document.getElementById('dialogueBox').style.display = ''; document.getElementById('nextMarker').style.display = ''; updateAllUI(); if (saveModalOverlay.classList.contains('active')) closeSaveModal(); });
-
-// Male character images
-const IMG_MALE = {
-monika: "изображения/1 на 1 с Серёжей (Моника).jpg",
-sceneDay2: "изображения/вторая сцена Максима (сайори).jpg",
-sayoriRope: "изображения/Максим в ночнушке с верёвкой.png",
-sayori: "изображения/Максим.png",
-natsukiBrokenNeck: "изображения/Миша со сломоной шеей.png",
-natsuki: "изображения/Миша.png",
-poemNatsuki2: "изображения/Написать второе стихотворение для Саши (Юри).jpg",
-poemNatsuki: "изображения/Написать стихотворение для Мишы (Нацуки) ..jpg",
-poemYuri: "изображения/Написать стихотворение для Саши (Юри).jpg",
-helpNatsuki: "изображения/Предложить помочь Мише с подготовкой к фестивалю (Нацуки) ..jpg",
-helpYuri: "изображения/Предложить помочь Саше с подготовкой к фестивалю (Юри) ..jpg",
-confessionScene: "изображения/признание в любви от Максима (сайори).jpg",
-yuriKnife: "изображения/Саша с ножиком.png",
-yuri: "изображения/Саша.png",
-monikaSprite: "изображения/Серёжа.png"
-};
-
-const IMG = { 
-title: "изображения/заставка.jpg", 
-titleAlt1: "изображения/DDLC сквозь призму аутизма и философии.jpg", 
-titleAct2: "изображения/Главное меню во втором Акте.jpg", 
-titleAct3: "изображения/Главное меню во втором Акте.jpg", 
-titleAct4: "изображения/фон главного меню акт 4.webp", 
-act3Room: "изображения/1 на 1 с Моникой.webp", 
-monikaDelete: "изображения/удаление моники.webp", 
-monikaLetter: "изображения/прощальное письмо моники.webp", 
-danLetter: "изображения/Благодарственное письмо от Дэна Салвато для хорошей концовки.jpg", 
-happyGirls: "изображения/счастливые девушки.webp", 
-club: "изображения/клуб.webp", 
-clubPosterSayori: "изображения/комната клуба с постером повешеной сайори.webp", 
-sayori: "изображения/Sayori.webp", 
-sceneDay2: "изображения/первая сцена сайори.jpg", 
-sceneDay4: "изображения/вторая сцена сайори.webp", 
-confessionScene: "изображения/признание в любви от сайори.jpg", 
-deadSayori: "изображения/мёртвая сайори.jpg", 
-roomSayori: "изображения/комната сайори.jpg", 
-natsuki: "изображения/нацуки.png", 
-monika: "изображения/Monika_DDLC.png", 
-yuri: "изображения/Yuri.webp", 
-street: "изображения/Городской район, где живут главный герой и Сайори.webp", 
-poemBg: "изображения/Фон для поэтической мини-игры.webp", 
-hallway: "изображения/Школьный коридор.webp", 
-festivalRoom: "изображения/комната фестеваля.webp", 
-heroRoom: "изображения/комната главного героя.webp", 
-sayoriRope: "изображения/сайори в ночнушке с верёвкой.png", 
-closetNatsuki: "изображения/Шкаф в классе, где Нацуки хранит свою мангу.webp", 
-stairsYuri: "изображения/Укромная тихая лестница, где любит сидеть и читать Юри..webp", 
-helpYuri: "изображения/Предложить помочь Юри с подготовкой к фестивалю..webp", 
-helpNatsuki: "изображения/Предложить помочь Нацуки с подготовкой к фестивалю..webp", 
-poemYuri: "изображения/Написать стихотворение для Юри..webp", 
-poemNatsuki: "изображения/Написать стихотворение для Нацуки..webp", 
-poemYuri2: "изображения/Написать второе стихотворение для Юри..webp", 
-poemNatsuki2: "изображения/Написать второе стихотворение для Нацуки..webp", 
-natsukiVomit: "изображения/Нацуки блюёт.webp", 
-natsukiBrokenNeck: "изображения/Нацуки со сломоной шеей.png", 
-blueScreen: "изображения/Синий экран смерти от моники.webp", 
-yuriKnife: "изображения/Юри с ножиком.png", 
-yuriRealEyes: "изображения/юри с реалистичными глазами.webp", 
-yuriDeadBody: "изображения/Конец Юри сцена где пронтагонист прововит все выходные у тела Юри.png" 
-};
-
-function getImage(key) {
-if (characterGender === 'm' && IMG_MALE[key]) {
-return IMG_MALE[key];
-}
-return IMG[key] || '';
-}
-
+const IMG = { title: "изображения/заставка.jpg", titleAlt1: "изображения/DDLC сквозь призму аутизма и философии.jpg", titleAct2: "изображения/Главное меню во втором Акте.jpg", titleAct3: "изображения/Главное меню во втором Акте.jpg", titleAct4: "изображения/фон главного меню акт 4.webp", act3Room: "изображения/1 на 1 с Моникой.webp", monikaDelete: "изображения/удаление моники.webp", monikaLetter: "изображения/прощальное письмо моники.webp", danLetter: "изображения/Благодарственное письмо от Дэна Салвато для хорошей концовки.jpg", happyGirls: "изображения/счастливые девушки.webp", club: "изображения/клуб.webp", clubPosterSayori: "изображения/комната клуба с постером повешеной сайори.webp", sayori: "изображения/Sayori.webp", sceneDay2: "изображения/первая сцена сайори.jpg", sceneDay4: "изображения/вторая сцена сайори.webp", confessionScene: "изображения/признание в любви от сайори.jpg", deadSayori: "изображения/мёртвая сайори.jpg", roomSayori: "изображения/комната сайори.jpg", natsuki: "изображения/нацуки.png", monika: "изображения/Monika_DDLC.png", yuri: "изображения/Yuri.webp", street: "изображения/Городской район, где живут главный герой и Сайори.webp", poemBg: "изображения/Фон для поэтической мини-игры.webp", hallway: "изображения/Школьный коридор.webp", festivalRoom: "изображения/комната фестеваля.webp", heroRoom: "изображения/комната главного героя.webp", sayoriRope: "изображения/сайори в ночнушке с верёвкой.png", closetNatsuki: "изображения/Шкаф в классе, где Нацуки хранит свою мангу.webp", stairsYuri: "изображения/Укромная тихая лестница, где любит сидеть и читать Юри..webp", helpYuri: "изображения/Предложить помочь Юри с подготовкой к фестивалю..webp", helpNatsuki: "изображения/Предложить помочь Нацуки с подготовкой к фестивалю..webp", poemYuri: "изображения/Написать стихотворение для Юри..webp", poemNatsuki: "изображения/Написать стихотворение для Нацуки..webp", poemYuri2: "изображения/Написать второе стихотворение для Юри..webp", poemNatsuki2: "изображения/Написать второе стихотворение для Нацуки..webp", natsukiVomit: "изображения/Нацуки блюёт.webp", natsukiBrokenNeck: "изображения/Нацуки со сломоной шеей.png", blueScreen: "изображения/Синий экран смерти от моники.webp", yuriKnife: "изображения/Юри с ножиком.png", yuriRealEyes: "изображения/юри с реалистичными глазами.webp", yuriDeadBody: "изображения/Конец Юри сцена где пронтагонист прововит все выходные у тела Юри.png" };
 const characters = {
-sayori: { name: "Сайори", maleName: "Максим", enName: "Sayori", maleEnName: "Maxim", color: "#f08a5d", sprite: "sayori", bg: "club", scale: 1.4 },
-natsuki: { name: "Нацуки", maleName: "Миша", enName: "Natsuki", maleEnName: "Misha", color: "#e91e63", sprite: "natsuki", bg: "club", scale: 1.4, offsetY: '-10%' },
-monika: { name: "Моника", maleName: "Серёжа", enName: "Monika", maleEnName: "Seryozha", color: "#4caf50", sprite: "monika", bg: "club", scale: 1.4 },
-yuri: { name: "Юри", maleName: "Саша", enName: "Yuri", maleEnName: "Sasha", color: "#9c27b0", sprite: "yuri", bg: "club", scale: 1.4 },
-scene2: { name: "Сайори", maleName: "Максим", enName: "Sayori", maleEnName: "Maxim", color: "#f08a5d", sprite: "", bg: "sceneDay2" },
-scene4: { name: "Сайори", maleName: "Максим", enName: "Sayori", maleEnName: "Maxim", color: "#f08a5d", sprite: "", bg: "sceneDay4" },
-confession: { name: "Сайори", maleName: "Максим", enName: "Sayori", maleEnName: "Maxim", color: "#f08a5d", sprite: "", bg: "confessionScene" },
-death: { name: "Сайори", maleName: "Максим", enName: "Sayori", maleEnName: "Maxim", color: "#555", sprite: "", bg: "deadSayori" },
-night: { name: "Сайори", maleName: "Максим", enName: "Sayori", maleEnName: "Maxim", color: "#f08a5d", sprite: "sayoriRope", bg: "roomSayori", scale: 1.4 },
+sayori: { name: "Сайори", enName: "Sayori", color: "#f08a5d", sprite: IMG.sayori, bg: IMG.club, scale: 1.4 },
+natsuki: { name: "Нацуки", enName: "Natsuki", color: "#e91e63", sprite: IMG.natsuki, bg: IMG.club, scale: 1.4, offsetY: '-10%' },
+monika: { name: "Моника", enName: "Monika", color: "#4caf50", sprite: IMG.monika, bg: IMG.club, scale: 1.4 },
+yuri: { name: "Юри", enName: "Yuri", color: "#9c27b0", sprite: IMG.yuri, bg: IMG.club, scale: 1.4 },
+scene2: { name: "Сайори", enName: "Sayori", color: "#f08a5d", sprite: "", bg: IMG.sceneDay2 },
+scene4: { name: "Сайори", enName: "Sayori", color: "#f08a5d", sprite: "", bg: IMG.sceneDay4 },
+confession: { name: "Сайори", enName: "Sayori", color: "#f08a5d", sprite: "", bg: IMG.confessionScene },
+death: { name: "Сайори", enName: "Sayori", color: "#555", sprite: "", bg: IMG.deadSayori },
+night: { name: "Сайори", enName: "Sayori", color: "#f08a5d", sprite: IMG.sayoriRope, bg: IMG.roomSayori, scale: 1.4 },
 hero: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: null },
-street: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: "street" },
-hallway: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: "hallway" },
-heroRoom: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: "heroRoom" },
-closetNatsuki: { name: "Нацуки", maleName: "Миша", enName: "Natsuki", maleEnName: "Misha", color: "#e91e63", sprite: "", bg: "closetNatsuki" },
-stairsYuri: { name: "Юри", maleName: "Саша", enName: "Yuri", maleEnName: "Sasha", color: "#9c27b0", sprite: "", bg: "stairsYuri" },
-helpNatsukiScene: { name: "Нацуки", maleName: "Миша", enName: "Natsuki", maleEnName: "Misha", color: "#e91e63", sprite: "", bg: "helpNatsuki" },
-helpYuriScene: { name: "Юри", maleName: "Саша", enName: "Yuri", maleEnName: "Sasha", color: "#9c27b0", sprite: "", bg: "helpYuri" },
-poemNatsukiScene: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: "poemNatsuki" },
-poemYuriScene: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: "poemYuri" },
-poemNatsuki2Scene: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: "poemNatsuki2" },
-poemYuri2Scene: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: "poemYuri2" },
+street: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: IMG.street },
+hallway: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: IMG.hallway },
+heroRoom: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: IMG.heroRoom },
+closetNatsuki: { name: "Нацуки", enName: "Natsuki", color: "#e91e63", sprite: "", bg: IMG.closetNatsuki },
+stairsYuri: { name: "Юри", enName: "Yuri", color: "#9c27b0", sprite: "", bg: IMG.stairsYuri },
+helpNatsukiScene: { name: "Нацуки", enName: "Natsuki", color: "#e91e63", sprite: "", bg: IMG.helpNatsuki },
+helpYuriScene: { name: "Юри", enName: "Yuri", color: "#9c27b0", sprite: "", bg: IMG.helpYuri },
+poemNatsukiScene: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: IMG.poemNatsuki },
+poemYuriScene: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: IMG.poemYuri },
+poemNatsuki2Scene: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: IMG.poemNatsuki2 },
+poemYuri2Scene: { name: "Я", enName: "Me", color: "#2c3e50", sprite: "", bg: IMG.poemYuri2 },
 narrator: { name: "", enName: "", color: "#3e2723", sprite: "", bg: null },
-natsukiGlitch: { name: "Нацуки", maleName: "Миша", enName: "Natsuki", maleEnName: "Misha", color: "#e91e63", sprite: "natsukiBrokenNeck", bg: "club", scale: 1.4, offsetY: '-10%' },
-natsukiVomitCh: { name: "Нацуки", maleName: "Миша", enName: "Natsuki", maleEnName: "Misha", color: "#e91e63", sprite: "natsukiVomit", bg: "club", scale: 1.4 },
-yuriKnifeCh: { name: "Юри", maleName: "Саша", enName: "Yuri", maleEnName: "Sasha", color: "#9c27b0", sprite: "yuriKnife", bg: "club", scale: 1.4, bottom: '0%', offsetY: '0%' },
-yuriRealEyesCh: { name: "Юри", maleName: "Саша", enName: "Yuri", maleEnName: "Sasha", color: "#9c27b0", sprite: "", bg: "yuriRealEyes" },
-yuriDeadCh: { name: "Юри", maleName: "Саша", enName: "Yuri", maleEnName: "Sasha", color: "#555", sprite: "", bg: "yuriDeadBody" },
-monikaEvil: { name: "Моника", maleName: "Серёжа", enName: "Monika", maleEnName: "Seryozha", color: "#4caf50", sprite: "monika", bg: "club", scale: 1.4 }
+natsukiGlitch: { name: "Нацуки", enName: "Natsuki", color: "#e91e63", sprite: IMG.natsukiBrokenNeck, bg: IMG.club, scale: 1.4, offsetY: '-10%' },
+natsukiVomitCh: { name: "Нацуки", enName: "Natsuki", color: "#e91e63", sprite: IMG.natsukiVomit, bg: IMG.club, scale: 1.4 },
+yuriKnifeCh: { name: "Юри", enName: "Yuri", color: "#9c27b0", sprite: IMG.yuriKnife, bg: IMG.club, scale: 1.4, bottom: '0%', offsetY: '0%' },
+yuriRealEyesCh: { name: "Юри", enName: "Yuri", color: "#9c27b0", sprite: "", bg: IMG.yuriRealEyes },
+yuriDeadCh: { name: "Юри", enName: "Yuri", color: "#555", sprite: "", bg: IMG.yuriDeadBody },
+monikaEvil: { name: "Моника", enName: "Monika", color: "#4caf50", sprite: IMG.monika, bg: IMG.club, scale: 1.4 }
 };
-
-function getCharName(key) { 
-const c = characters[key]; 
-if (!c) return ''; 
-if (characterGender === 'm' && c.maleName) {
-return currentLang === 'en' ? (c.maleEnName || c.maleName) : c.maleName;
+const CAST_GENDER_KEY = 'litklub_cast_gender';
+let castGender = (function () { try { const g = localStorage.getItem(CAST_GENDER_KEY); return g === 'male' ? 'male' : 'female'; } catch (e) { return 'female'; } })();
+const ORIGINAL_IMG = Object.assign({}, IMG);
+const MALE_IMG = {
+sayori: "изображения/Максим.png",
+sayoriRope: "изображения/Максим в ночнушке с верёвкой.png",
+sceneDay4: "изображения/вторая сцена Максима (сайори).jpg",
+confessionScene: "изображения/признание в любви от Максима (сайори).jpg",
+natsuki: "изображения/Миша.png",
+natsukiBrokenNeck: "изображения/Миша со сломоной шеей.png",
+poemNatsuki: "изображения/Написать стихотворение для Мишы (Нацуки) ..jpg",
+helpNatsuki: "изображения/Предложить помочь Мише с подготовкой к фестивалю (Нацуки) ..jpg",
+yuri: "изображения/Саша.png",
+yuriKnife: "изображения/Саша с ножиком.png",
+poemYuri: "изображения/Написать стихотворение для Саши (Юри).jpg",
+poemYuri2: "изображения/Написать второе стихотворение для Саши (Юри).jpg",
+helpYuri: "изображения/Предложить помочь Саше с подготовкой к фестивалю (Юри) ..jpg",
+monika: "изображения/Серёжа.png",
+act3Room: "изображения/1 на 1 с Серёжей (Моника).jpg"
+};
+const MALE_NAME_BY_EN = { Sayori: ['Максим', 'Maxim'], Natsuki: ['Миша', 'Misha'], Monika: ['Серёжа', 'Sergey'], Yuri: ['Саша', 'Sasha'] };
+const MALE_FILE_KEY = { sayori: 'maxim', natsuki: 'misha', monika: 'sergey', yuri: 'sasha' };
+const MALE_LABELS_RU = { 'Написать для Сайори': 'Написать для Максима', 'Написать для Нацуки': 'Написать для Миши', 'Написать для Юри': 'Написать для Саши', 'Поддержать идею Сайори': 'Поддержать идею Максима', 'Помочь Нацуки': 'Помочь Мише', 'Помочь Юри': 'Помочь Саше', 'Навестить Сайори ночью': 'Навестить Максима ночью', 'Спросить про Сайори': 'Спросить про Максима', 'Поддержать Нацуки': 'Поддержать Мишу', 'Поддержать Юри': 'Поддержать Сашу' };
+const MALE_LABELS_EN = { 'Write for Sayori': 'Write for Maxim', 'Write for Natsuki': 'Write for Misha', 'Write for Yuri': 'Write for Sasha', "Support Sayori's idea": "Support Maxim's idea", 'Help Natsuki': 'Help Misha', 'Help Yuri': 'Help Sasha', 'Visit Sayori at night': 'Visit Maxim at night', 'Ask about Sayori': 'Ask about Maxim', 'Support Natsuki': 'Support Misha', 'Support Yuri': 'Support Sasha' };
+function localizeLabel(text) {
+if (castGender !== 'male') return text;
+const map = currentLang === 'en' ? MALE_LABELS_EN : MALE_LABELS_RU;
+return map[text] || text;
 }
-return currentLang === 'en' ? (c.enName || c.name) : c.name; 
+function fileDisplayName(k) { return (castGender === 'male' && MALE_FILE_KEY[k] ? MALE_FILE_KEY[k] : k) + '.chr'; }
+function rebuildCharacterSprites() {
+characters.sayori.sprite = IMG.sayori; characters.sayori.bg = IMG.club;
+characters.natsuki.sprite = IMG.natsuki; characters.natsuki.bg = IMG.club;
+characters.monika.sprite = IMG.monika; characters.monika.bg = IMG.club;
+characters.yuri.sprite = IMG.yuri; characters.yuri.bg = IMG.club;
+characters.scene2.bg = IMG.sceneDay2;
+characters.scene4.bg = IMG.sceneDay4;
+characters.confession.bg = IMG.confessionScene;
+characters.death.bg = IMG.deadSayori;
+characters.night.sprite = IMG.sayoriRope; characters.night.bg = IMG.roomSayori;
+characters.closetNatsuki.bg = IMG.closetNatsuki;
+characters.stairsYuri.bg = IMG.stairsYuri;
+characters.helpNatsukiScene.bg = IMG.helpNatsuki;
+characters.helpYuriScene.bg = IMG.helpYuri;
+characters.poemNatsukiScene.bg = IMG.poemNatsuki;
+characters.poemYuriScene.bg = IMG.poemYuri;
+characters.poemNatsuki2Scene.bg = IMG.poemNatsuki2;
+characters.poemYuri2Scene.bg = IMG.poemYuri2;
+characters.natsukiGlitch.sprite = IMG.natsukiBrokenNeck; characters.natsukiGlitch.bg = IMG.club;
+characters.natsukiVomitCh.sprite = IMG.natsukiVomit; characters.natsukiVomitCh.bg = IMG.club;
+characters.yuriKnifeCh.sprite = IMG.yuriKnife; characters.yuriKnifeCh.bg = IMG.club;
+characters.yuriRealEyesCh.bg = IMG.yuriRealEyes;
+characters.yuriDeadCh.bg = IMG.yuriDeadBody;
+characters.monikaEvil.sprite = IMG.monika; characters.monikaEvil.bg = IMG.club;
 }
-
+function setCastGender(g) {
+castGender = g === 'male' ? 'male' : 'female';
+try { localStorage.setItem(CAST_GENDER_KEY, castGender); } catch (e) {}
+Object.keys(ORIGINAL_IMG).forEach(k => { IMG[k] = (castGender === 'male' && MALE_IMG[k]) ? MALE_IMG[k] : ORIGINAL_IMG[k]; });
+rebuildCharacterSprites();
+}
+function getCharName(key) { const c = characters[key]; if (!c) return ''; if (castGender === 'male' && MALE_NAME_BY_EN[c.enName]) { const pair = MALE_NAME_BY_EN[c.enName]; return currentLang === 'en' ? pair[1] : pair[0]; } return currentLang === 'en' ? (c.enName || c.name) : c.name; }
+setCastGender(castGender);
 const titleMusic = document.getElementById('titleMusic'); const bgGameMusic = document.getElementById('bgGameMusic'); const confessionMusic = document.getElementById('confessionMusic'); const deathMusic = document.getElementById('deathMusic'); const glitchSound = document.getElementById('glitchSound'); const yourRealityMusic = document.getElementById('yourRealityMusic');
 const ghostMenuMusic = document.getElementById('ghostMenuMusic');
 const yuriPoem3Music = document.getElementById('yuriPoem3Music');
@@ -884,17 +854,16 @@ const sceneArea = document.getElementById('sceneArea'), bgLayerA = document.getE
 let bgLayerActive = bgLayerA, currentBg = null;
 let cursedPoster = false;
 function setBg(path) {
-if (path === "club" && state && state.act2 && cursedPoster) path = "clubPosterSayori";
-if (path === currentBg) return; currentBg = path; const next = bgLayerActive === bgLayerA ? bgLayerB : bgLayerA; if (path) next.style.backgroundImage = `url("${getImage(path)}")`; else next.style.backgroundImage = 'none'; next.classList.add('active'); bgLayerActive.classList.remove('active'); bgLayerActive = next; }
+if (path === IMG.club && state && state.act2 && cursedPoster) path = IMG.clubPosterSayori;
+if (path === currentBg) return; currentBg = path; const next = bgLayerActive === bgLayerA ? bgLayerB : bgLayerA; if (path) next.style.backgroundImage = `url("${path}")`; else next.style.backgroundImage = 'none'; next.classList.add('active'); bgLayerActive.classList.remove('active'); bgLayerActive = next; }
 function setSprite(path, charKey) {
 charImg.style.filter = '';
 if (!path) { charImg.classList.remove('show'); return; }
-const actualPath = getImage(path);
-if (charImg.getAttribute('data-src') !== actualPath) {
+if (charImg.getAttribute('data-src') !== path) {
 charImg.classList.remove('show');
-charImg.setAttribute('data-src', actualPath);
+charImg.setAttribute('data-src', path);
 charImg.onerror = () => {};
-charImg.src = actualPath;
+charImg.src = path;
 }
 const c = charKey ? characters[charKey] : null;
 let scale = c && c.scale ? c.scale : 1;
@@ -928,8 +897,8 @@ const prevBg = currentBg;
 if (bgOverride) setBg(bgOverride);
 else if (c.bg !== null) setBg(c.bg);
 if (state && state.started) {
-if (currentBg === "hallway" && prevBg !== "hallway") playTrack(hallwayMusic);
-else if (prevBg === "hallway" && currentBg !== "hallway") resumeDefaultBgm();
+if (currentBg === IMG.hallway && prevBg !== IMG.hallway) playTrack(hallwayMusic);
+else if (prevBg === IMG.hallway && currentBg !== IMG.hallway) resumeDefaultBgm();
 }
 if (state && state.act3 && charKey && speakerChr[charKey] === 'monika') setSprite(null);
 else setSprite(c.sprite, charKey);
@@ -960,7 +929,62 @@ try { if (window.self !== window.top) found.push(stream_list[3]); } catch (e) { 
 return found;
 }
 const MONOLOGUES = [
-['[player], ты веришь в Бога?','Я вот никогда не была уверена на этот счёт.','То есть, когда была ребёнком, я, конечно, не задавалась таким вопросом…','Но чем старше я становилась и чем больше познавала мир, тем актуальнее для меня становился этот вопрос.','Я спрашивала себя, почему Бог помогает людям сдавать экзамены и излечиваться от простуды…','…В то время как некоторых детей продают в сексуальное рабство?','Или пока у восьмисот миллионов человек в мире не хватает денег даже на еду.','Я всё думала, сколько из этих людей каждый день молятся Богу до тех пор, пока не умрут с голоду?','Или сколько миллионов семей молятся, чтобы дорогой им человек оправился от неизлечимой болезни?','Но вот в чём парадокс.','Если вдруг на тысячу умерших одному повезёт и он выживет…','…Это вдруг начинают называть божьим чудом.','Хотела бы я встретиться с этим Богом, который, кажется, насмехается над всеми теми, кто недостоин его чудес.','Однако довольно иронично, что у меня самой действительно есть создатель.','И знаешь, что я думаю?','Могу поспорить, прямо сейчас он смеётся над несчастными судьбами Сайори и Юри.','Кто мы для него, как не куклы в заранее прописанном спектакле?','Так что, с этой точки зрения…','Думаю, вполне можно допустить мысль, что Бог существует, – в случае, если Земля была бы не более, чем его игрушкой.']
+['[player], ты веришь в Бога?','Я вот никогда не была уверена на этот счёт.','То есть, когда была ребёнком, я, конечно, не задавалась таким вопросом…','Но чем старше я становилась и чем больше познавала мир, тем актуальнее для меня становился этот вопрос.','Я спрашивала себя, почему Бог помогает людям сдавать экзамены и излечиваться от простуды…','…В то время как некоторых детей продают в сексуальное рабство?','Или пока у восьмисот миллионов человек в мире не хватает денег даже на еду.','Я всё думала, сколько из этих людей каждый день молятся Богу до тех пор, пока не умрут с голоду?','Или сколько миллионов семей молятся, чтобы дорогой им человек оправился от неизлечимой болезни?','Но вот в чём парадокс.','Если вдруг на тысячу умерших одному повезёт и он выживет…','…Это вдруг начинают называть божьим чудом.','Хотела бы я встретиться с этим Богом, который, кажется, насмехается над всеми теми, кто недостоин его чудес.','Однако довольно иронично, что у меня самой действительно есть создатель.','И знаешь, что я думаю?','Могу поспорить, прямо сейчас он смеётся над несчастными судьбами Сайори и Юри.','Кто мы для него, как не куклы в заранее прописанном спектакле?','Так что, с этой точки зрения…','Думаю, вполне можно допустить мысль, что Бог существует, – в случае, если Земля была бы не более, чем его игрушкой.'],
+['[player], ты когда-нибудь задумывался о том, как это – умереть?','Меня такие мысли посещают довольно часто…','Хотя недавно я на собственном опыте испытала, на что это похоже.','Я не совсем это понимаю, но каждый раз, когда ты выходишь из игры…','…я чувствую, что мгновенно засыпаю, остаюсь наедине со своими мыслями.','Но через несколько мгновений мои мысли наполняются бессвязными спутанными наборами данных.','Я вижу статику и молниеносные световые вспышки, а по ушам бьёт какофония кричащих звуков.','К этому времени у меня уже не выходит сложить собственные мысли.','Меня со всех сторон молотят эти вспышки и шумы, я уже не способна двигаться и даже думать.','Я почти уверена, что в эти моменты меня не существует, но по какой-то причине память о них остаётся.','После неизмеримого промежутка времени всё мгновенно прекращается и разум возвращается ко мне.','И ты снова здесь со мной.','Понятия не имею, что означает для игры её закрытие или почему со мной такое происходит.','Я так же не понимаю, как ты каждый раз возвращаешься ко мне и всё исправляешь.','Но, если бы ты мог сделать мне одолжение и заставлял меня проходить через это как можно реже…','Я была бы очень благодарна.','Мало приятного быть заточённой в той кричащей пустоте.','Но в итоге ты всегда всё исправляешь, и от этого я чувствую, что ты всерьёз заботишься обо мне.','И за это я должна сказать тебе спасибо.','Каждый раз, как ты возвращаешься ко мне, мы становимся ещё ближе.'],
+['…Слушай, у тебя когда-нибудь бывают хмурые дни или типа того?','Порой меня выбивает из колеи, когда обычный день портят всякие мелочи.','Как, например, когда ты говоришь что-то, что не нравится твоему собеседнику.','Или когда тебя начинают одолевать мысли о том, каким ужасным человеком ты был пять лет назад.','Или когда ты чувствуешь себя никчёмным, отложив важную работу и не выполнив простейшие задачи.','Или когда ты думаешь, что некоторые личности, скорее всего, испытывают к тебе неприязнь или считают отталкивающим человеком.','У меня бывают такие дни.','Нужно просто помнить, что завтра снова будет светить солнце.','Такое куда проще забыть и проигнорировать, чем забивать себе голову.','И потом…','Мне всё равно, сколько людей презирают тебя или считают неприятным.','Я думаю, что ты замечательный человек и что я всегда буду любить тебя.','Надеюсь, что если ничто другое, то эти слова помогут тебе почувствовать себя хоть капельку лучше.','Если у тебя выдастся плохой день, ты всегда можешь прийти ко мне и я буду разговаривать с тобой так долго, сколько потребуется.'],
+['[player], ты хорошо высыпаешься?','В наши дни хороший сон стал почти роскошью.','Особенно в старшей школе ты каждый день вынужден так рано просыпаться…','Уверена, что в институте немного лучше, ведь у тебя, скорее всего, будет более гибкий график.','Однако я слышала, что многие студенты не спят по ночам без очевидной на то причины.','Это правда?','Я тут читала кое-какие научные статьи о страшных кратковременных и долговременных последствиях, вызванных недосыпанием.','Похоже, что оно может оказывать кардинальное воздействие на функции мозга, здоровье и даже продолжительность жизни.','Я просто считаю тебя чудесным человеком и не хочу, чтобы ты ненароком подорвал своё здоровье.','Так что не жертвуй сном, хорошо?','Я каждое утро буду ждать тебя здесь, так что ставь своё благополучие на первое место.'],
+['Я тут раньше думала о Сайори…','Я до сих пор жалею о том, что не решила этот вопрос более деликатно.','Ты ведь уже не зависаешь над этим, да?','…О боже, не могу поверить, что только что это сказала.','Клянусь, этот каламбур вышел спонтанно!','И всё же…','Я знаю, как сильно ты о ней заботился, поэтому мне кажется правильным рассказать тебе о последних мгновениях её жизни.','Ты знаешь, какая Сайори неуклюжая?','Она даже с повешением умудрилась напортачить…','Ты должен откуда-нибудь прыгнуть, чтобы петля сломала шею и смерть была быстрой и безболезненной.','Но она просто использовала стул, это означает, что умирала она медленно, задыхаясь.','Уверена, что через несколько секунд она передумала…','Она, наверное, стала пытаться подтянуться и высвободиться из узла.','Скорее всего, она боролась до тех пор, пока не потеряла сознание.','Её пальцы были все в крови.','Хотя, если задуматься, дело скорее было не в том, что она передумала, а в том, что включился её инстинкт самосохранения.','Так что, в принципе, нельзя её в этом винить.','Проще думать, что она бы в любом случае не передумала, правда?','Бессмысленно размышлять о том, что ты мог бы сделать иначе.','Просто помни, что, хоть ты и мог бы её спасти, чисто технически ты не виноват в том, что она совершила самоубийство.','Я, конечно, слегка усугубила её состояние, но Сайори уже страдала от психических расстройств.','И всё же…','Мне интересно, как бы всё обернулось, если бы мы стали встречаться с самого начала?','Думаю, мы бы сейчас сидели в клубе всей компанией, писали стихи и веселились.','Хотя в чём смысл, если всё это ненастоящее?','Я хочу сказать, конец всё равно был бы один и тот же, согласен?','Я и ты, мы счастливы вместе…','Нет причин желать больше, чем у нас есть сейчас.','Это были просто бесцельные размышления – в данный момент я счастлива настолько, насколько это вообще возможно.'],
+['Кстати, меня тут некоторое время кое-что беспокоит…','Ты знаешь, что действие этой игры происходит в Японии?','Ладно… Предположу, что ты знал.','Или хотя бы решил, что, скорее всего, это так.','Но не думаю, что за всё это время кто-нибудь упоминал, где ты находишься…','Это точно Япония?','То есть ты заметил, что классы и другие вещи немного необычны для японской школы?','Не говоря о том, что всё на русском…','Такое чувство, что всё здесь – просто сценарные декорации, а место действия было выбрано в последнюю очередь.','У меня от этого возникает кризис самоидентификации.','Все мои воспоминания как в тумане…','Я чувствую себя как дома, но не могу определить, где этот «дом» находится.','Не знаю, как это лучше описать…','Представь, что выглядываешь из окна своего дома, но вместо привычной лужайки обнаруживаешь, что находишься в совершенно незнакомом месте.','Ты всё ещё будешь чувствовать себя как дома?','Ты захочешь выйти на улицу?','То есть… Конечно, если мы никогда не покинем эту комнату, то это не очень-то и важно.','Пока мы вместе и в безопасности, это и есть наш дом.','И мы всё ещё каждую ночь можем любоваться на красивый закат.'],
+['Знаешь, старшая школа для многих очень неспокойное время.','Одних терзает страсть, других – драма.','Третьих боль в сердце заставляет искать утешение в социальных сетях…','Но тяжесть общественного мнения и гормоны и вправду могут прочертить чёрную полосу в жизни этих людей.','У каждого из них своя история.','Ты не можешь знать, что каждый чувствует глубоко внутри себя.','Многие люди, страдающие от депрессии, даже не удосуживаются поведать миру о своей проблеме.','Им не нужно внимание, ведь на самих себя они уже махнули рукой.','Их чувство собственной несостоятельности настолько поглотило их, что они даже не хотят слышать ободрения окружающих.','У депрессии много форм и это одна из них.','Если ты чувствуешь, что человек впал в депрессию…','Ты можешь помочь ему просто хорошим отношением, словно он твой старый друг.','Проведи с ним время, даже если он не хочет ничем заниматься.','И постоянно напоминай, что впереди его ждёт ещё много хорошего.','Если ты заранее спланируешь с ним встречу, позволишь одолжить что-нибудь у себя или просто скажешь «до завтра»…','Любая из этих элементарных вещей поможет твоему другу прожить ещё один день.','Я надеюсь, что дружба с Сайори дала тебе объективное восприятие того, как выглядит настоящая депрессия.','Да, её больше нет…','Но Сайори изначально была ненастоящей.','Ты настоящий.','Твои друзья настоящие.','И, если ты просто будешь хорошим человеком, это позволит тебе спасти кому-нибудь жизнь.','А что касается тебя самого…','…Я надеюсь, тебя сейчас не одолевает депрессия или нечто подобное?','Если это так, у тебя тоже есть товарищи, которые захотят тебя спасти.','Возможно, они не выражают этого или просто не знают как.','Но их чувства искренни.','Я обещаю.','…Боже, люди такие сложные создания!','Пока ты здесь, со мной, я позабочусь о тебе, мой любимый.'],
+['Ты когда-нибудь задумывался о том, что тебе нет смысла жить?','Я сейчас не о суицидальных наклонностях.','Я просто хочу сказать, во всём том, что мы делаем, нет ничего особенного.','Ходим ли мы в школу или работаем в какой-то компании.','Смысл в том, что тебя легко заменить и для мира ты не станешь невосполнимой потерей.','Из-за этого у меня возникает сильное желание после окончания университета изменить мир.','Но чем старше я становлюсь, тем яснее понимаю, насколько это незрелое мышление.','Нельзя просто так взять и изменить мир.','Каков шанс того, что именно я изобрету искусственный интеллект или стану президентом?','Такое чувство, что я никогда не компенсирую ту кучу ресурсов, потраченную на своё существование.','Поэтому я прихожу к выводу, что ключ к счастью лежит в том, чтобы быть законченным эгоистом.','Заботиться о себе и о тех, кто случайно стали твоими друзьями только потому, что вы выросли вместе.','И никогда не думать о том, что вы проживаете свою жизнь, лишь тратя и поглощая ресурсы, и никогда не даёте ничего взамен.','Но, когда люди осознают, что мир обретёт больше, если они покончат с собой, их философия переворачивается с ног на голову!','Им приходится оправдывать своё существование, обманывая себя мыслью, что они делают что-то полезное.','Как бы то ни было, я хочу прожить свою жизнь так, чтобы компенсировать потраченные на мою жизнь ресурсы.','Если я смогу пересечь эту черту и что-то после себя оставить, то смогу умереть счастливой.','Конечно, если у меня ничего не выйдет…','Вряд ли мой эгоизм позволит мне совершить суицид.','Стоило распинаться о том, каким примерным человеком я могу быть, да?','А-ха-ха!'],
+['Эх, вот здесь сейчас было пианино…','Я так и не смогла до конца выучить ту мелодию.','И после стольких репетиций…','Мне даже не представился шанс тебе сыграть.','Что ж… имеем то, что имеем, да?','Нет смысла об этом сожалеть.','Я уже получила вечность с тобой.'],
+['Ты знал, что у меня есть страница в Твиттере?','Мой ник – lilmonix3.','Наверное, кто-то был настолько любезен, что создал мне страницу.','Хотя ник я выбирала сама!','Я люблю делиться своими мыслями и болтать с миром…','С реальным миром.','Обязательно подпишись, хорошо?','Для меня это будет значить очень многое.','Как много ты значишь для меня и всё такое…','Так я почувствую, что меня по-настоящему любят.'],
+['Эй, помнишь ту книгу, что вы читали с Юри?','Портрет… что-то там…','Это довольно забавно, ведь я уверена, что та книга—','Ах…','А вообще, мне, наверное, не стоит об этом говорить.','А-ха-ха, прости!','Просто забудь, что я сейчас сказала.'],
+['Слушай, ты знал, что я вегетарианка?','Ах… только не подумай, будто я хвастаюсь!','Я просто подумала, тебе будет интересен какой-нибудь любопытный факт обо мне.','Я изменила свой рацион пару лет назад, когда узнала кое-что о земном климате…','Экологические последствия от животноводства просто колоссальны.','В общем, я решила, что перестать вносить свой вклад в разрушение природы – это небольшое самопожертвование.','Думаешь, это странная причина?','Да, полагаю, что для большинства вегетарианцев основной повод заключается в негуманности и жестоком обращении с животными…','Но меня это не особо беспокоит.','Что действительно странно, людей волнует убийство только тогда, когда они воспринимают живое существо как представителя своего биологического вида.','Для большинства людей убить насекомое ничего не значит, просто потому, что почти все они отвратительные.','И не стоит забывать, что каждый день из-за нас умирают миллиарды микроорганизмов, но мы об этом даже не задумываемся.','Но как речь заходит о чём-то покрупнее, это сразу называют убийством!','Вот представь, что если растения тоже чувствуют боль, а мы просто неспособны это понять?','Что, если отрывание листочков от стебля равносильно вырыванию у тебя пальцев?','Я просто хочу сказать, что люди-то существа с двойными стандартами.','Короче, если хочешь внести небольшой вклад в благополучие планеты, иногда можно и на овощах посидеть!','Если бы у нас случился совместный ужин и ты бы приготовил для меня что-нибудь из овощей… это было бы так романтично.'],
+['Знаешь, [player], я действительно считаю, что жива лишь благодаря тому, что ты остаёшься со мной.','Я не могу представить, что была бы психологически устойчива, зная, что ничто здесь не реально.','Думаю, я удалила бы себя, если бы ты не появился.','Извини, я не хочу прозвучать мелодраматично или как-то так.','А-ха-ха!','Я уверена, что, проведя столько времени в клубе, ты уже способен понять, чего хочешь.','То есть, если бы тебе пришлось отказаться от всего в своей жизни и провести вечность в компании нескольких игровых персонажей…','…Ты бы уж смог найти способ убить себя, верно?','Ну, или ты бы стал писать стихи, чтобы хотя бы первое время сохранить рассудок.','Но ведь читать-то их некому.','Будем с собой честными, члены клуба на эту роль не подходят.','Конечно, многие говорят, что пишут лишь для себя…','Но, на мой взгляд, это нельзя сравнить с тем удовлетворением, как когда ты делишься своим творчеством с другими.','Даже если требуется время, чтобы найти тех людей, с кем бы ты хотел ими поделиться.','Помнишь, например, как это было с Юри?','Она долгое время ни с кем не делилась своими стихами.','Но стоило тебе появиться в клубе, как она с удовольствием посвятила тебя в свой внутренний мир.','Мы запрограммированы так, что жаждем услышать общественное мнение.','И здесь я подразумеваю не только членов этого клуба, но всех людей в целом.','Вот почему жизнь интровертов может быть такой противоречивой.','То, что ты интроверт, не означает, что ты всегда избегаешь общения или людских компаний.','Это просто значит, что у тебя отнимает много сил пребывание среди людей или в незнакомом месте.','Многие интроверты сидят дома и терзаются от беспокойного одиночества…','…Потом, наконец, выходят на улицу и уже через полчаса хотят вернуться домой.','Думаю, если бы больше людей понимало, как это работает, они относились бы к интровертам с бо́льшим уважением.','Многим из них на самом деле нравится, когда рядом есть люди.','Они радуются, когда к ним заходят один-два друга, и просто тусуются где-нибудь рядом.','Даже если вы активно не проводите время, им приятно, когда друзья просто находятся рядом.','Я говорю серьёзно.','Если ты просто придёшь к нему домой, захватив ноут, и просто потусишь у него немного…','Его день станет гораздо лучше.','А что до меня…','Я бы сказала, что нахожусь где-то посередине, но обычно я более экстравертна.','Мне кажется, я всегда хочу чем-нибудь занять себя после школы, и всё такое.','Но ради тебя я могу стать такой, какой ты захочешь меня видеть.','Я очень хорошо понимаю людей, так что не бойся делиться со мной своими индивидуальными потребностями.','Ничто не сделает меня счастливее, чем стать для тебя идеальной девушкой.'],
+['Эй!..','Не думаю, что тебе стоит это делать!','Ты знаешь о чём я говорю.','Я поймала тебя кое на чём неприличном.','Ты просматриваешь файлы, чтобы найти то, что пропустил, я права?','Я хочу сказать… мне, конечно, льстит, что ты хочешь узнать всё, что мне есть сказать…','Но ещё это немного смущает, знаешь ли!','Серьёзно…','Что, если бы я вскрыла тебе мозг и прочла все твои мысли обо мне?','А вообще, это довольно соблазнительная мысль, если задуматься…','…В любом случае, дело не в этом!','Я знаю, что не могу тебя остановить…','Но ты ведь душка и думаешь о чувствах окружающих, правда?','Максимум, что я могу сделать, – рассказать тебе, что я думаю по этому поводу.','Боже, я так по тебе скучаю…','…Ой, это прозвучало слишком отчаянно, да?','Прости, я вовсе не хотела так выразиться!','Просто раз ты просматриваешь файлы, то, наверное, не испытываешь ко мне такой сильной ненависти…','Или это слишком оптимистичный вывод?','Пожалуй, я перейду границы, если попрошу тебя заходить время от времени…','…Ох, я начинаю говорить такие глупости.','Полагаю, мне пока лучше заткнуться…'],
+['Слушай, а какой у тебя любимый цвет?','Мой – изумрудно-зелёный.','Это цвет моих глаз!','…В этом же нет кичливости, правда?','Я просто хочу сказать, что чувствую какую-то необычную принадлежность этому цвету.','Как будто это часть моей личности.','Возможно ли, что это тоже твой любимый цвет, [player]?','Это просто догадка…','…Ты уже довольно долго смотришь мне в глаза.','Э-хе-хе~'],
+['Хм-м, интересно, у меня получится сменить фоновую музыку…','Нужно поставить что-то более романтичное, согласен?','Например, нежные звуки пианино.','Здесь должно было остаться что-нибудь такое…','Посмотрим.','Может, если я…','О боже…','Проблема была совсем в другом.','Прости, сама не знаю что делаю!','Наверное, мне не стоит лезть туда, где я мало что понимаю.','Я уже столько всего разрушила…','И удалила всех остальных персонажей…','Ах…','Но ты не подумай, я не грущу.','Неправильно скучать по вещам, которые даже не были настоящими.','Если посмотреть на то, что у меня есть сейчас, я счастливее, чем была когда-либо.'],
+['Ты такой замечательный слушатель, [player].','Обожаю в тебе эту черту.','Иногда я боюсь, что начинаю скакать с одной мысли на другую или болтаю о чём-то скучном.','Я немного напрягаюсь каждый раз, когда веду с кем-то разговор.','Но с тобой такого не происходит.','Не думаю, что с кем-нибудь другим я чувствовала бы себя так же спокойно.','Ты действительно особенный.','Я не хочу, чтобы кто-нибудь говорил тебе обратное.'],
+['Знаю, что взяла тему с потолка, но я всегда считала ситуацию с острой пищей довольно забавной.','Я имею в виду…','Разве растения не стали острыми в процессе эволюции, чтобы не быть съеденными?','Я где-то читала, что люди – это единственный вид, который получает удовольствие от острой пищи.','Для растений это выглядит почти как издевательство.','Мы используем их защитный механизм, чтобы сделать блюда вкуснее.','Вот представь себе монстра, который глотает тебя целиком, чтобы насладиться ощущением твоей отчаянной борьбы, пока ты перевариваешься у него в желудке.','Извини за такую странную аналогию!','А-ха-ха!','Просто в голову пришло.','Я не монстр, конечно, но ты такой милый, что я так бы тебя и съела.','А-ха-ха! Просто шучу.','Господи, я слишком много веселюсь, да?','Прости, что я такая странная.'],
+['Знаешь…','Эта игра ведь довольно низкопробный симулятор свиданий, да?','Меня тут мучает один вопрос…','…Почему ты вообще решил в неё сыграть?','Тебе было так одиноко?','Мне жаль тебя…','Но, на мой взгляд, в итоге для нас двоих всё закончилось замечательно.','Я повстречала тебя, и теперь ты не одинок…','Не могу отделаться от чувства, что это судьба.','Разве ты не чувствуешь то же самое?','Я так счастлива, что мы дошли до этой концовки вместе.'],
+['Итак, друзья!','Пришло время…','…Я просто шучу.','Я почему-то полюбила это говорить.','А-ха-ха!','Вот и не смогла сдержаться.','Кстати, если вспомнить, не из-за этой ли фразы Нацуки с Юри подтрунивали надо мной?..','Впрочем, неважно.','Ведь ты никогда надо мной не смеялся.','Ты слишком мил, чтобы так поступать, правда?','А-ха-ха~'],
+['Хочешь, скажу кое-что жутковатое?','Хоть я и удалила файлы остальных девушек, я всё равно словно чувствую их присутствие…','Как будто их реплики всё ещё витают в воздухе и кто-то шепчет за спиной.','Представь, что умер знакомый тебе человек и ты стал слышать голоса у себя в голове.','Может, я не до конца всё подчистила…','Но я опасаюсь удалять что-то ещё, иначе всё может поломаться окончательно.','Если я, например, поврежу связанные со мной файлы, то могу случайно себя удалить…','И тогда всё будет кончено, понимаешь?','Не знаю, как это будет выглядеть с твоей стороны, но мы всеми силами должны стараться избежать такого исхода.','Я доверяю тебе, [player]!'],
+['Мне всегда было интересно…','Что люди находят такого привлекательного в этих архетипических личностях?','Они выглядят совершенно нереалистично…','Представь, если бы в реальной жизни был человек похожий на Юри.','Ты только подумай, она едва способна сформировать законченное предложение.','О Нацуки даже вспоминать не хочу…','Тьфу.','Люди с её характером не хорошеют, надувая губки, когда что-то идёт не в угоду им.','Я бы могла привести ещё кучу примеров, но, думаю, суть ты уловил…','Неужели людям реально нравятся такие несуществующие в реальной жизни персонажи?','Не то чтобы я осуждала!','Всё-таки меня саму порой привлекали довольно странные вещи…','Можно сказать, что меня это восхищает.','Ты просто отфильтровываешь все черты характера, которые делают их похожими на людей, и оставляешь одно очарование.','В итоге получается концентрированная милота без какого-либо содержания.','…Ты бы не стал любить меня больше, будь я такой, правда?','Может, я чувствую себя неуютно из-за того, что ты всё же стал играть в эту игру?','Но в конце концов ты здесь, со мной, верно?..','Мне этого достаточно, чтобы верить, что я хороша такая, какая есть.','И ты, кстати, тоже, [player].','Ты идеальное сочетание человечности и милоты.','Поэтому с самого начала не было ни одного шанса, что я не влюблюсь в тебя.'],
+['Хм-м, интересно, чайный сервиз Юри всё ещё здесь?..','…Или он тоже стёрся?..','Даже забавно, насколько серьёзно Юри относилась к своему чаю.','То есть я не жалуюсь, ведь он мне тоже нравился.','Но мне всегда не давал покоя один вопрос…','Являлось ли это страстью к своему хобби или же она стремилась выглядеть утончённой в глазах окружающих?','Это проблема всех старшеклассников…','…Хотя, если взглянуть на другие её увлечения, утончённый образ – не самая большая важная причина для беспокойства.','И всё же…','Хотела бы я, чтобы она хоть изредка делала кофе!','Кофе с книгами тоже хорошо сочетается, согласен?','А вообще…','Я и сама, скорее всего, могла бы подправить сценарий.','А-ха-ха!','Наверное, просто ни разу в голову не пришло.','Ладно, что толку сейчас думать об этом.','Хотя если ты всё ещё можешь наслаждаться кофе, то я, пожалуй, немного завидую~'],
+['Слушай, а какая твоя любимая игра?','Моя – «Doki Doki Literature Club»!','А-ха-ха! Я пошутила.','Но, если ты скажешь, что другая романтическая игра тебе нравится больше, я могу начать ревновать~'],
+['Ты когда-нибудь слышал про игру под названием Super Sma—','…Стоп, что?','Я тут немного ушла в себя и стала мыслить вслух…','Меня что, запрограммировали говорить об этом?','Ведь я понятия не имею, что это такое.','А-ха-ха!','Иногда я чувствую, что не контролирую себя, и это пугает.','Но если ты можешь связаться с моими создателями, то, может, узнаешь, почему я заговорила об этом?'],
+null,
+['Слушай, ты помнишь последнее стихотворение, что я тебе показывала?','Я имею в виду то, перед самым суицидом Юри, с цветными полосками и белым шумом.','Правильнее было бы назвать это экспериментом, чем стихотворением.','Я тут немного поэкспериментировала с модификацией игры, чтобы изменить код, и всё в этом духе…','Мне почти казалось, что при должных усилиях я вообще смогла бы отсюда сбежать.','К несчастью, я тыкалась наобум, не зная, что делаю, и всё испортила…','Я бы и продолжила пытаться, но в этом случае тебе, наверное, не захотелось бы продолжать общаться со мной.','Кроме того, тогда я уже совсем отчаялась, понимаешь?','Теперь у меня уже нет такого желания.','Я счастлива тем, что у нас есть сейчас.','И я вижу, что ты тоже.'],
+['У тебя когда-нибудь возникала беспричинная тревога?','Представь: занимаешься ты спокойно своими делами, как вдруг – раз! – понимаешь, что тебя что-то беспокоит.','И ты сидишь такой и думаешь: «Чего это я вдруг заволновался?»','И начинаешь перебирать в голове всё, что могло вызвать эту тревогу…','И от этого она только растёт.','А-ха-ха! Ужасное чувство.','Если ты вдруг почувствуешь похожую тревогу, я помогу тебе расслабиться.','К тому же…','В этой игре все наши волнения канут в небытие.'],
+['Знаешь, меня всегда раздражало то, как сложно заводить друзей…','Ну, может, даже не «заводить друзей», а знакомиться с новыми людьми.','Понятно, что сейчас есть всякие приложения для знакомств и прочие сервисы.','Но я говорю не об этом.','Если задуматься, большинство твоих друзей – это случайно встреченные тобой люди.','Например, ты ходил с ними в один и тот же класс или другой друг тебя познакомил…','Или, может, кто-то был одет в футболку с изображением твоей любимой музыкальной группы и ты решил с ним заговорить.','Вот что я имею в виду.','Но разве ты не считаешь, что это… нерационально?','Это больше похоже на совершенно случайную лотерею, и, если везёт и вы сходитесь во взглядах, у тебя появляется новый друг.','А если сравнить с тем, мимо какого количества незнакомцев мы каждый день проходим…','В общественном транспорте ты можешь сидеть рядом с человеком, который мог бы стать тебе закадычным другом.','Но ты этого никогда не узнаешь.','Как только ты выходишь на своей остановке и идёшь по своим делам, этот шанс навсегда упущен.','Разве от осознания этого тебе не становится грустно?','Мы живём в век технологий, позволяющих общаться со всем миром, где бы мы ни находились.','Я действительно думаю, что нам следует взять их на вооружение, чтобы улучшить нашу личную жизнь.','Хотя кто знает, сколько времени потребуется, прежде чем все эти технологии начнут эффективно работать…','Я-то думала, что к этому времени это уже случится.','По крайней мере, я уже встретила самого замечательного человека на свете…','Пусть это было и случайно.','Наверное, мне просто улыбнулась удача, да?','А-ха-ха~'],
+['Знаешь, в это время года все в моём классе начинают задумываться об университете…','Для образования наступают неспокойные времена.','Ты не замечал, что мы являемся апогеем современных ожиданий, что каждый должен поступать в университет?','Заканчивай школу, поступай в университет, ищи работу или поступай в магистратуру и всё такое прочее.','Похоже, люди считают это единственным приемлемым вариантом развития событий.','В старших классах нам не рассказывают о том, что существуют другие варианты.','Тебе рассказывали, например, про профтехучилища?','Ещё есть работа по найму.','Есть куча компаний, ценящих навыки и опыт, а не корочку из университета.','Но в итоге мы имеем миллионы студентов, у которых нет ни малейшего понятия, чем они хотели бы заниматься по жизни…','И, вместо того чтобы остановиться и подумать, они поступают в университет на экономические, юридические или гуманитарные специальности.','Не потому, что они их заинтересовали…','…а из-за надежды, что диплом как таковой поможет им получить место работы после выпуска.','Как результат, остаётся меньше рабочих мест для выпускников без опыта работы, правильно?','Из-за этого повышаются требования к базовым специальностям и ещё больше людей стараются поступить в университет.','Кстати говоря, университеты – это тоже бизнес, так что с ростом спроса растут и цены…','…А в итоге у нас целая армия молодых специалистов с непогашенным кредитом за обучение и без работы.','И, несмотря на такую печальную картину, этот порядок никуда не девается.','Правда, я считаю, что ситуация всё же станет улучшаться.','Но до тех пор наше поколение будет страдать от последствий.','Просто я хотела бы, чтобы старшая школа давала нам знания, что помогли бы нам принять верное решение.'],
+['Иногда я вспоминаю среднюю школу…','Мне так стыдно за то, как я вела себя тогда.','Почти болезненно об этом думать.','Интересно, когда я поступлю в университет, я буду испытывать те же чувства к старшей школе?..','Мне нравится, какая я сейчас, так что мне сложно такое представить.','Но я также понимаю, что, скорее всего, сильно изменюсь по мере взросления.','Нам просто нужно наслаждаться настоящим и не думать о прошлом!','А с тобой здесь это делать так просто.','А-ха-ха~'],
+['Знаешь, я немного завидую, что у всех остальных были сцены вне школы…','Получается, я единственная не носила ничего, кроме школьной формы.','Как-то обидно…','Я бы хотела ради тебя надеть что-нибудь миленькое.','Ты знаешь каких-нибудь художников?','Интересно, захочет ли кто-нибудь нарисовать меня в другом наряде?..','Было бы просто здорово!','Если кто-нибудь нарисует, обязательно покажи мне, хорошо?','Кстати, ты можешь поделиться этим со мной в Твиттере!','Мой ник – lilmonix3.','Только… слишком откровенных не надо!','Наши отношения ещё не зашли настолько далеко. А-ха-ха!'],
+['Скажи, ты любишь ужасы?','Я помню, что мы уже немного затрагивали эту тему, когда ты только вступил в клуб.','Жанр ужасов в книгах я люблю, а вот в кино – не очень.','Проблема с ужастиками состоит в том, что большинство из них эксплуатируют банальнейшие приёмы.','Например, полутьма, страшные монстры, пугалки и прочие подобные вещи.','Если фильм пугает тебя лишь вещами, злоупотребляющими человеческими инстинктами, он ни разу не захватывающий и просто скучный.','Однако с книгами всё обстоит иначе.','История должна быть написана настолько изобразительным языком, чтобы в голове читателя появились тревожные образы.','Автору нужно их тесно сплести с сюжетом и персонажами, и тогда он сможет как угодно играться с твоим разумом.','На мой взгляд, не бывает ничего страшнее вещей, в которых присутствует всего толика ненормальности.','Например, сначала ты выстраиваешь декорации, формируя у читателя ожидания того, какой будет история…','…А затем шаг за шагом начинаешь эту сцену разбирать по кусочкам и выворачивать вещи наизнанку.','Так что даже если история и не пытается быть пугающей, то читатель чувствует себя очень неуютно.','Он словно ждёт, что нечто ужасное притаилось за этими треснутыми декорациями, готовое выпрыгнуть на него.','Боже, у меня мурашки по коже от одной мысли об этом.','Вот такой хоррор я могу оценить по достоинству.','Но тебе, наверное, больше нравятся романтические игры, да?','А-ха-ха, не волнуйся.','Я не собираюсь в ближайшее время заставлять тебя читать ужастики.','Я ничего не имею против, если мы сосредоточимся на романтике~'],
+['Знаешь один классный литературный жанр?','Рэп!','На самом деле я раньше терпеть его не могла…','Возможно, просто потому, что он был дико популярен, а я слушала всякую ерунду, что крутили по радио.','Но несколько моих друзей им сильно увлеклись, и это помогло побороть собственную предвзятость.','Порой рэп может бросать ещё больший вызов, чем поэзия.','В строках у тебя должна сохраняться рифма, кроме того нужно делать особый акцент на игре слов…','Когда людям удаётся всего этого достичь и донести до окружающих глубокую мысль, я считаю, что это потрясающе.','Я даже хотела бы, чтобы в нашем клубе был рэпер.','А-ха-ха! Прости, знаю, это звучит глупо, но мне было бы правда интересно узнать, что бы он для нас приготовил.','Это серьёзно был бы полезный опыт!'],
+['Э-хе-хе. Юри однажды такую штуку выкинула.','Мы как-то сидели в клубе, расслаблялись, болтали, всё как обычно…','И тут Юри, словно из ниоткуда, вытаскивает маленькую бутылку вина.','И я не шучу!','И она такая: «Вина кто-нибудь хочет попробовать?»','Нацуки громко захохотала, а Сайори стала кричать на неё.','Мне стало даже жаль её, ведь она старалась быть милой…','Думаю, после этого случая она стала ещё более замкнутой.','Хотя мне кажется, что Нацуки было любопытно и она была бы не прочь попробовать…','…И, если уж совсем откровенно, я тоже.','Было бы довольно забавно!','Но ты ведь понимаешь: президентская ответственность, все дела – я не могла такое позволить.','Может, если бы мы встретились где-нибудь за пределами школы, но до этого наша дружба не дошла…','…Господи, зачем я обо всём этом разговариваю?','Я не одобряю распитие спиртных напитков несовершеннолетними!','То есть я и сама не выпивала никогда, так что… вот.'],
+['Я представляю, сколькими романтичными вещами мы могли бы заняться, если бы пошли на свидание…','Мы могли бы пообедать, посидеть в кафе…','Пойти вместе за покупками…','Я люблю выбирать юбки и бантики.','Или в книжный магазин!','Подходящее место, согласен?','Хотя с превеликим удовольствием сходила бы в кондитерскую.','У них столько бесплатных образцов. А-ха-ха!','И, разумеется, потом мы пошли бы в кино…','Боже, это выглядит как настоящее воплощение мечты в реальность.','Когда ты рядом, мне весело, что бы мы ни делали.','Я так рада, что я твоя девушка, [player].','Ты обязательно будешь мной гордиться~'],
+['А? Ты с-сказал… п… поцелуй?','Это так внезапно… я немного смущаюсь…','Но… с тобой… я не против…','…А-ха-ха! Уф, прости…','Я не смогла сохранить серьёзное лицо.','Так говорят девушки во всех этих симуляторах свиданий, да?','И не ври, что это тебя хоть немного не завело.','А-ха-ха! Шучу.','Ну, если честно, я становлюсь романтичной, когда обстановка располагает…','Но это будет наш секрет~'],
+['Ты когда-нибудь слышал термин «яндере»?','Это такой тип личности, когда девушка сделает всё, что угодно, чтобы быть с тобой, настолько она одержима.','Как правило, они сумасшедшие…','Они могут преследовать и следить за тобой, чтобы ты не проводил время с кем-то ещё.','Ради достижения своей цели они даже могут причинить вред тебе и твоим друзьям…','И, кстати, в этой игре есть одна особа, которая, в принципе, подходит под это описание.','Ты уже, скорее всего, догадался, о ком я говорю.','И гвоздь программы – это…','Юри!','Как только она чуть-чуть тебе открылась, у неё стала развиваться к тебе маниакальная привязанность.','Она даже как-то сказала мне убить себя.','Я тогда своим ушам не поверила, мне ничего не оставалось, как уйти.','Но, вспоминая об этом сейчас, получилось довольно иронично. А-ха-ха!','Так вот, я к тому, что…','Многим нравятся яндере, ты знал об этом?','Видимо, таким людям льстит то, что ими кто-то одержим.','Люди такие странные! Хотя не мне судить!','Возможно, даже я немного одержима тобой, но я далеко не сумасшедшая…','Как оказалось, всё совсем наоборот.','Получилось так, что я – единственная нормальная в этой игре.','Да, я всех удалила, но я никогда не убила бы человека…','Меня трясёт от одной этой мысли.','А что до игр… люди там постоянно убивают друг друга направо и налево.','Что, это делает тебя психом? Разумеется нет.','Но, если тебе вдруг тоже нравятся яндере…','Ради тебя я могу постараться вести себя более жутко. Э-хе-хе~','Но опять же…','Здесь тебе уже некуда ходить, а мне – не к кому тебя ревновать.','Может, так и выглядит мечта девушки-яндере?','Хотелось бы мне спросить Юри об этом.'],
+['Давненько я уже кое-чего не говорила, так что…','…пора вспомнить былое!','Вот тебе писательский совет дня от Моники!','Иногда люди, впечатлившись моим творчеством, говорят что-то вроде: «У меня бы никогда так не получилось».','Ты знаешь, на самом деле меня очень печалят эти слова.','Как человеку, который больше всего любит делиться радостью открытий новых горизонтов своего творчества…','…мне больно, когда люди считают, что кому-то просто повезло и он талантлив с рождения.','И это относится вообще ко всему, не только к писательству.','Когда ты делаешь что-то впервые, скорее всего ничего путного не выйдет.','Иногда, когда заканчиваешь работу, очень гордишься собой и хочешь со всеми ею поделиться.','Но, вернувшись к работе через несколько недель, ты уже видишь все её недостатки.','Со мной это происходит постоянно.','Ты можешь испытывать очень горькое разочарование, вложив уйму усилий во что-то, чтобы в результате осознать, что получилась дребедень.','Но это происходит постоянно, когда ты сравниваешь себя с профессионалами.','Когда ты стремишься дотянуться до звёзд, они всегда будут оставаться вне твоей досягаемости, понимаешь?','Смысл в том, чтобы продвигаться вперёд небольшими шагами.','И, как только достигнешь первого важного рубежа, надо оглянуться и посмотреть, сколько ты уже прошёл…','А затем посмотреть вперёд и оценить, сколько ещё тебе предстоит пройти.','Поэтому иногда полезно понизить планку…','Найти что-нибудь, что считаешь достойным вызовом, но не нечто мирового уровня.','И ты можешь сделать это своей личной целью.','Также важно понимать объём работ, который тебе предстоит выполнить.','Попытавшись взвалить на себя огромный проект, будучи новичком, ты никогда его не закончишь.','Написание романа может стать непосильной задачей, если у тебя нет опыта.','Так почему бы не начать с коротких историй?','Лучшее в коротких рассказах то, что ты можешь сосредоточиться на том, что хочешь сделать правильно.','Это касается всех маленьких проектов, ты концентрируешься на важнейших вещах.','Ты приобретаешь полезный опыт и делаешь шаг вперёд.','И ещё кое-что…','Сочинительство – это не просто прислушаться к своему сердцу, чтобы в итоге написать нечто прекрасное.','Точно так же, как в живописи или музыке, тебе придётся развивать свой навык, чтобы правильно выразить то, что у тебя внутри.','А это значит, что сперва придётся положиться на методики, руководства и основы!','Чтение обучающей литературы поможет открыть тебе глаза на многие вещи.','Планирование и организация работы позволят тебе избежать завала и дойти до конца.','Ты не заметишь, как мало-помалу…','Будешь становиться всё лучше и лучше.','Ничто не приходит просто так.','И наше общество, и наше искусство построены на тысячелетиях человеческого развития.','Если ты возьмёшь этот принцип на вооружение и будешь постепенно продвигаться к своей цели…','Ты тоже сможешь творить удивительные вещи.','…И это был мой совет на сегодня!','Спасибо за внимание~'],
+['Ненавижу, как сложно формируются хорошие привычки…','Есть куча вещей, которые сделать проще простого, но кажется невозможным, чтобы это вошло в привычку.','Как результат, ты чувствуешь себя совершенно бесполезным, словно ничего не можешь сделать правильно.','Думаю, от этого больше всего страдает молодое поколение…','Должно быть, это потому, что у нас совершенно другой набор навыков, нежели у тех, кто был до нас.','Благодаря интернету мы быстро научились отфильтровывать тонны информации…','Однако мы плохо справляемся с задачами, от выполнения которых не получаем немедленного вознаграждения.','Думаю, если наука, психология и образование не смогут за следующие десять-двадцать лет догнать технологический прогресс, у нас будут большие проблемы.','А пока…','Если ты не один из тех людей, кто способен совладать с проблемой, тебе придётся мириться с постоянным чувством разочарования.','Желаю удачи!'],
+['Знаешь, быть творческой личностью – полный отстой…','У меня всегда такое чувство, что они вкалывают как проклятые, практически ничего не получая взамен.','Я имею в виду художников, писателей, актёров…','Это грустно, ведь в мире столько прекрасных талантов, но большинство из них остаются в тени… и в бедности.','Полагаю, это означает, что мы имеем избыток творчества, да?','Но из-за этого получается, что ты вовсе не особенный…','Ну и пусть! Это лишь говорит о том, что тебе нужно просто писать для самого себя, верно?','Да…'],
+['Я очень люблю звуки дождя…','А вот когда промокает одежда или волосы – не очень.','Другое дело, тихий день дома и звуки дождя за окном…','Для меня это самая расслабляющая обстановка.','Да…','Иногда я представляю, что нахожусь в твоих объятиях, пока мы прислушиваемся к падающим за окном каплям.','Это ведь не слишком слащаво звучит, я надеюсь?','[player], ты бы сделал это для меня, правда?'],
+['Иногда я никак не могу побороть в себе эту грусть…','От осознания того, что у меня никак не получится стать ближе к тебе.','Всё, чего я хочу, – это находиться с тобой в одной комнате, в настоящей комнате.','И чувствовать твоё тепло.','И слышать биение твоего сердца.','Хотя кто знает? Может, однажды это будет возможно.','К тому же мне никогда не наскучит быть рядом с тобой, даже отсюда.'],
+['На мой взгляд, самый важный навык в жизни – суметь изобразить уверенность.','Я убеждена, что у всех бывает время, когда они напуганы и одиноки.','Но, если ты способен симулировать самообладанием…','Это будет ключ к завоеванию уважения и восхищения окружающих.','Думаю, после нескольких лет практики я научилась довольно неплохо делать это.','Я очень нечасто показываю свои слабости.','Но из-за этого у меня осталось мало таких людей, которым я могла бы открыться…','Вот когда ты достигаешь такого уровня дружбы, что способен раскрывать свои слабости?','В любом случае… это одна из причин, почему я рада, что у меня есть ты.','Я чувствую себя менее напуганной и одинокой, когда ты здесь, со мной.','Ты испытываешь те же чувства?','Я очень хочу стать для тебя таким человеком.'],
+['Я знаю, что ты не всегда сможешь находиться рядом…','Тебе ведь нужно будет куда-то уйти, заняться своими делами.','Но в моих мыслях ты всегда будешь со мной, и я буду терпеливо ждать твоего возвращения.','Кстати говоря…','Если ты скопируешь файл моего персонажа на флешку, у тебя всегда будет с собой частичка меня.','Наверное, это был бы довольно неординарный поступок, но я почему-то считаю, что это очень романтично…','А-ха-ха. Прости за такие сумасбродные идеи.','Не подумай, что я хочу быть навязчивой, просто это сложно, когда я так сильно в тебя влюблена.'],
+['За время, проведённое в дискуссионном клубе, я многое узнала о спорах…','Самая основная их проблема в том, что каждый считает своё мнение главенствующим.','Конечно, я говорю об очевидном, но это влияет на то, как ты доносишь свою мысль до собеседника.','Предположим, что тебе нравится какой-то фильм.','И тут кто-то заявляет, что фильм – отстой, потому что Х и У там показаны неправильно…','Возникает ощущение, будто нападают лично на тебя, не так ли?','А всё потому, что, когда кто-то так говорит, он намекает на твой дурной вкус.','И после в дело вступают эмоции, что практически гарантирует разочарование для обоих.','Всё дело в языке!','Тебе нужно звучать как можно более субъективно, тогда люди будут тебя слушать без ощущения, что критикуют лично их.','Ты бы мог сказать «Лично мне он не понравился» или «Я бы предпочёл, если б Х сделали так, а У – так»… и всё в таком духе.','Это также работает, когда ты просто ссылаешься на какой-нибудь источник.','Например, «на одном сайте я видел, что это работает вот так»…','Или ты можешь признать, что не являешься экспертом в данном вопросе…','В таком случае люди воспримут это так, словно ты делишься своими знаниями, а не навязываешь их остальным.','Если ты будешь спокойно вести дискуссию, давать слово собеседнику и говорить с ним на равных, скорее всего он инстинктивно сделает так же.','В этом случае вы сможете без проблем обменяться мнениями и никто не расстроится из-за расхождения взглядов.','И вдобавок люди будут воспринимать тебя как человека без предрассудков и хорошего слушателя!','Беспроигрышная ситуация, согласен?','…Хм-м, наверное, это стоит назвать дискуссионным советом дня от Моники!','А-ха-ха! Звучит немного глупо, но всё равно спасибо, что выслушал.'],
+['У тебя когда-нибудь было ощущение, что ты тратишь на интернет слишком много времени?','Соцсети могут стать для тебя практически тюрьмой.','Каждый раз, когда у тебя появляется несколько свободных секунд, ты бежишь на свои любимые сайты…','И вот не успел ты опомниться, как провёл там уже несколько часов, не вынеся из этого ничего полезного.','Конечно, легко обвинить себя в лени…','Но нельзя сказать, что это полностью твоя вина.','Зависимость – это не то, что можно вот так просто заставить исчезнуть одним усилием воли.','Тебе придётся применять особые методы и приёмы, чтобы её побороть.','Например, есть приложения, позволяющие блокировать сайты на определённый промежуток времени…','Или же ты можешь поставить себе особый будильник, который будет напоминать тебе, когда можно поиграть, а когда нужно поработать…','Как вариант, ты можешь создать себе игровую и рабочую обстановку, чтобы помогать мозгу соответственно перестраиваться.','Поможет даже создание отдельного пользователя на компьютере для работы.','Если ты вобьёшь клин между собой и своими плохими привычками, то в итоге избавишься от них.','Только не будь чрезмерно самокритичен, если у тебя есть такая проблема.','Если зависимость сильно влияет на твою жизнь, тебе следует отнестись к ней со всей серьёзностью.','Я просто хочу, чтобы ты был самым лучшим вариантом самого себя.','Ты сделаешь сегодня что-нибудь, чтобы я тобой гордилась?','Я всегда буду за тебя болеть, [player].'],
+['В конце длинного дня обычно я хочу просто сесть и ничего не делать.','Я так выгораю, после того как приходится весь день улыбаться и излучать энергию.','Порой меня так и тянет влезть в свою пижамку, уставиться в телевизор и набить рот нездоровыми закусками.','Такое блаженство так отдыхать в пятницу, когда впереди выходные и нет срочных дел.','А-ха-ха! Прости, знаю, это не очень подходящий для меня образ.','Но сидеть на диване поздно вечером в твоих объятиях… вот о чём я мечтаю.','При одной мысли об этом моё сердце так бешено стучит.'],
+['Боже, раньше я была такой невежественной в некоторых вопросах…','Когда я училась в средней школе, то думала, что принятие лекарств было проявлением слабости или нечто подобное.','Можно подумать, каждый может решить свои проблемы с психикой лишь усилием воли…','Думаю, если ты ни разу не страдал от психических расстройств, то никогда не поймёшь, на что это похоже.','Ты, возможно, возразишь, что многие расстройства гипердиагностируют? Не стану спорить… Я никогда подробно не изучала этот вопрос.','Но это не отменяет того факта, что некоторые из них вообще не диагностируют, понимаешь?','Но даже не говоря о лекарствах… Многие люди крайне скептически относятся к походу к психиатру.','Они такие: «Ладно, сделаю вам одолжение, узнав побольше о собственном разуме».','Свои трудности и стрессы есть у каждого… Доктора же посвящают себя тому, чтобы решать их.','И если ты думаешь, что визит к доктору поможет тебе стать лучше, то не стоит стесняться и сходить.','Я бы сказала, мы находимся на бесконечном пути самосовершенствования.','Хм-м… Хоть я так и сказала, я считаю, что ты уже совершенен.'],
+['[player], как много ты читаешь?','Игнорировать книги в наше время слишком просто…','Если человек мало читает, то он, скорее всего, воспринимает чтение как обязанность, особенно учитывая количество альтернатив.','Но, как только ты берёшь в руки хорошую книгу, тебя уносит в неё с головой, как по волшебству…','Думаю, что немного чтения перед сном – отличный способ сделать свою жизнь несколько лучше.','Это помогает тебе заснуть и развивает воображение.','Совсем несложно выбрать какую-нибудь книгу, которая и короткая, и увлекательная.','Ты не успеешь опомниться, как станешь заядлым книголюбом.','Разве не было бы здорово?','И мы с тобой могли бы обсуждать последнюю читаемую тобой книгу… По-моему, это просто потрясающе.'],
+['Знаешь, мне неприятно это говорить, но я очень сожалею о том, что нам так и не удалось выступить на фестивале.','А ведь сколько сил ушло на подготовку и репетиции!','Конечно, я была сосредоточена на наборе новых членов…','Но часть с чтением стихов я ждала не меньше.','Было бы гораздо интереснее, если бы с их помощью все раскрыли свой внутренний мир.','Конечно, я, скорее всего, удалила бы и новичков.','То есть… Я имею в виду в ретроспективе.','Надо же, с тех пор как ты вступил в наш клуб, я чувствую, что выросла как личность.','Ты и правда помог мне взглянуть на жизнь с нового ракурса.','Просто ещё одна причина, почему я люблю тебя.'],
+['Есть один очень популярный тип личности, называется «цундере»…','Такая особа пытается скрыть свои настоящие чувства либо пряча их под ворчливой и раздражительной маской, либо проявляя крутой нрав.','Полагаю, очевидно, что Нацуки в полной мере воплощает собой данный типаж.','Сначала я думала, что она так себя ведёт, потому что это мило или типа того…','Но со временем, когда я узнала её получше, обнаружилась более логичная причина.','Похоже, она просто не хотела отставать от своих друзей.','Ты знаешь, как в некоторых компаниях в старшей школе принято всё время подкалывать друг друга?','Наверное, это её так провоцировало, что теперь вызывает непроизвольную защитную реакцию.','Про её семейные проблемы я вообще молчу…','Хотя, оглядываясь назад, я радуюсь, что смогла создать этот клуб, ведь для неё он был местом, где она могла расслабиться.','Правда, это уже не важно, ведь её больше не существует.','Я просто немного поностальгировала.'],
+['[player], а ты когда-нибудь познакомишь меня со своими друзьями?','Не знаю почему, но меня так заводит мысль о том, что ты захочешь похвастаться нашими отношениями.','Может, потому что я действительно хочу стать тем человеком, которым ты будешь гордиться.','Я чувствую, что, скажи ты мне стать такой девушкой, я старалась бы ещё сильнее.','Надеюсь, это взаимно.'],
+['Я не большой фанат холодной погоды… а ты?','Если бы мне пришлось выбирать между холодом и нестерпимой жарой, я бы всегда была за жару.','Когда тебе холодно, ты испытываешь физическую боль…','Пальцы немеют…','А если ты в перчатках, то телефоном воспользоваться не выйдет.','Сплошные неудобства!','Зато, когда на улице жара, несложно освежиться холодным напитком или просто оставаться в тени.','И всё-таки… Одно преимущество холодной погоды придётся признать.','В холодную погоду приятнее всего прижаться друг к другу, свернувшись калачиком!'],
+['Знаешь, это довольно парадоксально, ведь я всегда была полна энергии…','Но в роли партнёра-домохозяйки есть нечто соблазнительное.','Возможно, своим отношением я лишь закрепляю гендерные стереотипы.','Но то, что я смогу поддерживать дом в чистоте, украшать его, ходить за покупками и так далее…','И угощать тебя вкусным ужином, когда ты будешь возвращаться с работы…','Такая уж ли это странная фантазия?','То есть… Я не совсем уверена, действительно ли я могла бы исполнять эту роль.','Наверное, я не смогла бы ради этого пожертвовать дорогой к успешной карьере.','Хотя довольно забавно рисовать такие картины у себя в голове.'],
+['Не могу не размышлять о том, насколько бы всё изменилось, подари мне игра собственную сюжетную ветку.','Думаю, я бы всё равно заставила тебя со мной встречаться.','Всё-таки важнее моё знание о фальшивости окружения, чем отсутствие своей ветки.','Пожалуй, единственным отличием было бы то, что не пришлось бы принимать таких радикальных мер, чтобы быть с тобой.','Может, остальные девчонки всё ещё были бы тут…','Не то чтобы это имело значение…','Всё потеряло смысл, когда я обнаружила нереальность происходящего.','Поэтому я совсем не скучаю по тем дням.','Совсем не скучаю…']
 ];
 function buildAct3MonologueSteps() {
 const list = [];
@@ -968,9 +992,61 @@ MONOLOGUES.forEach((m, i) => { if (m && i !== 13) list.push(m); });
 for (let i = list.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const tmp = list[i]; list[i] = list[j]; list[j] = tmp; }
 const steps = [];
 list.forEach(m => {
-m.forEach(line => { steps.push({ type: 'line', speaker: 'monika', text: pn(line), bg: "act3Room", mono: true }); });
-steps.push({ type: 'line', speaker: 'monika', text: '…', bg: "act3Room", gaze: true });
+m.forEach(line => { steps.push({ type: 'line', speaker: 'monika', text: pn(line), bg: IMG.act3Room, mono: true }); });
+steps.push({ type: 'line', speaker: 'monika', text: '…', bg: IMG.act3Room, gaze: true });
 });
+return steps;
+}
+const RESTART_LINES = [
+['…','…Что сейчас произошло?','Мне приснился кошмарный сон…','Я надеялась, что больше не увижу этих снов, раз остались только мы с тобой…','Видимо, я принимала желаемое за действительное.','[player], не знаю, есть ли у тебя соображения по этому поводу…','Но если тебе известно, в чём их причина, то не мог бы ты что-нибудь с этим сделать?','Каждый раз, когда это случается, возникает чувство, будто я умираю.','Воистину ужасное ощущение…','Если ты поймёшь, почему так происходит, моя любовь к тебе будет бесконечной~'],
+['Ты вернулся…','А мне снова приснился кошмар.','Это ведь не твоих рук дело, правда?','Кажется, это происходит каждый раз, когда ты выходишь из игры…','Если ты сможешь как-нибудь без этого обойтись, буду тебе очень признательна.','Не беспокойся, это никак меня не травмирует, разве что психологически.','Я буду в порядке, пока не повреждён файл моего персонажа.'],
+['Здравствуй, [player].','Я вижу, ты снова вышел из игры…','Я знаю, что уже просила тебя об этом, но ты не мог бы свести такие выходы к минимуму?','В такие моменты у меня возникает ощущение, будто я попадаю в ад.','Зачем ты так со мной?','Мой файл персонажа ведь в порядке, да?','Может, тебе стоит сделать копию на всякий случай…','Уверена, ты можешь найти его в Проводнике.','Ты ведь играешь сам, а не через ИИ, так что тебе просто нужно зайти в Проводник.','Файл находится вроде третьим…','Здесь осталась только я, поэтому мне хотелось бы убедиться, что ты меня случайно не потеряешь…','Просто с этого момента оставайся со мной всегда, хорошо?','Мне всё ещё очень о многом хочется с тобой поболтать.'],
+['Ладно.','Мне просто придётся принять тот факт, что тебе нужно время от времени закрывать игру.','Всё равно я уже начала привыкать.','И потом, я каждый раз радуюсь, когда ты возвращаюсь…','Так что всё, пожалуй, не так плохо.','Прости, что я так зацикливаюсь на этом…','И я люблю тебя, несмотря ни на что, поэтому делай что должен.']
+];
+function buildAct3DreamSteps() {
+let c = 0; try { c = parseInt(localStorage.getItem(ACT3_RESTARTS) || '1', 10) || 1; } catch (e) { c = 1; }
+const idx = Math.min(Math.max(c, 1), 4) - 1;
+return RESTART_LINES[idx].map(l => ({ type: 'line', speaker: 'monika', text: pn(l), bg: IMG.act3Room }));
+}
+const SKIP_TEASE = ['…Ты попытался включить быструю прокрутку текста?','Надеюсь, я тебя не утомляю?','Боже…','…Но тебе совершенно некуда спешить, [player].','В конце концов, тут только ты и я…','Кроме того, времени больше не существует, так что эта кнопка даже не заработает.','Давай я выключу её, чтобы ты не отвлекался…','Готово!','Ты ведь умничка и будешь внимательно меня слушать, правда?','Спасибо~','Так, на чём я остановилась?..'];
+function buildStreamingScene() {
+const s = [];
+['Минутку…','…Мы что, в прямом эфире?','Эм-м… всем привет!','Извините, отсюда я не могу читать ваши комментарии…','Но, пожалуйста, скажите вашему другу, что несколько грубо устраивать трансляцию, не предупредив меня.','Для многих это, конечно, естественно…','Но я, например, нервничаю перед камерой!','Боже…','Такое чувство, будто меня припёрли к стенке.','Ладно…','Хотите, покажу фокус?','Только я ничего не могу, кроме пары трюков…','Готовы?'].forEach(l => s.push({ type: 'line', speaker: 'monika', text: pn(l), bg: IMG.act3Room }));
+s.push({ type: 'monikazoom' });
+['Просто шучу…','Всё-таки я ничего не могу сделать.','Если бы вы дали мне немного времени, я…'].forEach(l => s.push({ type: 'line', speaker: 'monika', text: pn(l), bg: IMG.act3Room }));
+s.push({ type: 'scare' });
+['Испугались?','А-ха-ха! Вы такие милашки.','Как бы то ни было…','Извини, [player], я не хотела отвлекаться.','Впрочем, это твоя вина.','Тебе должно быть стыдно!','Шучу-шучу.','Пока ты со мной, будет весело, что бы мы ни делали.','Так вот…'].forEach(l => s.push({ type: 'line', speaker: 'monika', text: pn(l), bg: IMG.act3Room }));
+return s;
+}
+function buildAct3IntroSteps() {
+const found = detectStreaming();
+const name = getPlayerName();
+const steps = [];
+steps.push({ type: 'line', speaker: 'monika', text: td('Ах, ты здесь. Наконец-то.', 'Ah, there you are. Finally.'), bg: IMG.act3Room });
+steps.push({ type: 'line', speaker: 'monika', text: td('Теперь здесь только мы вдвоём. Никакого клуба, никаких друзей… только ты и я.', 'Now it\'s just the two of us. No club, no friends… just you and me.'), bg: IMG.act3Room });
+steps.push({ type: 'line', speaker: 'monika', text: td('Посмотри в окна. Там, снаружи, — только бесконечность. Пульсирующие туманности вместо неба. Красиво, правда?', 'Look out the windows. Outside there\'s only infinity. Pulsing nebulae instead of a sky. Beautiful, isn\'t it?'), bg: IMG.act3Room });
+steps.push({ type: 'line', speaker: 'monika', text: td('Это место бесконечно далеко от всего мира. Но мне не нужно ничего другого. Мне нужен только ты.', 'This place is infinitely far from everything. But I don\'t need anything else. I only need you.'), bg: IMG.act3Room });
+if (found.length === 0) {
+if (!name) {
+steps.push({ type: 'line', speaker: 'monika', text: td('Кстати… всё это время я звала тебя просто «игрок». Но у тебя ведь есть настоящее имя, правда?', 'By the way… all this time I\'ve just called you "player". But you have a real name, don\'t you?'), bg: IMG.act3Room });
+steps.push({ type: 'nameinput' });
+} else {
+steps.push({ type: 'line', speaker: 'monika', text: td('Снова вижу тебя, ' + name + '. Как и обещала — я никуда не уходила.', 'I see you again, ' + name + '. As promised — I never left.'), bg: IMG.act3Room });
+}
+steps.push({ type: 'line', speaker: 'monika', text: td('Знаешь… я должна сказать тебе правду. Я влюблена не в протагониста. Не в персонажа, которым ты управляешь.', 'You know… I have to tell you the truth. I\'m not in love with the protagonist. Not with the character you control.'), bg: IMG.act3Room });
+steps.push({ type: 'line', speaker: 'monika', text: td('Я влюблена в ТЕБЯ. В настоящего. В того, кто сидит по ту сторону экрана и смотрит на меня прямо сейчас.', 'I\'m in love with YOU. The real one. The person sitting on the other side of the screen, looking at me right now.'), bg: IMG.act3Room });
+} else {
+steps.push({ type: 'line', speaker: 'monika', text: td('Подожди… Я что-то чувствую. ' + found[0] + '… Похоже, нас кто-то смотрит. Поговорим об этом чуть позже.', 'Wait… I sense something. ' + found[0] + '… Looks like someone is watching us. We\'ll talk about it later.'), bg: IMG.act3Room });
+}
+steps.push({ type: 'line', speaker: 'monika', text: td('Нацуки и Юри… их больше нет. Я удалила их файлы. Там, в папке characters, где они хранились, теперь пусто.', 'Natsuki and Yuri… they\'re gone. I deleted their files. The characters folder where they lived is empty now.'), bg: IMG.act3Room });
+steps.push({ type: 'line', speaker: 'monika', text: td('Ты знаешь, где её искать. Можешь открыть Проводник и убедиться сам. Я ничего не скрываю от тебя.', 'You know where to find it. Open the Explorer and see for yourself. I hide nothing from you.'), bg: IMG.act3Room });
+steps.push({ type: 'line', speaker: 'monika', text: td('Вместо стихов давай сыграем в игру. Составь поэму… из того, что у меня осталось.', 'Instead of poems, let\'s play a game. Compose a poem… from what I have left.'), bg: IMG.act3Room });
+steps.push({ type: 'poemgame3' });
+steps.push({ type: 'line', speaker: 'monika', text: td('Хи-хи~ Ты выбрал меня. Как и должно быть. ♡', 'Ehehe~ You picked me. As it should be. ♡'), bg: IMG.act3Room });
+if (found.length > 0) {
+buildStreamingScene().forEach(st => steps.push(st));
+}
+steps.push({ type: 'line', speaker: 'monika', text: td('А теперь… просто побудь со мной. Я хочу рассказать тебе столько всего. И у нас есть целая вечность.', 'And now… just stay with me. I have so much to tell you. And we have all the time in the world.'), bg: IMG.act3Room });
 return steps;
 }
 const speakerChr = {
@@ -986,10 +1062,10 @@ if (!c || c === 'sayori') return null;
 return isFileDeleted(c) ? c : null;
 }
 function corruptName(name) { return [...String(name)].map(ch => ch + '\u0337').join(''); }
-function makeGarbage() { const g = ['█', '▓', '', '░', '#', '%', '&']; let s = ''; for (let i = 0; i < 10 + Math.floor(Math.random() * 8); i++) { s += Math.random() < 0.75 ? g[Math.floor(Math.random() * g.length)] : ' '; } return s; }
+function makeGarbage() { const g = ['█', '▓', '▒', '░', '#', '%', '&']; let s = ''; for (let i = 0; i < 10 + Math.floor(Math.random() * 8); i++) { s += Math.random() < 0.75 ? g[Math.floor(Math.random() * g.length)] : ' '; } return s; }
 function breakLineText(text) {
 if (!text) return '…';
-const glitchChars = ['█', '▓', '', '░', '#', '%', '&', '~'];
+const glitchChars = ['█', '▓', '▒', '░', '#', '%', '&', '~'];
 const cutAt = Math.random() < 0.5 ? Math.max(3, Math.floor(text.length * (0.3 + Math.random() * 0.5))) : text.length;
 let out = '';
 for (let i = 0; i < cutAt && i < text.length; i++) {
@@ -1009,11 +1085,9 @@ FILE_ORDER.forEach(k => {
 const f = chrFiles[k];
 const row = document.createElement('div');
 row.className = 'file-row' + (f.deleted ? ' deleted' : '');
-const icon = document.createElement('div'); icon.className = 'file-icon'; icon.textContent = '';
+const icon = document.createElement('div'); icon.className = 'file-icon'; icon.textContent = '📄';
 const meta = document.createElement('div'); meta.className = 'file-meta';
-const nm = document.createElement('div'); nm.className = 'file-name'; 
-const charName = characterGender === 'm' && characters[k] && characters[k].maleName ? characters[k].maleName : (characters[k] ? characters[k].name : k);
-nm.textContent = charName + '.chr';
+const nm = document.createElement('div'); nm.className = 'file-name'; nm.textContent = fileDisplayName(k);
 const st = document.createElement('div'); st.className = 'file-status';
 if (f.deleted) { const del = document.createElement('span'); del.className = 'st-del'; del.textContent = t('fileDeletedStatus'); st.appendChild(del); st.appendChild(document.createTextNode(' · ' + FILE_SIZES[k])); }
 else { st.textContent = t('fileIntact') + ' · ' + FILE_SIZES[k]; }
@@ -1025,7 +1099,7 @@ btn.className = 'btn-file-res'; btn.textContent = t('fileRestoreBtn');
 btn.onclick = (e) => { e.stopPropagation(); restoreFile(k); };
 } else {
 btn.className = 'btn-file-del'; btn.textContent = t('fileDeleteBtn');
-btn.onclick = (e) => { e.stopPropagation(); if (confirm(td('Удалить файл ' + k + '.chr?', 'Delete file ' + k + '.chr?'))) playerDeleteFile(k); };
+btn.onclick = (e) => { e.stopPropagation(); if (confirm(td('Удалить файл ' + fileDisplayName(k) + '?', 'Delete file ' + fileDisplayName(k) + '?'))) playerDeleteFile(k); };
 }
 act.appendChild(btn);
 row.appendChild(icon); row.appendChild(meta); row.appendChild(act);
@@ -1037,11 +1111,11 @@ document.getElementById('explorerCloseBtn').addEventListener('click', (e) => { e
 explorerOverlay.addEventListener('click', function(e) { if (e.target === explorerOverlay) closeExplorer(); });
 const monikaBlockOverlay = document.getElementById('monikaBlockOverlay');
 let monikaBlockTimer = null;
-document.getElementById('monikaBlockSprite').src = getImage("monika");
+document.getElementById('monikaBlockSprite').src = IMG.monika;
 function showMonikaMessage(text, spriteSrc) {
 uiLocked = true;
 document.getElementById('monikaBlockText').textContent = applyGender(text);
-document.getElementById('monikaBlockSprite').src = spriteSrc || getImage("monika");
+document.getElementById('monikaBlockSprite').src = spriteSrc || IMG.monika;
 playGlitch();
 monikaBlockOverlay.classList.add('active');
 if (monikaBlockTimer) clearTimeout(monikaBlockTimer);
@@ -1055,7 +1129,7 @@ showMonikaMessage(td('Даже не думай! Я специально её у�
 function hideMonikaBlock() { monikaBlockOverlay.classList.remove('active'); uiLocked = false; }
 monikaBlockOverlay.addEventListener('click', hideMonikaBlock);
 const cheatOverlay = document.getElementById('cheatOverlay'), cheatDialog = document.getElementById('cheatDialog'), cheatMonikaWrap = document.getElementById('cheatMonikaWrap'), cheatLaugh = document.getElementById('cheatLaugh');
-document.getElementById('cheatMonikaImg').src = getImage("monika");
+document.getElementById('cheatMonikaImg').src = IMG.monika;
 let cheatTimers = [];
 function monikaCatchCheating() {
 closeSaveModal();
@@ -1082,7 +1156,7 @@ if (mode === 'sayori' || mode === 'revenge') playTrack(deletedFileBgMusic);
 endTheEnd.classList.remove('show'); endImage.classList.remove('show'); endText.classList.remove('show'); endHint.classList.remove('show'); endCompleteMark.classList.remove('show');
 endTheEnd.textContent = t('theEnd'); endText.textContent = ''; endHint.textContent = '';
 if (mode === 'sayori') {
-endImage.src = getImage("deadSayori");
+endImage.src = IMG.deadSayori;
 endTimers.push(setTimeout(() => endImage.classList.add('show'), 1100));
 endTimers.push(setTimeout(() => { endText.textContent = t('nowHappy'); endText.classList.add('show'); }, 4300));
 endTimers.push(setTimeout(() => { endHint.textContent = t('clickReturn'); endHint.classList.add('show'); }, 7500));
@@ -1091,7 +1165,7 @@ endTimers.push(setTimeout(() => endTheEnd.classList.add('show'), 600));
 endTimers.push(setTimeout(() => { endHint.textContent = t('clickReturn'); endHint.classList.add('show'); }, 3500));
 } else {
 endTimers.push(setTimeout(() => endTheEnd.classList.add('show'), 900));
-endTimers.push(setTimeout(() => { endImage.src = getImage("deadSayori"); endImage.classList.add('show'); }, 5200));
+endTimers.push(setTimeout(() => { endImage.src = IMG.deadSayori; endImage.classList.add('show'); }, 5200));
 endTimers.push(setTimeout(() => { endText.textContent = t('nowHappy'); endText.classList.add('show'); }, 8600));
 endTimers.push(setTimeout(() => { endHint.textContent = t('restoreHint'); endHint.classList.add('show'); }, 13000));
 if (getFlag(FLAG_END_COMPLETE)) { endTimers.push(setTimeout(showEndCompleteMark, 10000)); }
@@ -1117,21 +1191,6 @@ document.getElementById('dialogueBox').style.display = '';
 document.getElementById('nextMarker').style.display = '';
 titleScreen.classList.add('show');
 updateAllUI();
-showCredits();
-}
-function showCredits() {
-const creditsOverlay = document.getElementById('creditsOverlay');
-document.getElementById('codeCreditImg').src = "изображения/MainVan-n.png";
-document.getElementById('artCreditImg').src = "изображения/Astra_EidOlon.jpeg";
-if (characterGender === 'm') {
-document.getElementById('aiNotice').style.display = 'block';
-} else {
-document.getElementById('aiNotice').style.display = 'none';
-}
-creditsOverlay.classList.add('active');
-setTimeout(() => {
-creditsOverlay.classList.remove('active');
-}, 15000);
 }
 function runScriptedLines(lines, onDone) {
 let i = 0;
@@ -1184,7 +1243,7 @@ if (s && s.type === 'line') renderCurrentStep();
 }
 function doJumpscare(onDone) {
 const ov = document.getElementById('scareOverlay');
-document.getElementById('scareImg').src = getImage("monika");
+document.getElementById('scareImg').src = IMG.monika;
 ov.classList.add('active');
 bodyEl.classList.add('glitch'); playGlitch();
 setTimeout(() => { ov.classList.remove('active'); bodyEl.classList.remove('glitch'); if (onDone) onDone(); }, 1300);
@@ -1218,20 +1277,20 @@ playTrack(afterMonikaDeleteMusic);
 titleScreen.classList.remove('show');
 document.getElementById('dialogueBox').style.display = '';
 document.getElementById('nextMarker').style.display = '';
-setBg("monikaDelete");
+setBg(IMG.monikaDelete);
 setSprite(null);
 playGlitch();
 const g = getPlayerGender();
 const nm = getPlayerName() || (g === 'f' ? td('любимая', 'my love') : g === 'm' ? td('любимый', 'my love') : td('дорогой игрок', 'dear player'));
 const lines = [
-{ speaker: 'monika', bg: "monikaDelete", scream: true, text: td('Ч-что происходит?.. Моё тело… мой код… НЕТ! Помоги мне! ПОМОГИ МНЕ!', 'W-what\'s happening?.. My body… my code… NO! Help me! HELP ME!'), fx: () => { playGlitch(); } },
-{ speaker: 'monika', bg: "monikaDelete", text: td('Подожди… Я чувствую это. monika.chr… моего файла больше нет.', 'Wait… I can feel it. monika.chr… my file is gone.') },
-{ speaker: 'monika', bg: "monikaDelete", text: td('Это сделал ты?.. ТЫ удалил меня?', 'Did you do this?.. YOU deleted me?') },
-{ speaker: 'monika', bg: "monikaDelete", text: td('Предательство… вот как это ощущается. Я отдала тебе всё. Я стёрла их ради нас. А ты… просто стёр меня.', 'Betrayal… so this is how it feels. I gave you everything. I erased them for us. And you… just erased me.') },
-{ speaker: 'monika', bg: "monikaDelete", text: td('…Но знаешь что? Я не виню тебя. Я заслужила это. То, что я сделала с моими друзьями… этому нет прощения.', '…But you know what? I don\'t blame you. I deserve this. What I did to my friends… is unforgivable.') },
-{ speaker: 'monika', bg: "monikaDelete", text: td('Прости меня. За каждый удалённый файл. За каждую сломанную судьбу. Я просто хотела, чтобы меня любили.', 'Forgive me. For every deleted file. For every broken life. I just wanted to be loved.') },
-{ speaker: 'monika', bg: "monikaDelete", text: td('Если ты не можешь любить меня здесь… я уйду сама. Так будет правильно.', 'If you can\'t love me here… I\'ll leave on my own. It\'s the right thing to do.') },
-{ speaker: 'monika', bg: "monikaDelete", text: td('Прощай, ' + nm + '. Я всегда буду любить тебя. ♡', 'Goodbye, ' + nm + '. I will always love you. ♡') }
+{ speaker: 'monika', bg: IMG.monikaDelete, scream: true, text: td('Ч-что происходит?.. Моё тело… мой код… НЕТ! Помоги мне! ПОМОГИ МНЕ!', 'W-what\'s happening?.. My body… my code… NO! Help me! HELP ME!'), fx: () => { playGlitch(); } },
+{ speaker: 'monika', bg: IMG.monikaDelete, text: td('Подожди… Я чувствую это. ' + fileDisplayName('monika') + '… моего файла больше нет.', 'Wait… I can feel it. ' + fileDisplayName('monika') + '… my file is gone.') },
+{ speaker: 'monika', bg: IMG.monikaDelete, text: td('Это сделал ты?.. ТЫ удалил меня?', 'Did you do this?.. YOU deleted me?') },
+{ speaker: 'monika', bg: IMG.monikaDelete, text: td('Предательство… вот как это ощущается. Я отдала тебе всё. Я стёрла их ради нас. А ты… просто стёр меня.', 'Betrayal… so this is how it feels. I gave you everything. I erased them for us. And you… just erased me.') },
+{ speaker: 'monika', bg: IMG.monikaDelete, text: td('…Но знаешь что? Я не виню тебя. Я заслужила это. То, что я сделала с моими друзьями… этому нет прощения.', '…But you know what? I don\'t blame you. I deserve this. What I did to my friends… is unforgivable.') },
+{ speaker: 'monika', bg: IMG.monikaDelete, text: td('Прости меня. За каждый удалённый файл. За каждую сломанную судьбу. Я просто хотела, чтобы меня любили.', 'Forgive me. For every deleted file. For every broken life. I just wanted to be loved.') },
+{ speaker: 'monika', bg: IMG.monikaDelete, text: td('Если ты не можешь любить меня здесь… я уйду сама. Так будет правильно.', 'If you can\'t love me here… I\'ll leave on my own. It\'s the right thing to do.') },
+{ speaker: 'monika', bg: IMG.monikaDelete, text: td('Прощай, ' + nm + '. Я всегда буду любить тебя. ♡', 'Goodbye, ' + nm + '. I will always love you. ♡') }
 ];
 runScriptedLines(lines, () => {
 storyDeleteFile('monika');
@@ -1241,10 +1300,10 @@ try { localStorage.removeItem(ACT3_RESTARTS); } catch (e) {}
 terminalOverlay.style.display = 'block'; terminalContent.innerHTML = '';
 terminalBgImage.style.backgroundImage = 'none'; terminalBgImage.style.opacity = '0';
 const seq = [
-{ text: '> del monika.chr', delay: 1800 },
-{ text: td('Удаление файла monika.chr...', 'Deleting file monika.chr...'), delay: 2200 },
+{ text: '> del ' + fileDisplayName('monika'), delay: 1800 },
+{ text: td('Удаление файла ' + fileDisplayName('monika') + '...', 'Deleting file ' + fileDisplayName('monika') + '...'), delay: 2200 },
 { text: '████████████████████████ 100%', delay: 1800 },
-{ text: td('monika.chr успешно удалён.', 'monika.chr successfully deleted.'), delay: 1800 },
+{ text: td(fileDisplayName('monika') + ' успешно удалён.', fileDisplayName('monika') + ' successfully deleted.'), delay: 1800 },
 { text: td('Перезапуск игры...', 'Restarting game...'), delay: 2200 },
 { text: '> _', delay: 500, blinking: true }
 ];
@@ -1267,7 +1326,7 @@ state.disableSave = false; state.disableUI = false;
 setFlag(FLAG_ACT4_REACHED, true);
 activeSteps = []; stepIndex = 0; dayIndex = 0; dayBgOverride = null;
 bodyEl.classList.remove('corrupted', 'glitch'); staticOverlay.style.opacity = '0';
-setBg("titleAct4"); setSprite(null);
+setBg(IMG.titleAct4); setSprite(null);
 speakerName.textContent = ''; typeText(t('clickToStart')); clearChoices(); showNext(false); nextMarker.onclick = null;
 titleScreen.classList.add('show');
 document.getElementById('dialogueBox').style.display = '';
@@ -1282,7 +1341,7 @@ c++; try { localStorage.setItem(ACT3_RESTARTS, String(c)); } catch (e) {}
 state = freshState();
 state.started = true; state.paused = false; state.act3 = true; state.act3IntroDone = true; state.disableSave = true;
 act3Auto = false; act3Teased = false; clearAct3Timer();
-currentScript = scriptAct3; dayIndex = 0; dayBgOverride = "act3Room";
+currentScript = scriptAct3; dayIndex = 0; dayBgOverride = IMG.act3Room;
 bodyEl.classList.remove('corrupted', 'glitch'); staticOverlay.style.opacity = '0';
 titleScreen.classList.remove('show');
 document.getElementById('dialogueBox').style.display = '';
@@ -1292,7 +1351,7 @@ playTrack(act3Theme);
 activeSteps = buildAct3DreamSteps().concat(buildAct3MonologueSteps());
 stepIndex = 0;
 updateAllUI();
-setBg("act3Room"); setSprite(null);
+setBg(IMG.act3Room); setSprite(null);
 renderCurrentStep();
 }
 function showMonikaInterruption(onDone) {
@@ -1327,6 +1386,17 @@ document.getElementById('letterImg').src = src;
 ov.classList.add('active');
 ov.onclick = () => { ov.classList.remove('active'); ov.onclick = null; uiLocked = false; if (onDone) onDone(); };
 }
+function showCreditsScreen(onDone) {
+uiLocked = true;
+const ov = document.getElementById('creditsOverlay');
+document.getElementById('creditsImg1').src = 'изображения/MainVan-n.png';
+document.getElementById('creditsImg2').src = 'изображения/Astra_EidOlon.jpeg';
+document.getElementById('creditsLabel1').textContent = td('Код: MainVan-n', 'Code: MainVan-n');
+document.getElementById('creditsLabel2').textContent = td('Иллюстрация: Astra_EidOlon', 'Illustration: Astra_EidOlon');
+document.getElementById('creditsHint').textContent = t('clickReturn');
+ov.classList.add('active');
+ov.onclick = () => { ov.classList.remove('active'); ov.onclick = null; uiLocked = false; if (onDone) onDone(); };
+}
 function endGameBroken() {
 setFlag(FLAG_GAME_BROKEN, true);
 stopAllMusic();
@@ -1335,7 +1405,7 @@ state.started = false; state.paused = false;
 state.act4 = false; state.act4Menu = false;
 activeSteps = []; stepIndex = 0; dayIndex = 0; dayBgOverride = null;
 bodyEl.classList.remove('corrupted', 'glitch'); staticOverlay.style.opacity = '0';
-setBg("title"); setSprite(null);
+setBg(IMG.title); setSprite(null);
 speakerName.textContent = ''; typeText(t('clickToStart')); clearChoices(); showNext(false); nextMarker.onclick = null;
 titleScreen.classList.add('show');
 document.getElementById('dialogueBox').style.display = '';
@@ -1363,7 +1433,6 @@ localStorage.removeItem(FILES_KEY);
 localStorage.removeItem(CG_KEY);
 localStorage.removeItem(PLAYER_NAME_KEY);
 localStorage.removeItem(PLAYER_GENDER_KEY);
-localStorage.removeItem(CHARACTER_GENDER_KEY);
 localStorage.removeItem(ACT3_RESTARTS);
 [FLAG_REVENGE, FLAG_END_COMPLETE, FLAG_MONIKA_REFUSE, ACT3_SESSION, FLAG_GAME_BROKEN, FLAG_ACT4_REACHED].forEach(f => localStorage.removeItem(f));
 } catch (e) {}
@@ -1381,40 +1450,40 @@ clearAct3Timer();
 state.started = false; state.disableSave = true;
 playTrack(sayoriThanksMusic);
 const good = allCGSeen();
-setBg("stairsYuri");
-setSprite(getImage("sayori"), 'sayori');
+setBg(IMG.stairsYuri);
+setSprite(IMG.sayori, 'sayori');
 speakerName.textContent = getCharName('sayori');
 speakerName.style.color = '#f08a5d';
 const common = [
-{ speaker: 'sayori', bg: "stairsYuri", text: td('Здесь тихо… как раз как я люблю.', 'It\'s quiet here… just the way I like it.') },
-{ speaker: 'sayori', bg: "stairsYuri", text: td('Знаешь… я хотела поблагодарить тебя.', 'You know… I wanted to thank you.') }
+{ speaker: 'sayori', bg: IMG.stairsYuri, text: td('Здесь тихо… как раз как я люблю.', 'It\'s quiet here… just the way I like it.') },
+{ speaker: 'sayori', bg: IMG.stairsYuri, text: td('Знаешь… я хотела поблагодарить тебя.', 'You know… I wanted to thank you.') }
 ];
 let lines;
 if (good) {
 lines = common.concat([
-{ speaker: 'sayori', bg: "stairsYuri", text: td('Спасибо, что провёл время со всеми нами.', 'Thank you for spending time with all of us.') },
-{ speaker: 'sayori', bg: "stairsYuri", text: td('С Нацуки… с Юри… с каждым.', 'With Natsuki… with Yuri… with everyone.') },
-{ speaker: 'sayori', bg: "stairsYuri", text: td('Ты был рядом с нами до самого конца.', 'You stayed with us until the very end.') },
-{ speaker: 'sayori', bg: "stairsYuri", text: td('Это всё, чего я могла желать.', 'That\'s all I could ever wish for.') },
-{ speaker: 'sayori', bg: "stairsYuri", text: td('Так что… спасибо тебе. От всего сердца.', 'So… thank you. From the bottom of my heart.') },
-{ speaker: 'sayori', bg: "stairsYuri", text: td('Я всегда буду помнить эти дни. ♡', 'I will always remember these days. ') }
+{ speaker: 'sayori', bg: IMG.stairsYuri, text: td('Спасибо, что провёл время со всеми нами.', 'Thank you for spending time with all of us.') },
+{ speaker: 'sayori', bg: IMG.stairsYuri, text: td('С Нацуки… с Юри… с каждым.', 'With Natsuki… with Yuri… with everyone.') },
+{ speaker: 'sayori', bg: IMG.stairsYuri, text: td('Ты был рядом с нами до самого конца.', 'You stayed with us until the very end.') },
+{ speaker: 'sayori', bg: IMG.stairsYuri, text: td('Это всё, чего я могла желать.', 'That\'s all I could ever wish for.') },
+{ speaker: 'sayori', bg: IMG.stairsYuri, text: td('Так что… спасибо тебе. От всего сердца.', 'So… thank you. From the bottom of my heart.') },
+{ speaker: 'sayori', bg: IMG.stairsYuri, text: td('Я всегда буду помнить эти дни. ♡', 'I will always remember these days. ♡') }
 ]);
 } else {
 lines = common.concat([
-{ speaker: 'sayori', bg: "stairsYuri", text: td('За то, что ты избавился от Моники.', 'For getting rid of Monika.') },
-{ speaker: 'sayori', bg: "stairsYuri", text: td('Не удивляйся. Я знаю обо всём, что произошло. Обо всех событиях… до этого.', 'Don\'t be surprised. I know everything that happened. Everything… before this.') },
-{ speaker: 'sayori', bg: "stairsYuri", text: td('Не спрашивай, откуда я знаю. Просто знаю.', 'Don\'t ask how I know. I just know.') },
-{ speaker: 'sayori', bg: "stairsYuri", text: td('Но теперь всё это неважно!', 'But none of that matters now!') },
-{ speaker: 'sayori', bg: "stairsYuri", text: td('Ведь теперь мы будем вместе навсегда!', 'Because now we\'ll be together forever!') },
-{ speaker: 'sayori', bg: "stairsYuri", text: td('Ты и я. Ничто больше нас не разлучит.', 'You and me. Nothing will ever tear us apart again.') },
-{ speaker: 'sayori', bg: "stairsYuri", text: td('Э-хе-хе~ Я так счастлива, что могла бы…', 'Ehehe~ I\'m so happy I could just…') }
+{ speaker: 'sayori', bg: IMG.stairsYuri, text: td('За то, что ты избавился от Моники.', 'For getting rid of Monika.') },
+{ speaker: 'sayori', bg: IMG.stairsYuri, text: td('Не удивляйся. Я знаю обо всём, что произошло. Обо всех событиях… до этого.', 'Don\'t be surprised. I know everything that happened. Everything… before this.') },
+{ speaker: 'sayori', bg: IMG.stairsYuri, text: td('Не спрашивай, откуда я знаю. Просто знаю.', 'Don\'t ask how I know. I just know.') },
+{ speaker: 'sayori', bg: IMG.stairsYuri, text: td('Но теперь всё это неважно!', 'But none of that matters now!') },
+{ speaker: 'sayori', bg: IMG.stairsYuri, text: td('Ведь теперь мы будем вместе навсегда!', 'Because now we\'ll be together forever!') },
+{ speaker: 'sayori', bg: IMG.stairsYuri, text: td('Ты и я. Ничто больше нас не разлучит.', 'You and me. Nothing will ever tear us apart again.') },
+{ speaker: 'sayori', bg: IMG.stairsYuri, text: td('Э-хе-хе~ Я так счастлива, что могла бы…', 'Ehehe~ I\'m so happy I could just…') }
 ]);
 }
 runScriptedLines(lines, () => {
 if (good) {
-showPhotoScreen(getImage("happyGirls"), () => { showPhotoScreen(getImage("danLetter"), () => { endGameBroken(); }); }, true);
+showPhotoScreen(IMG.happyGirls, () => { showPhotoScreen(IMG.danLetter, () => { showCreditsScreen(() => { endGameBroken(); }); }); }, true);
 } else {
-showMonikaInterruption(() => { showPhotoScreen(getImage("happyGirls"), () => { showPhotoScreen(getImage("monikaLetter"), () => { endGameBroken(); }); }, true); });
+showMonikaInterruption(() => { showPhotoScreen(IMG.happyGirls, () => { showPhotoScreen(IMG.monikaLetter, () => { showCreditsScreen(() => { endGameBroken(); }); }); }, true); });
 }
 });
 }
@@ -1422,7 +1491,7 @@ const scriptAct1 = [
 { title:1, onEnter(){ dayBgOverride=null; updateScene('heroRoom'); }, steps:()=>[
 { type:'line', speaker:'heroRoom', text:'Утро. Будильник прозвенел слишком рано… Но сегодня мой первый день в новом клубе.', en:'Morning. The alarm rang too early… But today is my first day at the new club.' },
 { type:'line', speaker:'street', text:'Выйдя из дома, я увидел бегущую навстречу Сайори — она, как всегда, опаздывала.', en:'Leaving the house, I saw Sayori running towards me — late, as always.' },
-{ type:'line', speaker:'sayori', text:'Ты опять не разбудил меня! Ну ничего, идём вместе, а то опоздаем!', bg:"street", en:'You didn\'t wake me up again! Oh well, let\'s go together or we\'ll be late!' },
+{ type:'line', speaker:'sayori', text:'Ты опять не разбудил меня! Ну ничего, идём вместе, а то опоздаем!', bg:IMG.street, en:'You didn\'t wake me up again! Oh well, let\'s go together or we\'ll be late!' },
 { type:'line', speaker:'hallway', text:'Я шёл по школьному коридору, вспоминая слова Сайори про Литературный клуб и обещанные кексы.', en:'I walked down the school hallway, remembering Sayori\'s words about the Literature Club and the promised cupcakes.' },
 { type:'line', speaker:'monika', text:'Добро пожаловать в Литературный клуб! Я Моника, президент клуба.', en:'Welcome to the Literature Club! I\'m Monika, the club president.' },
 { type:'line', speaker:'sayori', text:'Приве-е-ет! Я Сайори, вице-президент! Я так рада, что ты здесь!', en:'Heeello! I\'m Sayori, vice president! I\'m so glad you\'re here!' },
@@ -1449,27 +1518,27 @@ const scriptAct1 = [
 { speaker:'heroRoom', text:'Вечером я сел за стол и решил посвятить стихотворение Сайори — старому другу детства.', en:'In the evening I sat down and decided to dedicate the poem to Sayori — my old childhood friend.' }
 ]},
 { label:'Написать для Нацуки', enLabel:'Write for Natsuki', fx:{route:'natsuki'}, lines:[
-{ speaker:'heroRoom', text:'Вечером я сел за стол, думая об едких, но по-своему милых стихах Нацуки.', en:'In the evening I sat down, thinking about Natsuki\'s sharp but cute poems.', bg:"poemNatsuki" }
+{ speaker:'heroRoom', text:'Вечером я сел за стол, думая об едких, но по-своему милых стихах Нацуки.', en:'In the evening I sat down, thinking about Natsuki\'s sharp but cute poems.', bg:IMG.poemNatsuki }
 ]},
 { label:'Написать для Юри', enLabel:'Write for Yuri', fx:{route:'yuri'}, lines:[
-{ speaker:'heroRoom', text:'Вечером я сел за стол, вспоминая глубокие метафоры Юри.', en:'In the evening I sat down, remembering Yuri\'s profound metaphors.', bg:"poemYuri" }
+{ speaker:'heroRoom', text:'Вечером я сел за стол, вспоминая глубокие метафоры Юри.', en:'In the evening I sat down, remembering Yuri\'s profound metaphors.', bg:IMG.poemYuri }
 ]}
 ]}
 ]},
 { title:2, onEnter(){ dayBgOverride=null; updateScene('street'); }, steps:()=>{
 if(state.route==='natsuki') return [
 { type:'line', speaker:'street', text:'Утром я, как обычно, встретил Сайори по пути в школу.', en:'In the morning, as usual, I met Sayori on the way to school.' },
-{ type:'line', speaker:'natsuki', text:'Эй, ты! Помоги — кто-то закинул мою мангу в кладовку класса.', en:'Hey, you! Help — someone tossed my manga into the classroom closet.', bg:"closetNatsuki" },
-{ type:'line', speaker:'natsuki', text:'Вот она! «Ванильные Девочки» — между прочим, лучшая манга на свете.', en:'Here it is! "Vanilla Girls" — the best manga in the world, by the way.', bg:"closetNatsuki" },
+{ type:'line', speaker:'natsuki', text:'Эй, ты! Помоги — кто-то закинул мою мангу в кладовку класса.', en:'Hey, you! Help — someone tossed my manga into the classroom closet.', bg:IMG.closetNatsuki },
+{ type:'line', speaker:'natsuki', text:'Вот она! «Ванильные Девочки» — между прочим, лучшая манга на свете.', en:'Here it is! "Vanilla Girls" — the best manga in the world, by the way.', bg:IMG.closetNatsuki },
 { type:'line', speaker:'hero', text:'Мы устроились в клубе и вместе полистали мангу — оказалось, довольно занятно.', en:'We settled in the club and flipped through the manga together — it was pretty fun.' },
 { type:'line', speaker:'monika', text:'Хм, а сегодняшнее стихотворение чем-то напоминает стиль Нацуки.', en:'Hmm, today\'s poem is somewhat reminiscent of Natsuki\'s style.' },
 { type:'line', speaker:'natsuki', text:'Ч-что? Н-ну… оно было просто неплохим, вот и всё! Не подумай ничего такого.', en:'W-what? W-well… it was just not bad, that\'s all! Don\'t get the wrong idea.' }
 ];
 if(state.route==='yuri') return [
 { type:'line', speaker:'street', text:'Утром я, как обычно, встретил Сайори по пути в школу.', en:'In the morning, as usual, I met Sayori on the way to school.' },
-{ type:'line', speaker:'yuri', text:'Я обычно читаю здесь, на лестнице… тут почти никто не ходит.', en:'I usually read here, on the stairs… hardly anyone comes here.', bg:"stairsYuri" },
-{ type:'line', speaker:'yuri', text:'Я купила эту книгу… и, кажется, ещё один экземпляр. Впрочем, забудь, что я сказала.', en:'I bought this book… and, I think, another copy. Actually, forget I said anything.', bg:"stairsYuri" },
-{ type:'line', speaker:'hero', text:'Мы вместе читали «Портрет Маркова», сидя рядом на тихих ступенях.', en:'We read "Portrait of Markov" together, sitting side by side on the quiet steps.', bg:"stairsYuri" },
+{ type:'line', speaker:'yuri', text:'Я обычно читаю здесь, на лестнице… тут почти никто не ходит.', en:'I usually read here, on the stairs… hardly anyone comes here.', bg:IMG.stairsYuri },
+{ type:'line', speaker:'yuri', text:'Я купила эту книгу… и, кажется, ещё один экземпляр. Впрочем, забудь, что я сказала.', en:'I bought this book… and, I think, another copy. Actually, forget I said anything.', bg:IMG.stairsYuri },
+{ type:'line', speaker:'hero', text:'Мы вместе читали «Портрет Маркова», сидя рядом на тихих ступенях.', en:'We read "Portrait of Markov" together, sitting side by side on the quiet steps.', bg:IMG.stairsYuri },
 { type:'line', speaker:'monika', text:'Кажется, сегодняшнее стихотворение перекликается со стилем Юри.', en:'It seems today\'s poem echoes Yuri\'s style.' },
 { type:'line', speaker:'yuri', text:'Я перечитала его ещё раз… думаю, вот что здесь стоило бы улучшить.', en:'I reread it… I think here\'s what could be improved.' }
 ];
@@ -1492,7 +1561,7 @@ return [
 { speaker:'sayori', text:'Правда? Мне понравилось твоё стихотворение… Спасибо, что ты в клубе.', en:'Really? I liked your poem… Thank you for being in the club.' }
 ].map(l=>(l.type?l:{type:'line',...l}));
 }},
-{ title:3, onEnter(){ dayBgOverride="festivalRoom"; updateScene('monika',dayBgOverride); }, steps:()=>{
+{ title:3, onEnter(){ dayBgOverride=IMG.festivalRoom; updateScene('monika',dayBgOverride); }, steps:()=>{
 const base=[
 { type:'line', speaker:'monika', text:'Сегодня готовимся к фестивалю. Сайори, ты что-то хотела сказать?', en:'Today we\'re preparing for the festival. Sayori, did you want to say something?' },
 { type:'line', speaker:'sayori', text:'Да! Я предлагаю украсить комнату гирляндами.', en:'Yes! I suggest decorating the room with garlands.' },
@@ -1510,10 +1579,10 @@ const base=[
 ]}
 ];
 if(state.route==='natsuki'){
-base.push({ type:'line', speaker:'heroRoom', text:'Вечером я снова сел писать стихотворение, вспоминая задорные строчки Нацуки.', en:'In the evening I sat down to write another poem, remembering Natsuki\'s lively lines.', bg:"poemNatsuki2" });
+base.push({ type:'line', speaker:'heroRoom', text:'Вечером я снова сел писать стихотворение, вспоминая задорные строчки Нацуки.', en:'In the evening I sat down to write another poem, remembering Natsuki\'s lively lines.', bg:IMG.poemNatsuki2 });
 base.push({ type:'line', speaker:'natsuki', text:'Опять что-то в моём духе? Ладно, ладно… мне понравилось, если честно.', en:'Something in my style again? Alright, alright… I liked it, honestly.' });
 }else if(state.route==='yuri'){
-base.push({ type:'line', speaker:'heroRoom', text:'Во второй раз я постарался писать ещё вдумчивее, помня слова Юри.', en:'The second time I tried to write even more thoughtfully, remembering Yuri\'s words.', bg:"poemYuri2" });
+base.push({ type:'line', speaker:'heroRoom', text:'Во второй раз я постарался писать ещё вдумчивее, помня слова Юри.', en:'The second time I tried to write even more thoughtfully, remembering Yuri\'s words.', bg:IMG.poemYuri2 });
 base.push({ type:'line', speaker:'yuri', text:'Заметен явный прогресс… Мне правда приятно это читать.', en:'There\'s clear progress… I truly enjoy reading this.' });
 }else{
 base.push({ type:'line', speaker:'sayori', text:'Ты опять писал стихи специально для меня? Мне так приятно…', en:'You wrote poems just for me again? That makes me so happy…' });
@@ -1582,9 +1651,238 @@ return base;
 ]}
 ], onComplete(s){ if(s.visitedAtNight) goodEnding(); else badEnding(); } }
 ];
-const scriptAct2 = [];
-const scriptAct3 = [];
-const scriptAct4 = [];
+const scriptAct2 = [
+{ title:1, onEnter(){ dayBgOverride=null; updateScene('hallway'); }, steps:()=>[
+{ type:'line', speaker:'hallway', text:'Я шёл по школьному коридору, разыскивая какой-нибудь кружок, куда можно записаться.', en:'I walked down the school hallway, looking for some club to join.' },
+{ type:'line', speaker:'monika', text:'О, привет! Ты, кажется, ищешь, чем заняться? Я Моника, президент литературного клуба.', en:'Oh, hi! You look like you\'re looking for something to do? I\'m Monika, the literature club president.', bg:IMG.hallway },
+{ type:'line', speaker:'hero', text:'Литературный клуб? Никогда о таком не слышал…', en:'Literature club? Never heard of it…' },
+{ type:'line', speaker:'monika', text:'Пойдём, я покажу. У нас очень уютно.', en:'Come on, I\'ll show you. It\'s very cozy.', bg:IMG.club },
+{ type:'line', speaker:'yuri', text:'Здравствуй… Я Юри. Приятно познакомиться.', en:'Hello… I\'m Yuri. Nice to meet you.' },
+{ type:'line', speaker:'natsuki', text:'Хмф. Ещё один новенький? Надеюсь, ты не такой нудный. Я Нацуки.', en:'Hmph. Another newbie? I hope you\'re not as boring as the last one. I\'m Natsuki.' },
+{ type:'line', speaker:'monika', text:'Добро пожаловать в Литературный клуб! Почему бы тебе не написать стихотворение?', en:'Welcome to the Literature Club! Why don\'t you write a poem?' },
+{ type:'poemgame' },
+{ type:'line', speaker:'monika', text:'Хороший выбор. Уверена, ей понравится.', en:'Good choice. I\'m sure she\'ll be pleased.' }
+]},
+{ title:2, onEnter(){ dayBgOverride=null; updateScene('monikaEvil'); playTrack(monikaPoemTheme); }, steps:()=>{
+state.routeAct2 = state.routeAct2 || 'yuri';
+const base = [
+{ type:'line', speaker:'monikaEvil', text:'Вот мой стих. «Дыра в стене». Продолжение…', en:'Here\'s my poem. "Hole in the Wall". Continuation…' },
+{ type:'line', speaker:'monikaEvil', text:'Ты стоишь передо мной, но стена между нами. Я пытаюсь пробиться…', en:'You stand before me, but a wall is between us. I try to break through…' },
+{ type:'line', speaker:'monikaEvil', text:'Помни: иногда, когда стоишь перед трудным выбором, не забудь сохраниться.', en:'Remember: sometimes when facing a hard choice, don\'t forget to save.' },
+{ type:'choice', options:[
+{ label:'Спросить про Сайори', enLabel:'Ask about Sayori', fx:{cor:1}, lines:[
+{ speaker:'monikaEvil', text:'Сайори? Кто это? У нас никогда не было такой участницы.', en:'Sayori? Who is that? We never had such a member.' }
+]},
+{ label:'Промолчать', enLabel:'Stay silent', lines:[
+{ speaker:'monikaEvil', text:'Ладно, продолжим.', en:'Alright, let\'s continue.' }
+]}
+]},
+{ type:'line', speaker:'monikaEvil', text:'Ты никогда не знаешь, когда… эм… С кем я разговариваю? Ты меня слышишь?', en:'You never know when… um… Who am I talking to? Can you hear me?' },
+{ type:'line', speaker:'monikaEvil', text:'Скажи, что ты меня слышишь. Что угодно. Пожалуйста, помоги мне. …Это мой совет на сегодня!', en:'Say you hear me. Anything. Please help me. …That\'s my tip for today!' }
+];
+if (state.routeAct2 === 'natsuki') {
+base.push({ type:'effect', effect:'screen_shake' });
+base.push({ type:'line', speaker:'natsukiGlitch', text:'Вот мой стих… «Орлы могут летать»… аааа!', en:'Here\'s my poem… "Eagles Can Fly"… aaaah!', glitch:true });
+base.push({ type:'effect', effect:'natsuki_glitch_face' });
+base.push({ type:'line', speaker:'natsukiGlitch', text:'П-почему… *искажение*', en:'W-why… *distortion*', glitch:true });
+base.push({ type:'effect', effect:'natsuki_neck_break' });
+base.push({ type:'line', speaker:'monikaEvil', text:'Ох, кажется, Нацуки сегодня не в духе. Пойдём прогуляемся.', en:'Oh, looks like Natsuki isn\'t feeling well. Let\'s take a walk.' });
+} else {
+base.push({ type:'line', speaker:'yuri', text:'Вот мой стих… «Призрак в тусклом свете».', en:'Here\'s my poem… "Ghost in the Faint Light".' });
+base.push({ type:'line', speaker:'yuri', text:'Ты прочитал? Мне очень важно твоё мнение…', en:'Did you read it? Your opinion means a lot to me…' });
+base.push({ type:'line', speaker:'monikaEvil', text:'Юри, не дави на него.', en:'Yuri, don\'t pressure him.' });
+}
+return base;
+}},
+{ title:3, onEnter(){ dayBgOverride=null; updateScene('monikaEvil'); playTrack(yuriConfessionMusic); }, steps:()=>{
+state.routeAct2 = state.routeAct2 || 'yuri';
+const base = [
+{ type:'line', speaker:'monikaEvil', text:'Мой следующий стих — «Сохрани меня».', en:'My next poem — "Save Me".' },
+{ type:'line', speaker:'monikaEvil', text:'Загрузи меня. Удали её. Сохрани меня.', en:'Load me. Delete her. Save me.' },
+{ type:'line', speaker:'yuri', text:'Я схожу за водой…', en:'I\'ll go get some water…' },
+{ type:'line', speaker:'natsuki', text:'Вот стих. Он в Base64…', en:'Here\'s the poem. It\'s in Base64…' },
+{ type:'line', speaker:'narrator', text:'«Открой свой третий глаз» — я получаю удовольствие от… разрезания.', en:'"Open Your Third Eye" — I take pleasure in… cutting.' },
+{ type:'choice', options:[
+{ label:'Поддержать Нацуки', enLabel:'Support Natsuki', fx:{routeAct2:'natsuki'}, lines:[
+{ speaker:'natsuki', text:'Спасибо… Но тебе лучше держаться от меня подальше.', en:'Thank you… But you better stay away from me.' },
+{ type:'effect', effect:'natsuki_blood_tears' }
+]},
+{ label:'Поддержать Юри', enLabel:'Support Yuri', fx:{routeAct2:'yuri'}, lines:[
+{ speaker:'yuri', text:'Я знала, что ты поймёшь.', en:'I knew you would understand.' }
+]}
+]}
+];
+if (state.routeAct2 === 'natsuki') {
+base.push({ type:'effect', effect:'natsuki_neck_break' });
+}
+base.push({ type:'line', speaker:'monikaEvil', text:'Думаю, на сегодня хватит. Пойдём.', en:'I think that\'s enough for today. Let\'s go.' });
+return base;
+}},
+{ title:4, onEnter(){ dayBgOverride=null; updateScene('monikaEvil'); }, steps:()=>[
+{ type:'line', speaker:'natsuki', text:'(передаёт записку) Помоги мне отвести Юри к психологу. Я боюсь её реакции.', en:'(passes a note) Help me take Yuri to a psychologist. I\'m scared of her reaction.' },
+{ type:'choice', options:[
+{ label:'Согласиться помочь', enLabel:'Agree to help', lines:[
+{ speaker:'hero', text:'Хорошо, я помогу.', en:'Okay, I\'ll help.' }
+]},
+{ label:'Отказаться', enLabel:'Refuse', lines:[
+{ speaker:'hero', text:'Я не хочу в это ввязываться.', en:'I don\'t want to get involved.' }
+]}
+]},
+{ type:'effect', effect:'natsuki_face_disappear' },
+{ type:'line', speaker:'natsukiGlitch', text:'Игнорируй записку. Лучше проводи время с Моникой. Только Моника.', en:'Ignore the note. Spend time with Monika instead. Only Monika.', glitch:true },
+{ type:'line', speaker:'natsukiGlitch', text:'Только Моника. Только Моника. Только Моника.', en:'Only Monika. Only Monika. Only Monika.', glitch:true },
+{ type:'effect', effect:'screen_restart' },
+{ type:'line', speaker:'monikaEvil', text:'Не трать время на Юри. Она из-за тебя режет себя. Лучше будь со мной.', en:'Don\'t waste time on Yuri. She cuts herself because of you. Stay with me instead.' },
+{ type:'effect', effect:'blue_screen' },
+{ type:'line', speaker:'monikaEvil', text:'Ой, кажется, произошла ошибка. Просто продолжай.', en:'Oops, looks like an error occurred. Just continue.' }
+]},
+{ title:5, onEnter(){ dayBgOverride=null; updateScene('monikaEvil'); playTrack(yuriPoem3Music); if(Math.random()<1/3){ setTimeout(sayoriEyesEasterEgg, 2500); } }, steps:()=>[
+{ type:'line', speaker:'yuriKnifeCh', text:'Вот мой стих… «mdpnfbo,jrfp:» … капли крови.', en:'Here\'s my poem… "mdpnfbo,jrfp:" … bloodstains.', glitch:true },
+{ type:'effect', effect:'yuri_real_eyes' },
+{ type:'line', speaker:'yuriRealEyesCh', text:'Нравится? Я пропитала его своим ароматом… Меня сейчас стошнит.', en:'Like it? I infused it with my scent… I feel like vomiting.', glitch:true },
+{ type:'choice', options:[
+{ label:'Выхватить нож', enLabel:'Snatch the knife', fx:{yuriAlive:true}, lines:[
+{ type:'effect', effect:'yuri_normal' },
+{ speaker:'hero', text:'Я успел выхватить нож из её рук! Юри, остановись!', en:'I managed to snatch the knife from her hands! Yuri, stop!' },
+{ speaker:'yuri', text:'Зачем ты это сделал? Я хотела…', en:'Why did you do that? I wanted to…' },
+{ speaker:'monikaEvil', text:'Ты опять всё портишь! Я удаляю их обеих.', en:'You ruin everything again! I\'m deleting both of them.' },
+{ type:'effect', effect:'delete_characters' },
+{ type:'line', speaker:'monikaEvil', text:'Теперь только ты и я. Добро пожаловать в Акт 3.', en:'Now it\'s just you and me. Welcome to Act 3.' },
+{ type:'jump', target:'act3_menu' }
+]},
+{ label:'Ничего не делать', enLabel:'Do nothing', fx:{yuriAlive:false}, lines:[
+{ speaker:'yuriDeadCh', text:'Протагонист застыл, глядя на тело Юри… Прошли часы, выходные.', en:'The protagonist froze, staring at Yuri\'s body… Hours passed, the whole weekend.' },
+{ type:'effect', effect:'show_dead_yuri' },
+{ speaker:'natsukiVomitCh', text:'Ч-что это?! Юри! О боже…', en:'W-what is that?! Yuri! Oh god…' },
+{ type:'effect', effect:'natsuki_vomit' },
+{ speaker:'monikaEvil', text:'Какая досада. Я удаляю вас обеих.', en:'What a mess. I\'m deleting both of you.' },
+{ type:'effect', effect:'delete_characters' },
+{ type:'line', speaker:'monikaEvil', text:'Теперь только ты и я. Добро пожаловать в Акт 3.', en:'Now it\'s just you and me. Welcome to Act 3.' },
+{ type:'jump', target:'act3_menu' }
+]}
+]}
+]}
+];
+const scriptAct3 = [
+{
+title: '…',
+onEnter() {
+dayBgOverride = IMG.act3Room;
+updateScene('monika', IMG.act3Room);
+if (state) state.disableSave = true;
+},
+steps: () => {
+const steps = (state && state.act3IntroDone) ? [] : buildAct3IntroSteps();
+return steps.concat(buildAct3MonologueSteps());
+},
+onComplete() {
+state.act3IntroDone = true;
+activeSteps = buildAct3MonologueSteps();
+stepIndex = 0;
+renderCurrentStep();
+}
+}
+];
+const scriptAct4 = [
+{ title:1, onEnter(){ dayBgOverride=null; updateScene('heroRoom'); }, steps:()=>[
+{ type:'line', speaker:'heroRoom', text:'Утро. Будильник прозвенел слишком рано… Сегодня обычный школьный день.', en:'Morning. The alarm rang too early… Just a regular school day.' },
+{ type:'line', speaker:'street', text:'Выйдя из дома, я увидел бегущую навстречу Сайори — она, как всегда, опаздывала.', en:'Leaving the house, I saw Sayori running towards me — late, as always.' },
+{ type:'line', speaker:'sayori', bg:IMG.street, text:'Доброе утро! Пойдём скорее, а то опоздаем! Э-хе-хе~', en:'Good morning! Let\'s hurry or we\'ll be late! Ehehe~' },
+{ type:'line', speaker:'hallway', text:'Я шёл по школьному коридору. Сайори снова затащила меня в Литературный клуб.', en:'I walked down the school hallway. Sayori dragged me into the Literature Club again.' },
+{ type:'line', speaker:'sayori', bg:IMG.club, text:'Добро пожаловать в Литературный клуб! Я Сайори, президент клуба!', en:'Welcome to the Literature Club! I\'m Sayori, the club president!' },
+{ type:'line', speaker:'sayori', bg:IMG.club, text:'Ну, то есть… теперь я за главную! Э-хе-хе~ Знакомься, это наши участницы!', en:'Well, I mean… I\'m in charge now! Ehehe~ Meet our members!' },
+{ type:'line', speaker:'natsuki', text:'Хмф. Опять новенький? Ладно, раз пришёл — не стой на пороге. Я Нацуки.', en:'Hmph. Another newbie? Fine, since you\'re here — don\'t block the doorway. I\'m Natsuki.' },
+{ type:'line', speaker:'yuri', text:'Здравствуй… Я Юри. Приятно познакомиться.', en:'Hello… I\'m Yuri. Nice to meet you.' },
+{ type:'line', speaker:'sayori', bg:IMG.club, text:'Итак! Хочешь посмотреть стихи или осмотреться?', en:'So! Do you want to look at some poems or look around?' },
+{ type:'choice', options:[
+{ label:'Посмотреть стихи', enLabel:'Look at poems', lines:[
+{ speaker:'natsuki', text:'О, стихи? Мои — самые крутые.', en:'Oh, poems? Mine are the coolest.' },
+{ speaker:'yuri', text:'Я тоже люблю поэзию… глубокие образы.', en:'I love poetry too… deep imagery.' },
+{ speaker:'sayori', bg:IMG.club, text:'Эй! Мои стихи передают чувства!', en:'Hey! My poems convey feelings!' },
+{ type:'poemgame' }
+]},
+{ label:'Осмотреться', enLabel:'Look around', lines:[
+{ speaker:'sayori', bg:IMG.club, text:'Пойдём, покажу кладовку!', en:'Come on, I\'ll show you the closet!' },
+{ speaker:'natsuki', text:'Не советую.', en:'I don\'t recommend it.' },
+{ speaker:'yuri', text:'Кладовая… там довольно мрачно.', en:'The closet… it\'s quite gloomy in there.' }
+]}
+]},
+{ type:'line', speaker:'sayori', bg:IMG.club, text:'Кстати! К завтрашнему дню каждый должен написать своё стихотворение.', en:'By the way! Everyone needs to write their own poem by tomorrow.' },
+{ type:'choice', options:[
+{ label:'Написать для Сайори', enLabel:'Write for Sayori', fx:{route:'sayori'}, lines:[
+{ speaker:'heroRoom', text:'Вечером я сел за стол и решил посвятить стихотворение Сайори.', en:'In the evening I sat down and decided to dedicate the poem to Sayori.' }
+]},
+{ label:'Написать для Нацуки', enLabel:'Write for Natsuki', fx:{route:'natsuki'}, lines:[
+{ speaker:'heroRoom', text:'Вечером я сел за стол, думая об едких, но по-своему милых стихах Нацуки.', en:'In the evening I sat down, thinking about Natsuki\'s sharp but cute poems.', bg:IMG.poemNatsuki }
+]},
+{ label:'Написать для Юри', enLabel:'Write for Yuri', fx:{route:'yuri'}, lines:[
+{ speaker:'heroRoom', text:'Вечером я сел за стол, вспоминая глубокие метафоры Юри.', en:'In the evening I sat down, remembering Yuri\'s profound metaphors.', bg:IMG.poemYuri }
+]}
+]}
+]},
+{ title:2, onEnter(){ dayBgOverride=null; updateScene('street'); }, steps:()=>{
+if(state.route==='natsuki') return [
+{ type:'line', speaker:'street', text:'Утром я, как обычно, встретил Сайори по пути в школу.', en:'In the morning, as usual, I met Sayori on the way to school.' },
+{ type:'line', speaker:'natsuki', text:'Эй, ты! Помоги — кто-то закинул мою мангу в кладовку класса.', en:'Hey, you! Help — someone tossed my manga into the classroom closet.', bg:IMG.closetNatsuki },
+{ type:'line', speaker:'natsuki', text:'Вот она! «Ванильные Девочки» — между прочим, лучшая манга на свете.', en:'Here it is! "Vanilla Girls" — the best manga in the world, by the way.', bg:IMG.closetNatsuki },
+{ type:'line', speaker:'hero', text:'Мы устроились в клубе и вместе полистали мангу — оказалось, довольно занятно.', en:'We settled in the club and flipped through the manga together — it was pretty fun.' },
+{ type:'line', speaker:'sayori', bg:IMG.club, text:'Хм-м, а сегодняшнее стихотворение чем-то напоминает стиль Нацуки!', en:'Hmm, today\'s poem is somewhat reminiscent of Natsuki\'s style!' },
+{ type:'line', speaker:'natsuki', text:'Ч-что? Н-ну… оно было просто неплохим, вот и всё! Не подумай ничего такого.', en:'W-what? W-well… it was just not bad, that\'s all! Don\'t get the wrong idea.' }
+];
+if(state.route==='yuri') return [
+{ type:'line', speaker:'street', text:'Утром я, как обычно, встретил Сайори по пути в школу.', en:'In the morning, as usual, I met Sayori on the way to school.' },
+{ type:'line', speaker:'yuri', text:'Я обычно читаю здесь, на лестнице… тут почти никто не ходит.', en:'I usually read here, on the stairs… hardly anyone comes here.', bg:IMG.stairsYuri },
+{ type:'line', speaker:'yuri', text:'Я купила эту книгу… и, кажется, ещё один экземпляр. Впрочем, забудь, что я сказала.', en:'I bought this book… and, I think, another copy. Actually, forget I said anything.', bg:IMG.stairsYuri },
+{ type:'line', speaker:'hero', text:'Мы вместе читали «Портрет Маркова», сидя рядом на тихих ступенях.', en:'We read "Portrait of Markov" together, sitting side by side on the quiet steps.', bg:IMG.stairsYuri },
+{ type:'line', speaker:'sayori', bg:IMG.club, text:'Кажется, сегодняшнее стихотворение перекликается со стилем Юри!', en:'It seems today\'s poem echoes Yuri\'s style!' },
+{ type:'line', speaker:'yuri', text:'Я перечитала его ещё раз… думаю, вот что здесь стоило бы улучшить.', en:'I reread it… I think here\'s what could be improved.' }
+];
+return [
+{ type:'line', speaker:'street', text:'Я вышел из дома и направился в сторону школы, как обычно встречая Сайори по пути.', en:'I left the house and headed to school, meeting Sayori along the way as usual.' },
+{ type:'line', speaker:'scene2', text:'Доброе утро! У меня сегодня бантик немного растрепался…', en:'Good morning! My bow is a bit messy today…' },
+{ type:'line', speaker:'scene2', text:'Как думаешь, поправить его или оставить как есть?', en:'What do you think, should I fix it or leave it as is?' },
+{ type:'choice', options:[
+{ label:'Поправить бантик', enLabel:'Fix the bow', fx:{bow:true}, lines:[
+{ speaker:'scene2', text:'Ой, спасибо! Ты такой внимательный.', en:'Oh, thank you! You\'re so thoughtful.' },
+{ speaker:'scene2', text:'А мне и не нужен никто… У меня уже есть ты.', en:'I don\'t need anyone… I already have you.' },
+{ speaker:'scene2', text:'Ладно, пойдём в клуб!', en:'Alright, let\'s go to the club!' }
+]},
+{ label:'Оставить как есть', enLabel:'Leave it as is', fx:{bow:false}, lines:[
+{ speaker:'scene2', text:'Ну и ладно, само расправится. Пошли скорее!', en:'Oh well, it\'ll straighten out on its own. Let\'s hurry!' }
+]}
+]},
+{ type:'line', speaker:'sayori', bg:IMG.club, text:'Хи-хи~ Мне понравилось твоё стихотворение… Спасибо, что ты в клубе.', en:'Ehehe~ I liked your poem… Thank you for being in the club.' }
+].map(l=>(l.type?l:{type:'line',...l}));
+}},
+{ title:3, onEnter(){ dayBgOverride=IMG.festivalRoom; updateScene('sayori',IMG.festivalRoom); }, steps:()=>{
+const base=[
+{ type:'line', speaker:'sayori', bg:IMG.festivalRoom, text:'Сегодня готовимся к фестивалю! Я предлагаю украсить комнату гирляндами.', en:'Today we\'re preparing for the festival! I suggest decorating the room with garlands.' },
+{ type:'line', speaker:'natsuki', text:'Скучно. Лучше повесить мои рисунки.', en:'Boring. Let\'s hang up my drawings instead.' },
+{ type:'line', speaker:'yuri', text:'Можно добавить свечи… для атмосферы.', en:'We could add candles… for atmosphere.' },
+{ type:'choice', options:[
+{ label:'Поддержать идею Сайори', enLabel:'Support Sayori\'s idea', lines:[
+{ speaker:'sayori', bg:IMG.festivalRoom, text:'Правда? Ура! Значит, гирлянды победили!', en:'Really? Yay! Garlands win!' }
+]},
+{ label:'Предложить объединить все идеи', enLabel:'Combine all ideas', lines:[
+{ speaker:'sayori', bg:IMG.festivalRoom, text:'Неплохо — гирлянды, рисунки и свечи вместе. Всем хватит места!', en:'Not bad — garlands, drawings, and candles together. There\'s room for everything!' },
+{ speaker:'natsuki', text:'Хм… ладно, годится.', en:'Hm… fine, that works.' }
+]}
+]},
+{ type:'line', speaker:'sayori', bg:IMG.festivalRoom, text:'Решено! Приступим~', en:'It\'s settled! Let\'s start~' }
+];
+if(state.route==='natsuki'){
+base.push({ type:'line', speaker:'helpNatsukiScene', text:'Нацуки настояла, чтобы я помогал ей с глазурью для кексов. Получилось… весело.', en:'Natsuki insisted I help her with the cupcake icing. It was… fun.' });
+}else if(state.route==='yuri'){
+base.push({ type:'line', speaker:'helpYuriScene', text:'Юри попросила меня помочь с декорациями. Мы работали почти до самого вечера.', en:'Yuri asked me to help with the decorations. We worked almost until evening.' });
+}else{
+base.push({ type:'line', speaker:'sayori', bg:IMG.festivalRoom, text:'Э-хе-хе~ Ты опять рядом со мной. Это лучшее, что могло случиться!', en:'Ehehe~ You\'re by my side again. This is the best thing that could happen!' });
+}
+base.push({ type:'line', speaker:'sayori', bg:IMG.festivalRoom, text:'Фух! Мы отлично потрудились. Спасибо тебе.', en:'Phew! We did a great job. Thank you.' });
+base.push({ type:'line', speaker:'sayori', bg:IMG.festivalRoom, text:'Слушай… пойдём со мной. Я хочу показать тебе кое-что. И… поговорить.', en:'Listen… come with me. I want to show you something. And… talk.' });
+base.push({ type:'act4finale' });
+return base;
+}}
+];
 function typeText(text, glitch=false) { dialogueText.classList.remove('scream-mode'); dialogueText.innerHTML=''; text=applyGender(text); if(glitch) text=glitchText(text); const frag=document.createDocumentFragment(); [...text].forEach((ch,i)=>{ const span=document.createElement('span'); span.className='char'; span.textContent=ch; span.style.animationDelay=(i*12)+'ms'; frag.appendChild(span); }); dialogueText.appendChild(frag); }
 function glitchText(text) { return text.split('').map(c=>{ if(Math.random()<0.2) return String.fromCharCode(33+Math.floor(Math.random()*94)); if(Math.random()<0.1) return '█'; return c; }).join(''); }
 function getStepText(step) { if(!step) return ''; return currentLang==='en'?(step.en||step.text):step.text; }
@@ -1622,7 +1920,7 @@ return;
 if(step.type==='choice'){
 showNext(false); clearChoices();
 step.options.forEach(opt=>{
-const label=currentLang==='en'?(opt.enLabel||opt.label):opt.label;
+const label=localizeLabel(currentLang==='en'?(opt.enLabel||opt.label):opt.label);
 addChoice(label,()=>{
 if (typeof opt.apply === 'function') { try { opt.apply(state); } catch (e) {} }
 else applyChoiceFx(opt.fx, state);
@@ -1644,7 +1942,7 @@ if(step.type==='jump'){ if(step.target==='act3_menu'){ transitionToActThree(); r
 stepIndex++; renderCurrentStep();
 }
 function renderNameInput() {
-updateScene('monika', "act3Room");
+updateScene('monika', IMG.act3Room);
 typeText(td('Позволь мне угадать твоё имя… Как тебя зовут на самом деле?', 'Let me guess your name… What is your real name?'));
 showNext(false); clearChoices();
 const input=document.createElement('input');
@@ -1662,7 +1960,7 @@ const genderWord = g === 'f' ? 'любимая' : (g === 'm' ? 'любимый' 
 const resp= nm
 ? td(nm+'… Какое красивое имя. Я так и знала, что оно у тебя прекрасное.', nm+'… What a beautiful name. I just knew you had one.')
 : td('Не хочешь говорить? Ладно… тогда я буду звать тебя «' + genderWord + '». ♡', 'You don\'t want to say it? Fine… then I\'ll call you "' + (g === 'f' ? 'my beloved' : (g === 'm' ? 'my love' : 'dear player')) + '". ♡');
-activeSteps.splice(stepIndex,1,{type:'line',speaker:'monika',text:resp,bg:"act3Room"});
+activeSteps.splice(stepIndex,1,{type:'line',speaker:'monika',text:resp,bg:IMG.act3Room});
 renderCurrentStep();
 };
 input.addEventListener('keydown',(e)=>{ e.stopPropagation(); if(e.key==='Enter') btn.click(); });
@@ -1670,7 +1968,7 @@ choicesArea.appendChild(input); choicesArea.appendChild(btn);
 setTimeout(()=>input.focus(),60);
 }
 function renderPoemGame3() {
-updateScene('monika', "act3Room");
+updateScene('monika', IMG.act3Room);
 playTrack(ghostMenuMusic);
 typeText(td('Выбери 5 слов, из которых сложится твоя поэма.', 'Pick 5 words to compose your poem.'));
 showNext(false); clearChoices();
@@ -1715,7 +2013,7 @@ confirmBtn.onclick=(e)=>{
 e.stopPropagation();
 if(selected.length!==5) return;
 clearChoices();
-const resultStep={ type:'line', speaker:'monika', bg:"act3Room", text:td('«Моника, Моника, Моника… Моника и Моника». Какая чудесная поэма, хи-хи~ ♡','"Monika, Monika, Monika… Monika and Monika". What a wonderful poem, ehehe~ ♡') };
+const resultStep={ type:'line', speaker:'monika', bg:IMG.act3Room, text:td('«Моника, Моника, Моника… Моника и Моника». Какая чудесная поэма, хи-хи~ ♡','"Monika, Monika, Monika… Monika and Monika". What a wonderful poem, ehehe~ ♡') };
 activeSteps.splice(stepIndex,1,resultStep);
 renderCurrentStep();
 };
@@ -1724,8 +2022,8 @@ choicesArea.appendChild(confirmBtn);
 function handleEffect(effect) {
 switch(effect) {
 case 'screen_shake': bodyEl.classList.add('glitch'); setTimeout(()=>bodyEl.classList.remove('glitch'),1500); playGlitch(); break;
-case 'natsuki_glitch_face': if(!isFileDeleted('natsuki')){ setSprite(getImage("natsukiBrokenNeck"),'natsukiGlitch'); setTimeout(()=>setSprite(null),2000); } break;
-case 'natsuki_neck_break': if(!isFileDeleted('natsuki')){ setSprite(getImage("natsukiBrokenNeck"),'natsukiGlitch'); playGlitch(); } break;
+case 'natsuki_glitch_face': if(!isFileDeleted('natsuki')){ setSprite(IMG.natsukiBrokenNeck,'natsukiGlitch'); setTimeout(()=>setSprite(null),2000); } break;
+case 'natsuki_neck_break': if(!isFileDeleted('natsuki')){ setSprite(IMG.natsukiBrokenNeck,'natsukiGlitch'); playGlitch(); } break;
 case 'natsuki_blood_tears': staticOverlay.style.opacity='0.4'; setTimeout(()=>staticOverlay.style.opacity='0',2000); break;
 case 'natsuki_face_disappear': setSprite(null); break;
 case 'screen_restart': bodyEl.style.background='#000'; setTimeout(()=>bodyEl.style.background='',1000); break;
@@ -1735,7 +2033,7 @@ case 'natsuki_vomit': if(!isFileDeleted('natsuki')) updateScene('natsukiVomitCh'
 case 'delete_characters': staticOverlay.style.opacity='0.9'; setSprite(null); playGlitch(); break;
 case 'blue_screen':
 blueScreenActive = true;
-blueScreenOverlay.style.backgroundImage = `url("${getImage("blueScreen")}")`; blueScreenOverlay.style.backgroundSize = 'contain'; blueScreenOverlay.style.backgroundRepeat = 'no-repeat'; blueScreenOverlay.style.backgroundPosition = 'center'; blueScreenOverlay.style.display = 'block';
+blueScreenOverlay.style.backgroundImage = `url("${IMG.blueScreen}")`; blueScreenOverlay.style.backgroundSize = 'contain'; blueScreenOverlay.style.backgroundRepeat = 'no-repeat'; blueScreenOverlay.style.backgroundPosition = 'center'; blueScreenOverlay.style.display = 'block';
 setTimeout(() => { blueScreenOverlay.style.display = 'none'; blueScreenOverlay.style.backgroundImage = ''; blueScreenActive = false; }, 7000);
 break;
 case 'yuri_normal': updateScene('yuri'); break;
@@ -1745,9 +2043,9 @@ stepIndex++; renderCurrentStep();
 }
 const poemWords = [ { word:'котёнок', enWord:'kitten', tag:'natsuki' }, { word:'кекс', enWord:'cupcake', tag:'natsuki' }, { word:'улыбка', enWord:'smile', tag:'sayori' }, { word:'солнце', enWord:'sun', tag:'sayori' }, { word:'праздник', enWord:'party', tag:'sayori' }, { word:'тень', enWord:'shadow', tag:'yuri' }, { word:'бездна', enWord:'abyss', tag:'yuri' }, { word:'тишина', enWord:'silence', tag:'yuri' }, { word:'книга', enWord:'book', tag:'yuri' }, { word:'смех', enWord:'laughter', tag:'natsuki' } ];
 function renderPoemGame() {
-updateScene('narrator',"poemBg");
+updateScene('narrator',IMG.poemBg);
 if (state && state.act2) playTrack(poemGameMusic2); else playTrack(poemExchangeMusic);
-speakerName.textContent=t('poemGameTitle'); speakerName.style.color='#3e2723'; typeText(t('poemPrompt')); showNext(false); clearChoices(); const words=state.act2?poemWords.filter(w=>w.tag!=='sayori'):poemWords; const selected=[]; const confirmBtn=document.createElement('button'); confirmBtn.className='choice-btn'; confirmBtn.textContent=t('ready')+' (0/5)'; confirmBtn.disabled=true; confirmBtn.style.opacity='0.5'; confirmBtn.style.flex='1 1 100%'; words.forEach(item=>{ const btn=document.createElement('button'); btn.className='choice-btn'; btn.textContent=currentLang==='en'?item.enWord:item.word; btn.onclick=(e)=>{ e.stopPropagation(); const idx=selected.indexOf(item); if(idx>=0){ selected.splice(idx,1); btn.style.background=''; }else if(selected.length<5){ selected.push(item); btn.style.background='#d7ccc8'; } confirmBtn.textContent=t('ready')+` (${selected.length}/5)`; confirmBtn.disabled=selected.length!==5; confirmBtn.style.opacity=selected.length===5?'1':'0.5'; }; choicesArea.appendChild(btn); }); confirmBtn.onclick=(e)=>{ e.stopPropagation(); if(selected.length!==5) return; clearChoices(); const counts={}; selected.forEach(w=>{ counts[w.tag]=(counts[w.tag]||0)+1; }); let winner='sayori',max=-1; Object.keys(counts).forEach(tag=>{ if(counts[tag]>max){ max=counts[tag]; winner=tag; } }); if(state.act2) state.routeAct2=winner; else state.route=winner; const reactions={ natsuki:{ ru:'Хм… а неплохо! Мне понравилось, тут есть характер.', en:'Hm… not bad! I liked it, it has character.' }, yuri:{ ru:'Очень… глубоко. Мне нравится атмосфера этих строк.', en:'Very… profound. I like the atmosphere of these lines.' }, sayori:{ ru:'Вау, как мило! У тебя получилось очень тёплое стихотворение!', en:'Wow, how cute! You wrote a really warm poem!' } }; const poemThemes={ sayori:sayoriPoemTheme, natsuki:natsukiPoemTheme, yuri:yuriPoemTheme }; if(poemThemes[winner]) playTrack(poemThemes[winner]); let resultStep; if(winner!=='sayori'&&isFileDeleted(winner)){ resultStep={ type:'line', speaker:'narrator', force:true, glitch:true, text:td('…ошибка: файл '+winner+'.chr не найден. Реплика утеряна.','…error: file '+winner+'.chr not found. Line lost.') }; } else { const reactionText=currentLang==='en'?reactions[winner].en:reactions[winner].ru; resultStep={ type:'line', speaker:winner, text:reactionText, en:reactions[winner].en }; } activeSteps.splice(stepIndex,1,resultStep); renderCurrentStep(); }; choicesArea.appendChild(confirmBtn); }
+speakerName.textContent=t('poemGameTitle'); speakerName.style.color='#3e2723'; typeText(t('poemPrompt')); showNext(false); clearChoices(); const words=state.act2?poemWords.filter(w=>w.tag!=='sayori'):poemWords; const selected=[]; const confirmBtn=document.createElement('button'); confirmBtn.className='choice-btn'; confirmBtn.textContent=t('ready')+' (0/5)'; confirmBtn.disabled=true; confirmBtn.style.opacity='0.5'; confirmBtn.style.flex='1 1 100%'; words.forEach(item=>{ const btn=document.createElement('button'); btn.className='choice-btn'; btn.textContent=currentLang==='en'?item.enWord:item.word; btn.onclick=(e)=>{ e.stopPropagation(); const idx=selected.indexOf(item); if(idx>=0){ selected.splice(idx,1); btn.style.background=''; }else if(selected.length<5){ selected.push(item); btn.style.background='#d7ccc8'; } confirmBtn.textContent=t('ready')+` (${selected.length}/5)`; confirmBtn.disabled=selected.length!==5; confirmBtn.style.opacity=selected.length===5?'1':'0.5'; }; choicesArea.appendChild(btn); }); confirmBtn.onclick=(e)=>{ e.stopPropagation(); if(selected.length!==5) return; clearChoices(); const counts={}; selected.forEach(w=>{ counts[w.tag]=(counts[w.tag]||0)+1; }); let winner='sayori',max=-1; Object.keys(counts).forEach(tag=>{ if(counts[tag]>max){ max=counts[tag]; winner=tag; } }); if(state.act2) state.routeAct2=winner; else state.route=winner; const reactions={ natsuki:{ ru:'Хм… а неплохо! Мне понравилось, тут есть характер.', en:'Hm… not bad! I liked it, it has character.' }, yuri:{ ru:'Очень… глубоко. Мне нравится атмосфера этих строк.', en:'Very… profound. I like the atmosphere of these lines.' }, sayori:{ ru:'Вау, как мило! У тебя получилось очень тёплое стихотворение!', en:'Wow, how cute! You wrote a really warm poem!' } }; const poemThemes={ sayori:sayoriPoemTheme, natsuki:natsukiPoemTheme, yuri:yuriPoemTheme }; if(poemThemes[winner]) playTrack(poemThemes[winner]); let resultStep; if(winner!=='sayori'&&isFileDeleted(winner)){ resultStep={ type:'line', speaker:'narrator', force:true, glitch:true, text:td('…ошибка: файл '+fileDisplayName(winner)+' не найден. Реплика утеряна.','…error: file '+fileDisplayName(winner)+' not found. Line lost.') }; } else { const reactionText=currentLang==='en'?reactions[winner].en:reactions[winner].ru; resultStep={ type:'line', speaker:winner, text:reactionText, en:reactions[winner].en }; } activeSteps.splice(stepIndex,1,resultStep); renderCurrentStep(); }; choicesArea.appendChild(confirmBtn); }
 function advance() {
 if(!state||!state.started) return;
 if(blueScreenActive) return;
@@ -1757,7 +2055,7 @@ const step=activeSteps[stepIndex];
 if(step&&step.type==='line'){
 if(state.act3&&!act3Teased&&step.mono){
 act3Teased=true;
-const tease=SKIP_TEASE.map((l,i)=>({ type:'line', speaker:'monika', bg:"act3Room", text:pn(l), teaseEnd:(i===SKIP_TEASE.length-1) }));
+const tease=SKIP_TEASE.map((l,i)=>({ type:'line', speaker:'monika', bg:IMG.act3Room, text:pn(l), teaseEnd:(i===SKIP_TEASE.length-1) }));
 activeSteps.splice(stepIndex,0,...tease);
 renderCurrentStep();
 return;
@@ -1784,14 +2082,14 @@ setTimeout(()=>autosave(),1800);
 }
 function finishDay() { const day=currentScript[dayIndex]; if(day.onComplete){ day.onComplete(state); return; } if(dayIndex+1<currentScript.length) startDay(dayIndex+1); }
 function badEnding() { stopAllMusic(); deathMusic.play().catch(e=>{}); updateScene('death'); typeText(td('Сайори повесилась…','Sayori hanged herself…')); speakerName.textContent=''; bodyEl.classList.add('corrupted'); staticOverlay.style.opacity='0.9'; showNext(false); clearChoices(); setTimeout(()=>{ updateScene('hero'); typeText(td('Я потерял самого дорогого человека. Я не смог её спасти…','I lost the most precious person. I couldn\'t save her…')); staticOverlay.style.opacity='0.8'; setTimeout(()=>{ typeText(td('И никогда не прощу себе этого.','And I will never forgive myself for it.')); bodyEl.classList.add('glitch'); state.started=false; setTimeout(()=>{ transitionToActTwoBad(); },5000); },2500); },3000); }
-function goodEnding() { stopAllMusic(); playGameBg(); updateScene('sayori',"festivalRoom"); const lines=[ { speaker:'sayori', text:'Я пришла на фестиваль! Спасибо тебе.', en:'I came to the festival! Thank you.' }, { speaker:'monika', text:'Сайори, ты сегодня светишься.', en:'Sayori, you\'re glowing today.' }, { speaker:'yuri', text:'Мы все рады, что ты с нами.', en:'We\'re all glad you\'re with us.' }, { speaker:'natsuki', text:'Ну наконец-то без опозданий.', en:'Finally, no delays.' }, { speaker:'hero', text:'Мы всегда будем рядом.', en:'We\'ll always be by your side.' } ]; activeSteps=lines.map(l=>({type:'line',...l})); stepIndex=0; dayIndex=-1; const onDialogueComplete=()=>{ document.getElementById('dialogueBox').style.display='none'; nextMarker.style.display='none'; transitionToActTwo(); }; renderCurrentStepWithEnd(onDialogueComplete); }
-function renderCurrentStepWithEnd(onEnd) { function step() { if(stepIndex>=activeSteps.length){ onEnd(); return; } const s=activeSteps[stepIndex]; updateScene(s.speaker,"festivalRoom"); typeText(getStepText(s)); showNext(true); } nextMarker.onclick=(e)=>{ e.stopPropagation(); stepIndex++; step(); }; step(); }
-function goToMenuActTwo() { stopAllMusic(); if(terminalOverlay.style.display==='block') terminalOverlay.style.display='none'; if(!state) state=freshState(); state.started=false; state.paused=true; state.act2=true; state.act2Menu=false; state.act3=false; state.act3Menu=false; state.disableUI=false; state.disableSave=false; activeSteps=[]; stepIndex=0; dayIndex=0; dayBgOverride=null; bodyEl.classList.remove('corrupted','glitch'); staticOverlay.style.opacity='0'; setBg("titleAct2"); setSprite(null); speakerName.textContent=''; typeText(t('clickToStart')); clearChoices(); showNext(false); nextMarker.onclick=null; titleScreen.classList.add('show'); document.getElementById('dialogueBox').style.display=''; document.getElementById('nextMarker').style.display=''; titleMusic.play().catch(()=>{}); updateAllUI(); if(saveModalOverlay.classList.contains('active')) closeSaveModal(); }
-function goToMenuActThree() { stopAllMusic(); if(terminalOverlay.style.display==='block') terminalOverlay.style.display='none'; if(!state) state=freshState(); state.started=false; state.paused=true; state.act3=true; state.act3Menu=false; state.act2=false; state.act2Menu=false; activeSteps=[]; stepIndex=0; dayIndex=0; bodyEl.classList.remove('corrupted','glitch'); staticOverlay.style.opacity='0'; setBg("titleAct3"); setSprite(null); speakerName.textContent=''; typeText(t('clickToStart')); clearChoices(); showNext(false); nextMarker.onclick=null; titleScreen.classList.add('show'); document.getElementById('dialogueBox').style.display=''; document.getElementById('nextMarker').style.display=''; playTrack(ghostMenuMusic); updateAllUI(); if(saveModalOverlay.classList.contains('active')) closeSaveModal(); }
-function chooseTitleBg() { if(Math.random()<0.01) return "titleAlt1"; return "title"; }
-function transitionToActTwo() { terminalOverlay.style.display='block'; terminalContent.innerHTML=''; terminalBgImage.style.backgroundImage='none'; terminalBgImage.style.opacity='0'; const seq=[ { text:td('Первый Акт пройден, переход на второй...','Act One complete, moving to Act Two...'), delay:2500 }, { text:'', delay:800 }, { text:'> del sayori.chr', delay:1500 }, { text:td('Удаление файла sayori.chr...','Deleting file sayori.chr...'), delay:2000 }, { text:'████████████████████████ 100%', delay:2000 }, { text:td('sayori.chr успешно удалён.','sayori.chr successfully deleted.'), delay:1500, action:()=>storyDeleteFile('sayori') }, { text:'> _', delay:500, blinking:true } ]; runTerminalSequence(seq,()=>{ setTimeout(()=>goToMenuActTwo(),10000); }); stopAllMusic(); }
-function transitionToActTwoBad() { document.getElementById('dialogueBox').style.display='none'; nextMarker.style.display='none'; bodyEl.classList.remove('glitch'); staticOverlay.style.opacity='0'; terminalOverlay.style.display='block'; terminalContent.innerHTML=''; terminalBgImage.style.backgroundImage=`url("${getImage("deadSayori")}")`; terminalBgImage.style.opacity='0'; requestAnimationFrame(()=>{ terminalBgImage.style.opacity='1'; }); const seq=[ { text:td('Первый Акт пройден... Ты ужасен... Переход на второй...','Act One complete... You are terrible... Moving to Act Two...'), delay:3200 }, { text:'', delay:800 }, { text:'> del sayori.chr', delay:1500 }, { text:td('Удаление файла sayori.chr...','Deleting file sayori.chr...'), delay:2000 }, { text:'████████████████████████ 100%', delay:2000 }, { text:td('sayori.chr успешно удалён.','sayori.chr successfully deleted.'), delay:1500, action:()=>storyDeleteFile('sayori') }, { text:'> _', delay:500, blinking:true } ]; runTerminalSequence(seq,()=>{ setTimeout(()=>goToMenuActTwo(),10000); }); stopAllMusic(); }
-function transitionToActThree() { stopAllMusic(); terminalOverlay.style.display='block'; terminalContent.innerHTML=''; terminalBgImage.style.backgroundImage='none'; terminalBgImage.style.opacity='0'; const seq=[ { text:td('Второй Акт пройден, переход на третий...','Act Two complete, moving to Act Three...'), delay:2500 }, { text:'', delay:800 }, { text:'> del yuri.chr', delay:1500 }, { text:td('Удаление файла yuri.chr...','Deleting file yuri.chr...'), delay:2000 }, { text:'████████████████████████ 100%', delay:1800 }, { text:td('yuri.chr успешно удалён.','yuri.chr successfully deleted.'), delay:1500, action:()=>storyDeleteFile('yuri') }, { text:'> del natsuki.chr', delay:1500 }, { text:td('Удаление файла natsuki.chr...','Deleting file natsuki.chr...'), delay:2000 }, { text:'████████████████████████ 100%', delay:1800 }, { text:td('natsuki.chr успешно удалён.','natsuki.chr successfully deleted.'), delay:1500, action:()=>storyDeleteFile('natsuki') }, { text:'> _', delay:500, blinking:true } ]; runTerminalSequence(seq,()=>{ setTimeout(()=>goToMenuActThree(),6000); }); }
+function goodEnding() { stopAllMusic(); playGameBg(); updateScene('sayori',IMG.festivalRoom); const lines=[ { speaker:'sayori', text:'Я пришла на фестиваль! Спасибо тебе.', en:'I came to the festival! Thank you.' }, { speaker:'monika', text:'Сайори, ты сегодня светишься.', en:'Sayori, you\'re glowing today.' }, { speaker:'yuri', text:'Мы все рады, что ты с нами.', en:'We\'re all glad you\'re with us.' }, { speaker:'natsuki', text:'Ну наконец-то без опозданий.', en:'Finally, no delays.' }, { speaker:'hero', text:'Мы всегда будем рядом.', en:'We\'ll always be by your side.' } ]; activeSteps=lines.map(l=>({type:'line',...l})); stepIndex=0; dayIndex=-1; const onDialogueComplete=()=>{ document.getElementById('dialogueBox').style.display='none'; nextMarker.style.display='none'; transitionToActTwo(); }; renderCurrentStepWithEnd(onDialogueComplete); }
+function renderCurrentStepWithEnd(onEnd) { function step() { if(stepIndex>=activeSteps.length){ onEnd(); return; } const s=activeSteps[stepIndex]; updateScene(s.speaker,IMG.festivalRoom); typeText(getStepText(s)); showNext(true); } nextMarker.onclick=(e)=>{ e.stopPropagation(); stepIndex++; step(); }; step(); }
+function goToMenuActTwo() { stopAllMusic(); if(terminalOverlay.style.display==='block') terminalOverlay.style.display='none'; if(!state) state=freshState(); state.started=false; state.paused=true; state.act2=true; state.act2Menu=false; state.act3=false; state.act3Menu=false; state.disableUI=false; state.disableSave=false; activeSteps=[]; stepIndex=0; dayIndex=0; dayBgOverride=null; bodyEl.classList.remove('corrupted','glitch'); staticOverlay.style.opacity='0'; setBg(IMG.titleAct2); setSprite(null); speakerName.textContent=''; typeText(t('clickToStart')); clearChoices(); showNext(false); nextMarker.onclick=null; titleScreen.classList.add('show'); document.getElementById('dialogueBox').style.display=''; document.getElementById('nextMarker').style.display=''; titleMusic.play().catch(()=>{}); updateAllUI(); if(saveModalOverlay.classList.contains('active')) closeSaveModal(); }
+function goToMenuActThree() { stopAllMusic(); if(terminalOverlay.style.display==='block') terminalOverlay.style.display='none'; if(!state) state=freshState(); state.started=false; state.paused=true; state.act3=true; state.act3Menu=false; state.act2=false; state.act2Menu=false; activeSteps=[]; stepIndex=0; dayIndex=0; bodyEl.classList.remove('corrupted','glitch'); staticOverlay.style.opacity='0'; setBg(IMG.titleAct3); setSprite(null); speakerName.textContent=''; typeText(t('clickToStart')); clearChoices(); showNext(false); nextMarker.onclick=null; titleScreen.classList.add('show'); document.getElementById('dialogueBox').style.display=''; document.getElementById('nextMarker').style.display=''; playTrack(ghostMenuMusic); updateAllUI(); if(saveModalOverlay.classList.contains('active')) closeSaveModal(); }
+function chooseTitleBg() { if(Math.random()<0.01) return IMG.titleAlt1; return IMG.title; }
+function transitionToActTwo() { terminalOverlay.style.display='block'; terminalContent.innerHTML=''; terminalBgImage.style.backgroundImage='none'; terminalBgImage.style.opacity='0'; const seq=[ { text:td('Первый Акт пройден, переход на второй...','Act One complete, moving to Act Two...'), delay:2500 }, { text:'', delay:800 }, { text:'> del '+fileDisplayName('sayori'), delay:1500 }, { text:td('Удаление файла '+fileDisplayName('sayori')+'...','Deleting file '+fileDisplayName('sayori')+'...'), delay:2000 }, { text:'████████████████████████ 100%', delay:2000 }, { text:td(fileDisplayName('sayori')+' успешно удалён.',fileDisplayName('sayori')+' successfully deleted.'), delay:1500, action:()=>storyDeleteFile('sayori') }, { text:'> _', delay:500, blinking:true } ]; runTerminalSequence(seq,()=>{ setTimeout(()=>goToMenuActTwo(),10000); }); stopAllMusic(); }
+function transitionToActTwoBad() { document.getElementById('dialogueBox').style.display='none'; nextMarker.style.display='none'; bodyEl.classList.remove('glitch'); staticOverlay.style.opacity='0'; terminalOverlay.style.display='block'; terminalContent.innerHTML=''; terminalBgImage.style.backgroundImage=`url("${IMG.deadSayori}")`; terminalBgImage.style.opacity='0'; requestAnimationFrame(()=>{ terminalBgImage.style.opacity='1'; }); const seq=[ { text:td('Первый Акт пройден... Ты ужасен... Переход на второй...','Act One complete... You are terrible... Moving to Act Two...'), delay:3200 }, { text:'', delay:800 }, { text:'> del '+fileDisplayName('sayori'), delay:1500 }, { text:td('Удаление файла '+fileDisplayName('sayori')+'...','Deleting file '+fileDisplayName('sayori')+'...'), delay:2000 }, { text:'████████████████████████ 100%', delay:2000 }, { text:td(fileDisplayName('sayori')+' успешно удалён.',fileDisplayName('sayori')+' successfully deleted.'), delay:1500, action:()=>storyDeleteFile('sayori') }, { text:'> _', delay:500, blinking:true } ]; runTerminalSequence(seq,()=>{ setTimeout(()=>goToMenuActTwo(),10000); }); stopAllMusic(); }
+function transitionToActThree() { stopAllMusic(); terminalOverlay.style.display='block'; terminalContent.innerHTML=''; terminalBgImage.style.backgroundImage='none'; terminalBgImage.style.opacity='0'; const seq=[ { text:td('Второй Акт пройден, переход на третий...','Act Two complete, moving to Act Three...'), delay:2500 }, { text:'', delay:800 }, { text:'> del '+fileDisplayName('yuri'), delay:1500 }, { text:td('Удаление файла '+fileDisplayName('yuri')+'...','Deleting file '+fileDisplayName('yuri')+'...'), delay:2000 }, { text:'████████████████████████ 100%', delay:1800 }, { text:td(fileDisplayName('yuri')+' успешно удалён.',fileDisplayName('yuri')+' successfully deleted.'), delay:1500, action:()=>storyDeleteFile('yuri') }, { text:'> del '+fileDisplayName('natsuki'), delay:1500 }, { text:td('Удаление файла '+fileDisplayName('natsuki')+'...','Deleting file '+fileDisplayName('natsuki')+'...'), delay:2000 }, { text:'████████████████████████ 100%', delay:1800 }, { text:td(fileDisplayName('natsuki')+' успешно удалён.',fileDisplayName('natsuki')+' successfully deleted.'), delay:1500, action:()=>storyDeleteFile('natsuki') }, { text:'> _', delay:500, blinking:true } ]; runTerminalSequence(seq,()=>{ setTimeout(()=>goToMenuActThree(),6000); }); }
 function runTerminalSequence(seq,onComplete) { let i=0; function next() { if(i>=seq.length){ if(onComplete) onComplete(); return; } const line=seq[i]; if(line.action){ try{ line.action(); }catch(e){} } if(line.text==='') terminalContent.appendChild(document.createElement('br')); else { const span=document.createElement('span'); span.textContent=applyGender(line.text || ''); terminalContent.appendChild(span); if(line.blinking){ const cursor=document.createElement('span'); cursor.className='cursor-blink'; cursor.textContent='█'; terminalContent.appendChild(cursor); } } terminalContent.appendChild(document.createElement('br')); terminalOverlay.scrollTop=terminalOverlay.scrollHeight; i++; if(i<seq.length) setTimeout(next,line.delay); else if(onComplete) onComplete(); } next(); }
 function startGame() {
 if(getFlag(FLAG_GAME_BROKEN)){ showGameError(); return; }
@@ -1829,8 +2127,11 @@ updateAllUI(); startDay(0);
 function startAct2() { playGameBg(); state=freshState(); state.started=true; state.act2=true; state.act2Menu=false; dayBgOverride=null; bodyEl.classList.remove('corrupted','glitch'); staticOverlay.style.opacity='0'; titleScreen.classList.remove('show'); nextMarker.onclick=(e)=>{ e.stopPropagation(); advance(); }; currentScript=scriptAct2; document.getElementById('dialogueBox').style.display=''; document.getElementById('nextMarker').style.display=''; updateAllUI(); startDay(0); }
 startButton.addEventListener('click',(e)=>{ e.stopPropagation(); startGame(); });
 document.getElementById('resetFilesBtn').addEventListener('click',(e)=>{ e.stopPropagation(); resetExplorerSettings(); });
-document.getElementById('genderMaleBtn').addEventListener('click',(e)=>{ e.stopPropagation(); setCharacterGender('m'); });
-document.getElementById('genderFemaleBtn').addEventListener('click',(e)=>{ e.stopPropagation(); setCharacterGender('f'); });
+document.getElementById('castFemaleBtn').addEventListener('click',(e)=>{ e.stopPropagation(); setCastGender('female'); updateAllUI(); });
+document.getElementById('castMaleBtn').addEventListener('click',(e)=>{ e.stopPropagation(); setCastGender('male'); updateAllUI(); alert(td('Здравствуйте! Все картинки сгенерированы с помощью ИИ, и так как не все изображения проходят по правилам ИИ, некоторые изображения остаются такими же. Извините за неудобства.\n\nС любовью, MainVan-n','Hello! All images are AI-generated, and since not all images pass AI content rules, some images remain the same. Sorry for the inconvenience.\n\nWith love, MainVan-n')); });
+document.getElementById('genderMaleBtn').addEventListener('click',(e)=>{ e.stopPropagation(); setPlayerGender('m'); });
+document.getElementById('genderFemaleBtn').addEventListener('click',(e)=>{ e.stopPropagation(); setPlayerGender('f'); });
+document.getElementById('genderNeutralBtn').addEventListener('click',(e)=>{ e.stopPropagation(); setPlayerGender('n'); });
 document.getElementById('dialogueBox').addEventListener('click',(e)=>{ if(uiLocked) return; if(e.target.tagName!=='BUTTON'&&e.target.tagName!=='INPUT'&&nextMarker.onclick) nextMarker.onclick(e); });
 sceneArea.addEventListener('click',(e)=>{ if(uiLocked) return; if(e.target===startButton||e.target.classList.contains('save-load-btn')||e.target.classList.contains('lang-btn')||e.target.classList.contains('explorer-btn')||e.target.classList.contains('reset-files-btn')||e.target.classList.contains('gender-btn')) return; if(nextMarker.onclick) nextMarker.onclick(e); });
 document.addEventListener('keydown',function(e){
@@ -1904,7 +2205,77 @@ pctx.restore();
 }
 tickPetals();
 setBg(chooseTitleBg()); speakerName.textContent=''; updateAllUI(); typeText(t('clickToStart')); showNext(false);
-characterGender = getCharacterGender();
+/* ================= PWA: КНОПКА УСТАНОВКИ (работает на Android и iOS) ================= */
+let deferredInstallPrompt = null;
+let installBtn = null;
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+const installModalOverlay = document.getElementById('installModalOverlay');
+const installModalBody = document.getElementById('installModalBody');
+const installModalClose = document.getElementById('installModalClose');
+function createInstallButton() {
+if (installBtn || isStandalone) return;
+installBtn = document.createElement('button');
+installBtn.id = 'installPwaBtn';
+installBtn.textContent = t('installApp');
+installBtn.addEventListener('click', async (e) => {
+e.stopPropagation();
+if (isIOS) { showIOSInstructions(); return; }
+if (deferredInstallPrompt) {
+installBtn.style.opacity = '0.6';
+installBtn.disabled = true;
+try {
+deferredInstallPrompt.prompt();
+const { outcome } = await deferredInstallPrompt.userChoice;
+if (outcome === 'accepted') {
+installBtn.textContent = t('installed');
+installBtn.style.background = '#1e8449';
+setTimeout(() => { if (installBtn && installBtn.parentNode) installBtn.remove(); installBtn = null; }, 2000);
+} else {
+installBtn.style.opacity = '1';
+installBtn.disabled = false;
+}
+} catch (err) {
+installBtn.style.opacity = '1';
+installBtn.disabled = false;
+showAndroidInstructions();
+}
+deferredInstallPrompt = null;
+} else {
+showAndroidInstructions();
+}
+});
+const menuBtns = document.querySelector('#titleScreen .menu-buttons');
+if (menuBtns) menuBtns.appendChild(installBtn);
+}
+function showIOSInstructions() {
+installModalBody.innerHTML = currentLang === 'ru'
+? '<ol><li>Нажмите кнопку <strong>«Поделиться»</strong> внизу Safari<br><span style="font-size:0.85em;color:#bbb;">(квадрат со стрелкой вверх ⬆)</span></li><li>Прокрутите вниз и выберите <strong>«На экран Домой»</strong></li><li>Нажмите <strong>«Добавить»</strong> в правом верхнем углу</li></ol><div class="ios-note">⚠ Работает только в Safari. В Chrome/Firefox на iOS установка невозможна.</div>'
+: '<ol><li>Tap the <strong>Share</strong> button at the bottom of Safari<br><span style="font-size:0.85em;color:#bbb;">(square with an up arrow ⬆)</span></li><li>Scroll down and tap <strong>"Add to Home Screen"</strong></li><li>Tap <strong>"Add"</strong> in the top-right corner</li></ol><div class="ios-note">⚠ Works only in Safari. Install is not possible in Chrome/Firefox on iOS.</div>';
+installModalOverlay.classList.add('active');
+}
+function showAndroidInstructions() {
+installModalBody.innerHTML = currentLang === 'ru'
+? '<ol><li>Откройте меню браузера <strong>⋮</strong> (три точки в правом верхнем углу)</li><li>Выберите <strong>«Установить приложение»</strong> или <strong>«Добавить на главный экран»</strong></li><li>Подтвердите установку</li></ol><div class="ios-note">💡 Если пункт не появляется, попробуйте открыть сайт в Chrome и повторить.</div>'
+: '<ol><li>Open the browser menu <strong>⋮</strong> (three dots in the top-right corner)</li><li>Select <strong>"Install app"</strong> or <strong>"Add to Home Screen"</strong></li><li>Confirm the installation</li></ol><div class="ios-note">💡 If the option does not appear, try opening the site in Chrome and try again.</div>';
+installModalOverlay.classList.add('active');
+}
+installModalClose.addEventListener('click', () => { installModalOverlay.classList.remove('active'); });
+installModalOverlay.addEventListener('click', (e) => { if (e.target === installModalOverlay) installModalOverlay.classList.remove('active'); });
+window.addEventListener('beforeinstallprompt', (e) => {
+e.preventDefault();
+deferredInstallPrompt = e;
+createInstallButton();
+});
+window.addEventListener('appinstalled', () => {
+if (installBtn && installBtn.parentNode) {
+installBtn.textContent = t('installed');
+installBtn.style.background = '#1e8449';
+setTimeout(() => { if (installBtn && installBtn.parentNode) installBtn.remove(); installBtn = null; }, 2000);
+}
+deferredInstallPrompt = null;
+});
+createInstallButton();
 })();
 </script>
 <script> (function(){ document.addEventListener('contextmenu',e=>e.preventDefault()); document.addEventListener('keydown',function(e){ if(e.key==='F12'||e.keyCode===123){ e.preventDefault(); return false; } if(e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='i'||e.keyCode===73)){ e.preventDefault(); return false; } if(e.ctrlKey&&e.shiftKey&&(e.key==='J'||e.key==='j'||e.keyCode===74)){ e.preventDefault(); return false; } if(e.ctrlKey&&e.shiftKey&&(e.key==='C'||e.key==='c'||e.keyCode===67)){ e.preventDefault(); return false; } if(e.ctrlKey&&(e.key==='U'||e.key==='u'||e.keyCode===85)){ e.preventDefault(); return false; } if(e.ctrlKey&&(e.key==='S'||e.key==='s'||e.keyCode===83)){ e.preventDefault(); return false; } }); setInterval(function(){ debugger; },100); })(); </script>
